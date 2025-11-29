@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+import {Main} from './main/main';
 
 declare global {
   interface Window {
@@ -10,26 +12,17 @@ declare global {
   selector: 'app-root',
   standalone: true,
   templateUrl: './app.html',
-  styleUrls: ['./app.scss']
+  styleUrls: ['./app.scss'],
+  imports: [
+    RouterOutlet
+  ]
 })
 export class AppComponent {
 
   tg = window.Telegram?.WebApp;
 
-  title = 'MedAssist MiniApp';
-
   constructor() {
     // Расширяем интерфейс Telegram WebApp на весь экран
     this.tg?.expand();
-  }
-
-  onAction() {
-    alert('Действие выполнено!');
-  }
-
-  sendData() {
-    this.tg?.sendData(
-      JSON.stringify({ message: 'Привет от MiniApp!' })
-    );
   }
 }

@@ -1,1 +1,42 @@
+@import 'fonts';
+
+// Переменные цветов Telegram
+$bg-color: var(--tg-theme-bg-color, #f4f4f4);
+$text-color: var(--tg-theme-text-color, #222);
+$btn-color: #510FAD;
+
+body{font-family: 'JetBrains Mono', monospace;}
+html {
+  margin: 0;
+  padding: 0;
+  background-color: $bg-color;
+  color: $text-color;
+}
+
+.container {
+  padding: 20px;
+  text-align: center;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+  background-color: $btn-color;
+  color: white;
+  font-style: normal;
+  font-weight: 500;
+
+  &:hover {
+    background-color: darken($btn-color, 10%);
+  }
+}
+
+
 /* You can add global styles to this file, and also import other style files */
