@@ -8,4 +8,13 @@ import { Component } from '@angular/core';
 })
 export class Patients {
 
+  Delete (){
+    alert("удали меня полностью")
+  }
+  Create (){
+    alert("создай меня полностью")
+  }
+  GetList (){
+    alert("Список")
+  }
 }

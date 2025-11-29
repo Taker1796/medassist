@@ -10,9 +10,18 @@ import {Router} from '@angular/router';
 export class Main {
 
   _router:Router;
+  _user: any;
 
   constructor(router: Router) {
     this._router = router;
+    window.Telegram?.WebApp?.init();
+  }
+
+  showUserName(){
+    // Получаем данные о пользователе
+    this._user = window.Telegram?.WebApp?.initDataUnsafe;
+
+    alert(this._user?.username);
   }
 
   goToDialogs(){
@@ -21,5 +30,9 @@ export class Main {
 
   goToDoctor(){
     this._router.navigate(['/doctor']);
+  }
+
+  goToPatients(){
+    this._router.navigate(['/patients']);
   }
 }
