@@ -4,8 +4,10 @@
   <meta charset="utf-8">
   <title>Med Assistant</title>
   <script>
-    // Редирект на Angular SPA
-    window.location.replace("/medassist/");
+    // Проверяем, что мы не уже на /medassist/
+    if (!window.location.pathname.startsWith('/medassist/')) {
+      window.location.replace('/medassist/');
+    }
   </script>
   <base href="/medassist/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
