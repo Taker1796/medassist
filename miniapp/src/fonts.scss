@@ -3,12 +3,12 @@
   font-family: 'JetBrains Mono';
   font-style: normal;
   font-weight: 500;
-  src: url("/assets/fonts/JetBrainsMono-Medium.woff2") format("woff2"), url("/assets/fonts/JetBrainsMono-Medium.woff") format("woff");
+  src: url("./assets/fonts/JetBrainsMono-Medium.woff2") format("woff2"), url("./assets/fonts/JetBrainsMono-Medium.woff") format("woff");
 }
 @font-face {
   font-display: swap;
   font-family: 'JetBrains Mono';
   font-style: italic;
   font-weight: 500;
-  src: url("/assets/fonts/JetBrainsMono-Italic.woff2") format("woff2"), url("/assets/fonts/JetBrainsMono-Italic.woff") format("woff");
+  src: url("./assets/fonts/JetBrainsMono-Italic.woff2") format("woff2"), url("./assets/fonts/JetBrainsMono-Italic.woff") format("woff");
 }

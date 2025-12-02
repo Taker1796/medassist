@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "ng build --output-path dist/medassist --base-href /medassist/ --deploy-url /medassist/ && powershell Copy-Item dist/medassist/browser/index.html dist/medassist/browser/404.html -Force && npx angular-cli-ghpages --dir=dist/medassist/browser"
   },
   "prettier": {
     "printWidth": 100,

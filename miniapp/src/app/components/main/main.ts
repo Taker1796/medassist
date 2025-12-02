@@ -14,14 +14,11 @@ export class Main {
 
   constructor(router: Router) {
     this._router = router;
-    window.Telegram?.WebApp?.init();
   }
 
   showUserName(){
-    // Получаем данные о пользователе
-    this._user = window.Telegram?.WebApp?.initDataUnsafe;
 
-    alert(this._user?.username);
+    alert(window.Telegram?.WebApp?.initDataUnsafe?.user?.username);
   }
 
   goToDialogs(){
@@ -35,4 +32,6 @@ export class Main {
   goToPatients(){
     this._router.navigate(['/patients']);
   }
+
+
 }

@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
-import {Main} from './main/main';
+import { Component, OnInit, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import {RegistrationService} from './services/registration-service';
 
 declare global {
   interface Window {
@@ -13,16 +13,27 @@ declare global {
   standalone: true,
   templateUrl: './app.html',
   styleUrls: ['./app.scss'],
-  imports: [
-    RouterOutlet
-  ]
+  imports: [RouterOutlet]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-  tg = window.Telegram?.WebApp;
+  registrationService: RegistrationService = inject(RegistrationService);
+  constructor() {}
 
-  constructor() {
-    // Расширяем интерфейс Telegram WebApp на весь экран
-    this.tg?.expand();
+  ngOnInit() {
+
+    if (window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
+
+      tg.expand();         // Развернуть на весь экран
+
+      alert("Telegram WebApp доступен");
+      console.log("User:", tg.initDataUnsafe);
+    } else {
+      alert("Telegram WebApp не доступен!2");
+    }
+
+    this.registrationService.setRegistrationStatus();
+
   }
 }

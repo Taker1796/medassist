@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-dialogs',
-  imports: [],
+    imports: [
+        RouterLink
+    ],
   templateUrl: './dialogs.html',
   styleUrl: './dialogs.css',
 })
