@@ -7,6 +7,8 @@ import {Registration} from './components/registration/registration';
 import {RegistrationGuard} from './guards/registration.guard';
 import {UserAgreement} from './components/user-agreement/user-agreement';
 import {Specializations} from './components/specializations/specializations';
+import {UserAgreementGuard} from './guards/user-agreement.guard';
+import {SpecializationsGuard} from './guards/specializations.guard';
 
 export const routes: Routes = [
   { path: '', component: Main,
@@ -14,10 +16,10 @@ export const routes: Routes = [
     children: [
       { path: 'dialogs', component: Dialogs },
       { path: 'doctor', component: Doctor },
-      { path: 'patients', component: Patients },
-      { path: 'specializations', component: Specializations }
+      { path: 'patients', component: Patients }
     ]
   },
   { path: 'registration', component: Registration },
-  { path: 'user-agreement', component: UserAgreement }
+  { path: 'specializations', component: Specializations, canActivate: [SpecializationsGuard] },
+  { path: 'user-agreement', component: UserAgreement, canActivate: [UserAgreementGuard] },
 ];

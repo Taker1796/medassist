@@ -1,4 +1,5 @@
 export const Environment = {
   production: true,
-  apiUrl: 'https://api.myapp.com'
+  apiUrl: 'http://muk.i234.me:5555',
+  specializationUrlPath: '/v1/reference/specializations',
 };

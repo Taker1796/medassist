@@ -10,12 +10,13 @@ import {catchError, EMPTY, tap} from 'rxjs';
 export class RegistrationService {
 
   isRegistered: boolean = false;
+  isUserAgreementEnabled = false;
+  isSpecializationsEnabled = false;
   private _http: HttpClient = inject(HttpClient);
   private _baseUrl = Environment.apiUrl;
   private _userName: string = window.Telegram?.WebApp?.initDataUnsafe?.user?.username?.test;
 
   setRegistrationStatus(){
-debugger;
     this._userName = 'Taker1796';
     if(this._userName){
       this._http.get<RegistrationStatus>(`${this._baseUrl}/${this._userName}`).pipe(

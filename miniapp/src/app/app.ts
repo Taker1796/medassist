@@ -27,10 +27,9 @@ export class AppComponent implements OnInit {
 
       tg.expand();         // Развернуть на весь экран
 
-      alert("Telegram WebApp доступен");
       console.log("User:", tg.initDataUnsafe);
     } else {
-      alert("Telegram WebApp не доступен!2");
+      alert("Telegram WebApp не доступен!");
     }
 
     this.registrationService.setRegistrationStatus();
