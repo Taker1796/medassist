@@ -1,13 +1,20 @@
 import {inject} from '@angular/core';
 import {RegistrationService} from '../services/registration-service';
 import {Router} from '@angular/router';
+import {map, of, take} from 'rxjs';
 
 export const RegistrationGuard = ()=> {
-  const isRegister = inject(RegistrationService).isRegistered;
+  const registrationService = inject(RegistrationService);
+  const router = inject(Router);
 
-  if(isRegister){
-    return true;
+  if(registrationService.isRegistered){
+    return of(true);
   }
 
-  return inject(Router).createUrlTree(['/registration']);
+  return registrationService.getRegistrationStatus().pipe(
+    map(isAllow => {
+      if (isAllow) return true;
+      return router.createUrlTree(['/registration']);
+    })
+  );
 }

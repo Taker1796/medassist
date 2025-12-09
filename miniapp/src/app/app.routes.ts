@@ -9,14 +9,17 @@ import {UserAgreement} from './components/user-agreement/user-agreement';
 import {Specializations} from './components/specializations/specializations';
 import {UserAgreementGuard} from './guards/user-agreement.guard';
 import {SpecializationsGuard} from './guards/specializations.guard';
+import {CreatePatient} from './components/create-patient/create-patient';
 
 export const routes: Routes = [
-  { path: '', component: Main,
+  { path: '',
     canActivate: [RegistrationGuard],   // Гвард на родительском уровне
     children: [
+      { path: '', component: Main },
       { path: 'dialogs', component: Dialogs },
       { path: 'doctor', component: Doctor },
-      { path: 'patients', component: Patients }
+      { path: 'patients', component: Patients },
+      { path: 'create-patient', component: CreatePatient }
     ]
   },
   { path: 'registration', component: Registration },

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import {RouterLink} from "@angular/router";
+import {Component, inject} from '@angular/core';
+import {Router, RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-patients',
@@ -11,11 +11,13 @@ import {RouterLink} from "@angular/router";
 })
 export class Patients {
 
+  router = inject(Router)
+
   Delete (){
     alert("удали меня полностью")
   }
   Create (){
-    alert("создай меня полностью")
+    this.router.navigate(['/create-patient']);
   }
   GetList (){
     alert("Список")

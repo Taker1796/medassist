@@ -5,7 +5,6 @@ import {RegistrationService} from '../../services/registration-service';
 @Component({
   selector: 'app-registration',
   imports: [
-    RouterLink
   ],
   templateUrl: './registration.html',
   styleUrl: './registration.css',

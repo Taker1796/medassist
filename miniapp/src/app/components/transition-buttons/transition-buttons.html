@@ -1,0 +1,9 @@
+<div class="transition-buttons-container">
+  @for (button of buttons; track button.label){
+    <button
+      [routerLink]="button.routerLink"
+      [disabled]="isDisabled(button)"
+      (click)="button.onClick ? button.onClick() : null">{{button.label}}
+    </button>
+  }
+</div>

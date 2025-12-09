@@ -1,0 +1,54 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+
+  <div class="form-control">
+    <label>Полное имя</label>
+    <input formControlName="fullName" />
+  </div>
+
+  <div class="form-control">
+    <label>Дата рождения</label>
+    <input type="date" formControlName="birthDate" />
+  </div>
+
+  <div class="form-control">
+    <label>Пол</label>
+    <input type="number" formControlName="sex" />
+  </div>
+
+  <div class="form-control">
+    <label>Телефон</label>
+    <input formControlName="phone" />
+  </div>
+
+  <div class="form-control">
+    <label>Email</label>
+    <input formControlName="email" />
+  </div>
+
+  <div class="form-control">
+    <label>Аллергии</label>
+    <input formControlName="allergies" />
+  </div>
+
+  <div class="form-control">
+    <label>Хронические заболевания</label>
+    <input formControlName="chronicConditions" />
+  </div>
+
+  <div class="form-control">
+    <label>Теги</label>
+    <input formControlName="tags" />
+  </div>
+
+  <div class="form-control">
+    <label>Другие заметки</label>
+    <input formControlName="notes" />
+  </div>
+
+  <div class="form-control">
+    <label>Status</label>
+    <input type="number" formControlName="status" />
+  </div>
+  <button type="submit">Создать</button>
+</form>
+

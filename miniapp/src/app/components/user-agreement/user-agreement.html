@@ -78,7 +78,4 @@
     </label>
   </footer>
 </section>
-<div class="buttons-container">
-  <button [disabled]="!isConsentReceived()" (click)="goToSpecializations()">Далее</button>
-  <button routerLink="">Назад</button>
-</div>
+<app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>

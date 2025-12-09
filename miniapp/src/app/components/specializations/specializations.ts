@@ -1,21 +1,46 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Specialization} from '../../models/specializationModel';
 import {SpecializationsService} from '../../services/specializations-service';
-import {AsyncPipe, JsonPipe} from '@angular/common';
+import {AsyncPipe} from '@angular/common';
+import {MatChipsModule} from '@angular/material/chips';
+import { CommonModule } from '@angular/common';
+import {RouterLink} from '@angular/router';
+import {RegistrationService} from '../../services/registration-service';
+import {TransitionButtons} from '../transition-buttons/transition-buttons';
 
 @Component({
   selector: 'app-specializations',
   imports: [
-    JsonPipe,
-    AsyncPipe
+    AsyncPipe,
+    MatChipsModule,
+    CommonModule,
+    TransitionButtons
   ],
   templateUrl: './specializations.html',
   styleUrl: './specializations.css',
 })
 export class Specializations {
 
+  buttonsConfig = [
+    { label: 'Готово', onClick: () => this.register() },
+    { label: 'Назад', routerLink: '' }
+  ];
+
   specializationService: SpecializationsService = inject(SpecializationsService);
   specializations$: Observable<Specialization[]> = this.specializationService.getList();
+  selected = new Set<string>();
+  registrationService: RegistrationService = inject(RegistrationService);
 
+  toggle(code: string) {
+    if (this.selected.has(code)) {
+      this.selected.delete(code);
+    } else {
+      this.selected.add(code);
+    }
+  }
+
+  register(){
+    this.registrationService.register([...this.selected]);
+  }
 }

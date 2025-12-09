@@ -84,10 +84,6 @@ ul, ol {
   cursor: pointer;
 }
 
-.buttons-container {
-  margin-top: 1%;
-}
-
 /* Кнопка согласия может быть подключена извне (Angular) */
 
 

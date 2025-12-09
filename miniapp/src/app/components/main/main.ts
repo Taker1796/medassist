@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-main',
-  imports: [],
+  imports: [
+
+  ],
   templateUrl: './main.html',
   styleUrl: './main.css',
 })
@@ -14,11 +16,6 @@ export class Main {
 
   constructor(router: Router) {
     this._router = router;
-  }
-
-  showUserName(){
-
-    alert(window.Telegram?.WebApp?.initDataUnsafe?.user?.username);
   }
 
   goToDialogs(){
@@ -33,5 +30,8 @@ export class Main {
     this._router.navigate(['/patients']);
   }
 
+  goToSpecializations(){
+    this._router.navigate(['/specializations']);
+  }
 
 }

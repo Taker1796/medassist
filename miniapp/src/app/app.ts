@@ -2,12 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {RegistrationService} from './services/registration-service';
 
-declare global {
-  interface Window {
-    Telegram?: any;
-  }
-}
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -31,8 +25,5 @@ export class AppComponent implements OnInit {
     } else {
       alert("Telegram WebApp не доступен!");
     }
-
-    this.registrationService.setRegistrationStatus();
-
   }
 }

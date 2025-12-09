@@ -1,3 +1,13 @@
-<pre>
-  {{ specializations$ | async | json}}
-</pre>
+<div class="container">
+  <p class="subtitle">Выберите специализацию:</p>
+  <div class="chip-table">
+    @for (spec of specializations$ | async; track spec.code) {
+      <div class="chip-cell"
+           [class.selected]="selected.has(spec.code)"
+           (click)="toggle(spec.code)">
+        {{ spec.title }}
+      </div>
+    }
+  </div>
+  <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+</div>

@@ -15,13 +15,15 @@
     "target": "ES2022",
     "module": "preserve"
   },
+  "include": [
+    "src/**/*.d.ts"
+  ],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "files": [],
   "references": [
     {
       "path": "./tsconfig.app.json"
