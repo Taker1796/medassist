@@ -13,13 +13,10 @@ export class Patients {
 
   router = inject(Router)
 
-  Delete (){
-    alert("удали меня полностью")
-  }
   Create (){
     this.router.navigate(['/create-patient']);
   }
-  GetList (){
-    alert("Список")
+  goToList (){
+    this.router.navigate(['/patient-list']);
   }
 }

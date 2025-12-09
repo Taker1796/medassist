@@ -1,4 +1,4 @@
-export interface PatientCreateResponseModel {
+export interface PatientResponse {
   id: string,
   fullName: string,
   birthDate: Date | null,
