@@ -1,0 +1,63 @@
+stages:
+  - build
+  - test
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+
+before_script:
+  - dotnet --version
+
+# ---------------- BUILD ----------------
+build:
+  stage: build
+  script:
+    - dotnet restore
+    - dotnet build --configuration Release
+
+  rules:
+    # Push в feature/* или ft/* → только build
+    - if: CI_COMMIT_BRANCH =~ /^feature\//
+      when: always
+    - if: $CI_COMMIT_BRANCH =~ /^ft\//
+      when: always
+
+    # Merge Request (например feature → develop)
+    - if: $CI_MERGE_REQUEST_ID
+      when: always
+
+    # develop и develop/* → build
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: always
+    - if: $CI_COMMIT_BRANCH =~ /^develop\//
+      when: always
+
+    # main → build
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: always
+
+
+# ---------------- TEST ----------------
+test:
+  stage: test
+  script:
+    - dotnet test --configuration Release --no-build
+
+  rules:
+    # Тесты только для MR
+    - if: $CI_MERGE_REQUEST_ID
+      when: always
+
+    # develop и develop/* → тесты
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: always
+    - if: $CI_COMMIT_BRANCH =~ /^develop\//
+      when: always
+
+    # main → тесты
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: always
+
+  needs:
+    - build

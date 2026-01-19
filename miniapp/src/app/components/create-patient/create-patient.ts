@@ -19,40 +19,40 @@ export class CreatePatient implements OnInit {
   constructor(private fb: FormBuilder) {
   }
 
+  get fullName(){
+    return this.form.get('fullName');
+  }
+
+
   onSubmit(){
-     if(this.form.valid){
 
-       let body:PatientCreateRequestModel = {
-         fullName: this.form.value.fullName,
-         birthDate: this.form.value.birthDate ? new Date(this.form.value.birthDate) : null,
-         sex: this.form.value.sex,
-         phone: this.form.value.phone,
-         email: this.form.value.email,
-         allergies: this.form.value.allergies,
-         chronicConditions: this.form.value.chronicConditions,
-         tags: this.form.value.tags,
-         notes: this.form.value.notes,
-         status: this.form.value.status
-       }
+    if(!this.form.valid){
+      this.form.markAllAsTouched();
+      alert("Заполните обязательные поля");
+      return;
+    }
 
-       this._patientService.create(body).subscribe()
+    let body:PatientCreateRequestModel = {
+      fullName: this.form.value.fullName,
+      age: this.form.value.age,
+      sex: this.form.value.sex,
+      allergies: this.form.value.allergies,
+      chronicConditions: this.form.value.chronicConditions,
+      notes: this.form.value.notes
+    }
 
-     }
-     alert("Валидация не пройдена");
+    this._patientService.create(body).subscribe()
+
   }
 
   ngOnInit(){
     this.form = this.fb.group({
-      fullName: [''],
-      birthDate: [''],
+      fullName: ['', Validators.required],
+      age: [''],
       sex: [''],
-      phone: [''],
-      email: ['', Validators.email],
       allergies: [''],
       chronicConditions: [''],
-      tags: [''],
       notes: [''],
-      status:['']
     });
   }
 }

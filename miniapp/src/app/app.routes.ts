@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import {Dialogs} from './components/dialogs/dialogs';
 import {Main} from './components/main/main';
 import {Doctor} from './components/doctor/doctor';
 import {Patients} from './components/patients/patients';
@@ -17,7 +16,6 @@ export const routes: Routes = [
     canActivate: [RegistrationGuard],   // Гвард на родительском уровне
     children: [
       { path: '', component: Main },
-      { path: 'dialogs', component: Dialogs },
       { path: 'doctor', component: Doctor },
       { path: 'patients', component: Patients },
       { path: 'create-patient', component: CreatePatient },

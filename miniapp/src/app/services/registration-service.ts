@@ -49,11 +49,6 @@ export class RegistrationService {
 
   register(specializations:string[]){
 
-    if(specializations.length == 0){
-      alert('Для продолжения регистрации нужно выбрать минимум одну специализацию');
-      return;
-    }
-
     if(!this._tgUserName){
       alert("Регистрация невозможна. Не получен tgUserName");
       return;

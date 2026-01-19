@@ -23,7 +23,7 @@ import {TransitionButtons} from '../transition-buttons/transition-buttons';
 export class Specializations {
 
   buttonsConfig = [
-    { label: 'Готово', onClick: () => this.register() },
+    { label: 'Продолжить', onClick: () => this.register()  },
     { label: 'Назад', routerLink: '' }
   ];
 
@@ -36,6 +36,9 @@ export class Specializations {
     if (this.selected.has(code)) {
       this.selected.delete(code);
     } else {
+      if (this.selected.size > 0) {
+        this.selected.clear();
+      }
       this.selected.add(code);
     }
   }

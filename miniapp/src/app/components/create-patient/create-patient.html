@@ -1,28 +1,23 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
 
-  <div class="form-control">
-    <label>Полное имя</label>
+  <div class="form-control" [class.has-error]="fullName?.invalid && fullName?.touched">
+    <label>Имя</label>
     <input formControlName="fullName" />
+    @if (fullName?.invalid && fullName?.touched) {
+      <div class="fieldRequiredError">
+        Поле обязательно
+      </div>
+    }
   </div>
 
   <div class="form-control">
-    <label>Дата рождения</label>
-    <input type="date" formControlName="birthDate" />
+    <label>Возраст</label>
+    <input type="number" formControlName="age" />
   </div>
 
   <div class="form-control">
     <label>Пол</label>
     <input type="number" formControlName="sex" />
-  </div>
-
-  <div class="form-control">
-    <label>Телефон</label>
-    <input formControlName="phone" />
-  </div>
-
-  <div class="form-control">
-    <label>Email</label>
-    <input formControlName="email" />
   </div>
 
   <div class="form-control">
@@ -36,19 +31,10 @@
   </div>
 
   <div class="form-control">
-    <label>Теги</label>
-    <input formControlName="tags" />
-  </div>
-
-  <div class="form-control">
     <label>Другие заметки</label>
     <input formControlName="notes" />
   </div>
 
-  <div class="form-control">
-    <label>Status</label>
-    <input type="number" formControlName="status" />
-  </div>
   <button type="submit">Создать</button>
 </form>
 

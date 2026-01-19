@@ -5,7 +5,13 @@ $bg-color: var(--tg-theme-bg-color, #f4f4f4);
 $text-color: var(--tg-theme-text-color, #222);
 $btn-color: #510FAD;
 
-body{font-family: 'JetBrains Mono', monospace;}
+body{
+  font-family: 'JetBrains Mono', monospace;
+  //background-image: url('/assets/background.png'); /* путь к вашей картинке */
+  //background-size: cover;    /* чтобы изображение покрывало весь экран */
+  //background-position: center;
+  //background-repeat: no-repeat;
+}
 html {
   margin: 0;
   padding: 0;
@@ -103,6 +109,10 @@ button {
   color: #333;
 }
 
+.form-control.has-error input {
+  border-color: #d32f2f;
+}
+
 .form-control input {
   padding: 10px 14px;
   border-radius: 8px;
@@ -115,6 +125,10 @@ button {
   box-shadow: 0 0 0 3px rgba(63, 81, 181, .2);
   outline: none;
 }
-
+.fieldRequiredError{
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+}
 
 /* You can add global styles to this file, and also import other style files */

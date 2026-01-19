@@ -1,12 +1,8 @@
 export interface PatientCreateRequestModel {
   fullName: string,
-  birthDate: Date | null,
-  sex: number,
-  phone: string,
-  email: string,
+  age: number,
+  sex: string,
   allergies: string,
   chronicConditions: string,
-  tags: string,
-  notes: string,
-  status: number
+  notes: string
 }
