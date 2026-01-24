@@ -6,6 +6,7 @@ import { catchError, EMPTY, map, Observable, of, tap } from 'rxjs';
 import {CreateRegistrationRequestModel} from '../models/createRegistrationRequest.model';
 import {CreateRegistrationResponseModel} from '../models/createRegistrationResponse.model';
 import {Router} from '@angular/router';
+import {TgService} from './tg-service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,25 +18,15 @@ export class RegistrationService {
   isRegistered : boolean = false;
 
   private _http: HttpClient = inject(HttpClient);
+  private _tgService = inject(TgService);
   private _baseUrl = Environment.apiUrl;
-  private _tgUserName: string | null = null;
-  private _userFirstName: string | null = null;
-  private _userLastName: string | null = null;
   private _router = inject(Router);
 
-  constructor() {
-    let tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-    if(tgUser) {
-      this._tgUserName = tgUser.username;
-      this._userFirstName = tgUser.first_name;
-      this._userLastName = tgUser.last_name;
-    }
-  }
+
 
   getRegistrationStatus(): Observable<boolean> {
-    this._tgUserName = 'Taker1796';
-    if(this._tgUserName){
-      return this._http.get<RegistrationStatus>(`${this._baseUrl}${Environment.registrationUrlPath}/${this._tgUserName}`).pipe(
+    if(this._tgService.userName){
+      return this._http.get<RegistrationStatus>(`${this._baseUrl}${Environment.registrationUrlPath}/${this._tgService.userName}`).pipe(
         tap(regStatus => { this.isRegistered = regStatus && regStatus.humanInLoopConfirmed; }),
         map(regStatus => regStatus && regStatus.humanInLoopConfirmed),
         catchError(error => {
@@ -43,34 +34,28 @@ export class RegistrationService {
           return of(false);
         }));
     }
+    else {
+      alert("Не удалось определить пользователя")
+    }
 
     return of(false);
   }
 
   register(specializations:string[]){
 
-    if(!this._tgUserName){
+    if(!this._tgService.userName){
       alert("Регистрация невозможна. Не получен tgUserName");
       return;
     }
 
     let body: CreateRegistrationRequestModel = {
-      displayName: `${this._userFirstName} ${this._userLastName}`,
+      telegramUserId: this._tgService.id,
       specializationCodes: specializations,
-      telegramUsername: this._tgUserName,
-      humanInLoopConfirmed: true,
-      degrees: null,
-      experienceYears: 0,
-      languages: null,
-      bio: null,
-      focusAreas: null,
-      acceptingNewPatients: true,
-      location: null,
-      contactPolicy: null,
-      avatarUrl: null,
+      nickname: this._tgService.userName,
+      confirmed: true
     }
 
-    this._http.post<CreateRegistrationResponseModel>(`${this._baseUrl}${Environment.registrationUrlPath}`, body).pipe(
+    this._http.put<CreateRegistrationResponseModel>(`${this._baseUrl}${Environment.registrationUrlPath}`, body).pipe(
       catchError(error => {
         console.error('Ошибка запроса:', error);
         return EMPTY;
@@ -82,7 +67,7 @@ export class RegistrationService {
 
   }
 
-  unregister(){
-
+  delete(){
+    this._http.delete(`${this._baseUrl}${Environment.registrationUrlPath}`).subscribe();
   }
 }

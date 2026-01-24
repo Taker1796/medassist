@@ -3,5 +3,7 @@ export const Environment = {
   apiUrl: 'http://muk.i234.me:5555',
   specializationUrlPath: '/v1/reference/specializations',
   registrationUrlPath: '/v1/registration',
-  patientsUrlPath: '/v1/patients'
+  patientsUrlPath: '/v1/patients',
+  staticContentUrlPath: '/v1/static-content',
+  meUrlPath: '/v1/me',
 };

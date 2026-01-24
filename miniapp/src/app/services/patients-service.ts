@@ -22,11 +22,15 @@ export class PatientsService {
     return this._http.get<PatientResponse[]>(`${this._baseUrl}${this._patientsUrlPath}`);
   }
 
+  getById(id:number): Observable<PatientResponse>{
+    return this._http.get<PatientResponse>(`${this._baseUrl}${this._patientsUrlPath}/${id}`);
+  }
+
   delete(id:string):Observable<Object> {
     return this._http.delete(`${this._baseUrl}${this._patientsUrlPath}/${id}`);
   }
 
-  select(id:string):Observable<SelectPatientResponse> {
-    return this._http.post<SelectPatientResponse>(`${this._baseUrl}${this._patientsUrlPath}/${id}/select`,{});
+  setActive(id:string):Observable<SelectPatientResponse> {
+    return this._http.post<SelectPatientResponse>(`${this._baseUrl}${this._patientsUrlPath}/${id}/setactive`,{});
   }
 }

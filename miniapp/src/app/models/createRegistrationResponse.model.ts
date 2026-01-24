@@ -1,7 +1,8 @@
 export interface CreateRegistrationResponseModel {
   status: number,
   specializationCodes: string[],
-  humanInLoopConfirmed: boolean,
+  confirmed: boolean,
   startedAt: "string",
-  telegramUsername: "string"
+  nickname: "string",
+  telegramUserId: number
 }

@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {RegistrationService} from '../../services/registration-service';
 import {TransitionButtons} from '../transition-buttons/transition-buttons';
+import {MeService} from '../../services/me-service';
 
 @Component({
   selector: 'app-specializations',
@@ -31,6 +32,7 @@ export class Specializations {
   specializations$: Observable<Specialization[]> = this.specializationService.getList();
   selected = new Set<string>();
   registrationService: RegistrationService = inject(RegistrationService);
+  meService = inject(MeService);
 
   toggle(code: string) {
     if (this.selected.has(code)) {
@@ -45,5 +47,9 @@ export class Specializations {
 
   register(){
     this.registrationService.register([...this.selected]);
+  }
+
+  updateSpecialization(value: string){
+    this.meService.changeSpecialization(value);
   }
 }

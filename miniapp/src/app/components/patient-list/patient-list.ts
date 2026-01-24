@@ -63,7 +63,7 @@ export class PatientList {
 
     const patientId = [...this.selected][0];
 
-    this.patientService.select(patientId).subscribe(value => {});
+    this.patientService.setActive(patientId).subscribe(value => {});
   }
 
   patientIsSelected(): boolean {

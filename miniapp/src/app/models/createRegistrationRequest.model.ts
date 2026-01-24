@@ -1,15 +1,6 @@
 export interface CreateRegistrationRequestModel {
-  displayName: string,
+  telegramUserId: number,
   specializationCodes: string[],
-  telegramUsername: string,
-  degrees: string | null,
-  experienceYears: number,
-  languages: string | null,
-  bio: string | null,
-  focusAreas: string | null,
-  acceptingNewPatients: boolean,
-  location: string | null,
-  contactPolicy: string | null,
-  avatarUrl: string | null,
-  humanInLoopConfirmed: boolean
+  nickname: string,
+  confirmed: boolean
 }
