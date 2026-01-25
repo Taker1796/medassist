@@ -5,9 +5,9 @@ import {SpecializationsService} from '../../services/specializations-service';
 import {AsyncPipe} from '@angular/common';
 import {MatChipsModule} from '@angular/material/chips';
 import { CommonModule } from '@angular/common';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {RegistrationService} from '../../services/registration-service';
-import {TransitionButtons} from '../transition-buttons/transition-buttons';
+import {IButtonConfig, TransitionButtons} from '../transition-buttons/transition-buttons';
 import {MeService} from '../../services/me-service';
 
 @Component({
@@ -23,16 +23,18 @@ import {MeService} from '../../services/me-service';
 })
 export class Specializations {
 
-  buttonsConfig = [
-    { label: 'Продолжить', onClick: () => this.register()  },
-    { label: 'Назад', routerLink: '' }
-  ];
-
   specializationService: SpecializationsService = inject(SpecializationsService);
   specializations$: Observable<Specialization[]> = this.specializationService.getList();
   selected = new Set<string>();
   registrationService: RegistrationService = inject(RegistrationService);
   meService = inject(MeService);
+  router = inject(Router);
+  mode: string|null  = null;
+  buttonsConfig: IButtonConfig[] = [];
+
+  constructor() {
+    this.mode = this.router.currentNavigation()?.extras.state?.['mode'];
+  }
 
   toggle(code: string) {
     if (this.selected.has(code)) {
@@ -45,11 +47,31 @@ export class Specializations {
     }
   }
 
-  register(){
+  private register(){
     this.registrationService.register([...this.selected]);
   }
 
-  updateSpecialization(value: string){
-    this.meService.changeSpecialization(value);
+  private updateSpecialization(){
+    const val = this.selected.size > 0 ? this.selected.values().next().value! : null;
+
+    this.meService.changeSpecialization(val);
+  }
+
+  ngOnInit() {
+    this.initButtons();
+  }
+
+  private initButtons() {
+    if (this.mode === 'registration') {
+      this.buttonsConfig = [
+        { label: 'Продолжить', onClick: () => this.register()  },
+        { label: 'Назад', routerLink: '' }
+      ];
+    } else {
+      this.buttonsConfig = [
+        { label: 'Сохранить', onClick: () => this.updateSpecialization() },
+        { label: 'Назад', routerLink: '/doctor' }
+      ];
+    }
   }
 }

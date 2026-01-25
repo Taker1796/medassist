@@ -1,7 +1,7 @@
 import {Component, Input, Signal} from '@angular/core';
 import {RouterLink} from '@angular/router';
 
-interface IButtonConfig {
+export interface IButtonConfig {
   label: string;
   onClick?: () => void; // необязательный обработчик
   routerLink?: string;  // необязательная ссылка

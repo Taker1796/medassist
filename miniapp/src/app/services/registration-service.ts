@@ -68,6 +68,10 @@ export class RegistrationService {
   }
 
   delete(){
-    this._http.delete(`${this._baseUrl}${Environment.registrationUrlPath}`).subscribe();
+    this._http.delete(`${this._baseUrl}${Environment.registrationUrlPath}`)
+      .subscribe(value => {
+      this.isRegistered = false;
+      this._router.navigate([''])
+    });
   }
 }

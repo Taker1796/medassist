@@ -33,7 +33,7 @@ export class UserAgreement {
 
   goToSpecializations(){
     this._registrationService.isSpecializationsEnabled = true;
-    this._router.navigate(['/specializations']);
+    this._router.navigate(['/specializations'], { state:{mode:"registration"}});
   }
 
 }

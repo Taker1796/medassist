@@ -29,7 +29,7 @@ export class MeService {
     return this._http.patch<MeResponse>(`${this._baseUrl}${Environment.meUrlPath}`, body);
   }
 
-  changeSpecialization(value: string){
+  changeSpecialization(value: string|null){
 
     const body: UpdateSpecialization = {
       code: value

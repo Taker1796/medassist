@@ -1,3 +1,3 @@
 export interface UpdateSpecialization {
-  code: string
+  code: string | null
 }
