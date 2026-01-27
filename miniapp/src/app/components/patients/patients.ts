@@ -13,9 +13,14 @@ export class Patients {
 
   router = inject(Router)
 
-  Create (){
-    this.router.navigate(['/create-patient']);
+  create (){
+    this.router.navigate(['/upsert-patient'], { state:{mode:"create"}});
   }
+
+  update (){
+    this.router.navigate(['/upsert-patient'], { state:{mode:"update"}});
+  }
+
   goToList (){
     this.router.navigate(['/patient-list']);
   }

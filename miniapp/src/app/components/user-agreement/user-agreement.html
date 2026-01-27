@@ -2,8 +2,14 @@
 
   <div class="terms-content"
        [innerHTML]="agreementText$ | async">
-  </div>
 
+  </div>
+  <footer class="terms-footer">
+    <label class="agree-row">
+      <input id="agree" type="checkbox" (change)="isConsentReceived.set($any($event.target).checked)"/>
+      <span>Согласен с условиями использования</span>
+    </label>
+  </footer>
 
 </section>
 <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>

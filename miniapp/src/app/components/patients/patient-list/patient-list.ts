@@ -1,10 +1,10 @@
 import {Component, inject} from '@angular/core';
 import {AsyncPipe} from "@angular/common";
-import {TransitionButtons} from "../transition-buttons/transition-buttons";
+import {TransitionButtons} from "../../transition-buttons/transition-buttons";
 import {BehaviorSubject, Observable, switchMap} from 'rxjs';
-import {Specialization} from '../../models/specializationModel';
-import {PatientsService} from '../../services/patients-service';
-import {PatientResponse} from '../../models/patientResponse.model';
+import {Specialization} from '../../../models/specializationModel';
+import {PatientsService} from '../../../services/patients-service';
+import {PatientResponse} from '../../../models/patientResponse.model';
 
 @Component({
   selector: 'app-patient-list',
@@ -20,7 +20,7 @@ export class PatientList {
   buttonsConfig = [
     { label: 'Выбрать', onClick: () => this.select() },
     { label: 'Удалить', onClick: () => this.delete() },
-    { label: 'Назад', routerLink: '' }
+    { label: 'Назад', routerLink: '/patients' }
   ];
 
   private refresh$ = new BehaviorSubject<void>(undefined);

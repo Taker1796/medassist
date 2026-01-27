@@ -1,5 +1,5 @@
-export interface PatientCreateRequestModel {
-  fullName: string,
+export interface UpsertPatientRequest {
+  nickname: string,
   age: number,
   sex: string,
   allergies: string,

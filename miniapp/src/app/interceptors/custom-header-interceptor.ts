@@ -6,14 +6,14 @@ export const customHeaderInterceptor: HttpInterceptorFn = (req, next) => {
 
   const tgService = inject(TgService)
 
-  if (!tgService.userName) {
+  if (!tgService.id) {
     return next(req);
   }
 
   return next(
     req.clone({
       setHeaders: {
-        'X-Telegram-User-Id': tgService.userName
+        'X-Telegram-User-Id': tgService.id.toString()
       }
     })
   );

@@ -22,25 +22,6 @@ export class RegistrationService {
   private _baseUrl = Environment.apiUrl;
   private _router = inject(Router);
 
-
-
-  getRegistrationStatus(): Observable<boolean> {
-    if(this._tgService.userName){
-      return this._http.get<RegistrationStatus>(`${this._baseUrl}${Environment.registrationUrlPath}/${this._tgService.userName}`).pipe(
-        tap(regStatus => { this.isRegistered = regStatus && regStatus.humanInLoopConfirmed; }),
-        map(regStatus => regStatus && regStatus.humanInLoopConfirmed),
-        catchError(error => {
-          console.error('Ошибка запроса:', error);
-          return of(false);
-        }));
-    }
-    else {
-      alert("Не удалось определить пользователя")
-    }
-
-    return of(false);
-  }
-
   register(specializations:string[]){
 
     if(!this._tgService.userName){
@@ -51,11 +32,10 @@ export class RegistrationService {
     let body: CreateRegistrationRequestModel = {
       telegramUserId: this._tgService.id,
       specializationCodes: specializations,
-      nickname: this._tgService.userName,
-      confirmed: true
+      nickname: this._tgService.userName
     }
 
-    this._http.put<CreateRegistrationResponseModel>(`${this._baseUrl}${Environment.registrationUrlPath}`, body).pipe(
+    this._http.post<CreateRegistrationResponseModel>(`${this._baseUrl}${Environment.registrationUrlPath}`, body).pipe(
       catchError(error => {
         console.error('Ошибка запроса:', error);
         return EMPTY;

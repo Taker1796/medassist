@@ -8,8 +8,8 @@ import {UserAgreement} from './components/user-agreement/user-agreement';
 import {Specializations} from './components/specializations/specializations';
 import {UserAgreementGuard} from './guards/user-agreement.guard';
 import {SpecializationsGuard} from './guards/specializations.guard';
-import {CreatePatient} from './components/create-patient/create-patient';
-import {PatientList} from './components/patient-list/patient-list';
+import {UpsertPatient} from './components/patients/upsert-patient/upsert-patient';
+import {PatientList} from './components/patients/patient-list/patient-list';
 
 export const routes: Routes = [
   { path: '',
@@ -18,7 +18,7 @@ export const routes: Routes = [
       { path: '', component: Main },
       { path: 'doctor', component: Doctor },
       { path: 'patients', component: Patients },
-      { path: 'create-patient', component: CreatePatient },
+      { path: 'upsert-patient', component: UpsertPatient },
       { path: 'patient-list', component: PatientList }
     ]
   },

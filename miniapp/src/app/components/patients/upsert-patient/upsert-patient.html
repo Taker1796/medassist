@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+<form [formGroup]="form">
 
   <div class="form-control" [class.has-error]="fullName?.invalid && fullName?.touched">
     <label>Имя</label>
@@ -35,6 +35,9 @@
     <input formControlName="notes" />
   </div>
 
-  <button type="submit">Создать</button>
+  <div class="container">
+    <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+  </div>
 </form>
+
 

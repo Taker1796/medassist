@@ -100,7 +100,8 @@ button {
 .form-control {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+  margin: 0 auto 16px;
+  width: 70%;
 }
 
 .form-control label {

@@ -11,7 +11,7 @@ export class StaticContentService {
   private _baseUrl = Environment.apiUrl;
 
   getUserAgreementText(): Observable<string>  {
-    const code = 5;
+    const code = 'eula';
 
     return this._http.get<string>(`${this._baseUrl}${Environment.staticContentUrlPath}/${code}`).pipe(
       catchError(error => {

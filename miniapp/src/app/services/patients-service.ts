@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Environment} from '../environments/environment';
-import {PatientCreateRequestModel} from '../models/createPatientRequest.model';
+import {UpsertPatientRequest} from '../models/upsertPatientRequest.model';
 import {Observable, of} from 'rxjs';
 import {PatientResponse} from '../models/patientResponse.model';
 import {SelectPatientResponse} from '../models/selectPatientResponse.model';
@@ -13,9 +13,18 @@ export class PatientsService {
   private _http: HttpClient = inject(HttpClient);
   private _baseUrl = Environment.apiUrl;
   private _patientsUrlPath = Environment.patientsUrlPath;
+  private _updatingPatient: string|null = null;
 
-  create(body:PatientCreateRequestModel):Observable<PatientCreateRequestModel> {
-    return this._http.post<PatientCreateRequestModel>(`${this._baseUrl}${this._patientsUrlPath}`,body);
+  setUpdatingPatient(id:string|null) {
+    this._updatingPatient = id;
+  }
+
+  getUpdatingPatient() {
+    return this._updatingPatient;
+  }
+
+  create(body:UpsertPatientRequest):Observable<UpsertPatientRequest> {
+    return this._http.post<UpsertPatientRequest>(`${this._baseUrl}${this._patientsUrlPath}`,body);
   }
 
   getList(): Observable<PatientResponse[]>{
@@ -28,6 +37,10 @@ export class PatientsService {
 
   delete(id:string):Observable<Object> {
     return this._http.delete(`${this._baseUrl}${this._patientsUrlPath}/${id}`);
+  }
+
+  update(body:UpsertPatientRequest):Observable<UpsertPatientRequest> {
+    return this._http.patch<UpsertPatientRequest>(`${this._baseUrl}${this._patientsUrlPath}`,body);
   }
 
   setActive(id:string):Observable<SelectPatientResponse> {
