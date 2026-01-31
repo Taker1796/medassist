@@ -1,6 +1,6 @@
 export interface UpsertPatientRequest {
   nickname: string,
-  age: number,
+  ageYears: number,
   sex: string,
   allergies: string,
   chronicConditions: string,

@@ -39,14 +39,7 @@ export class MeService {
     return of(false);
   }
 
-  update(): Observable<MeResponse> {
-
-    const body :UpdateMeRequest = {
-      specializations: [],
-      nickname:"",
-      lastSelectedPatientId:"sdad"
-    };
-
+  update(body: UpdateMeRequest): Observable<MeResponse> {
     return this._http.patch<MeResponse>(`${this._baseUrl}${Environment.meUrlPath}`, body);
   }
 

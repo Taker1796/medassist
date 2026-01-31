@@ -13,15 +13,6 @@ export class PatientsService {
   private _http: HttpClient = inject(HttpClient);
   private _baseUrl = Environment.apiUrl;
   private _patientsUrlPath = Environment.patientsUrlPath;
-  private _updatingPatient: string|null = null;
-
-  setUpdatingPatient(id:string|null) {
-    this._updatingPatient = id;
-  }
-
-  getUpdatingPatient() {
-    return this._updatingPatient;
-  }
 
   create(body:UpsertPatientRequest):Observable<UpsertPatientRequest> {
     return this._http.post<UpsertPatientRequest>(`${this._baseUrl}${this._patientsUrlPath}`,body);
@@ -31,7 +22,7 @@ export class PatientsService {
     return this._http.get<PatientResponse[]>(`${this._baseUrl}${this._patientsUrlPath}`);
   }
 
-  getById(id:number): Observable<PatientResponse>{
+  getById(id:string): Observable<PatientResponse>{
     return this._http.get<PatientResponse>(`${this._baseUrl}${this._patientsUrlPath}/${id}`);
   }
 
@@ -39,8 +30,8 @@ export class PatientsService {
     return this._http.delete(`${this._baseUrl}${this._patientsUrlPath}/${id}`);
   }
 
-  update(body:UpsertPatientRequest):Observable<UpsertPatientRequest> {
-    return this._http.patch<UpsertPatientRequest>(`${this._baseUrl}${this._patientsUrlPath}`,body);
+  update(body:UpsertPatientRequest, id:string):Observable<UpsertPatientRequest> {
+    return this._http.patch<UpsertPatientRequest>(`${this._baseUrl}${this._patientsUrlPath}/${id}`,body);
   }
 
   setActive(id:string):Observable<SelectPatientResponse> {

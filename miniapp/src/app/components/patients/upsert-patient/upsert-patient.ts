@@ -19,12 +19,15 @@ export class UpsertPatient implements OnInit {
   form!: FormGroup;
   private _patientService  = inject(PatientsService)
   private _router = inject(Router);
+  private readonly _patientId: string|null = null;
 
   mode: string|null  = null;
   buttonsConfig: IButtonConfig[] = [];
 
+
   constructor(private fb: FormBuilder) {
     this.mode = this._router.currentNavigation()?.extras.state?.['mode'];
+    this._patientId = this._router.currentNavigation()?.extras.state?.['patientId'];
   }
 
   get fullName(){
@@ -36,7 +39,6 @@ export class UpsertPatient implements OnInit {
     this._router.navigate(['/patients']);
   }
 
-
   private upsert() {
     if (!this.form.valid) {
       this.form.markAllAsTouched();
@@ -46,7 +48,7 @@ export class UpsertPatient implements OnInit {
 
     let body: UpsertPatientRequest = {
       nickname: this.form.value.fullName,
-      age: this.form.value.age || null,
+      ageYears: this.form.value.age || null,
       sex: this.form.value.sex || null,
       allergies: this.form.value.allergies || null,
       chronicConditions: this.form.value.chronicConditions || null,
@@ -61,8 +63,15 @@ export class UpsertPatient implements OnInit {
       )
     }
     else {
-      this._patientService.update(body).subscribe(val => {
-          this._patientService.setUpdatingPatient(null);
+
+      if(this._patientId == null){
+
+        console.log('patientId is null');
+        return;
+      }
+
+      this._patientService.update(body, this._patientId).subscribe(val => {
+
           alert(`Пациент ${val.nickname} обновлен!`);
           this._router.navigate(['/patients']);
         }
@@ -76,27 +85,37 @@ export class UpsertPatient implements OnInit {
   }
 
   private initForm(){
-    if(this.mode === 'create'){
-      this.form = this.fb.group({
-        fullName: ['', Validators.required],
-        age: [''],
-        sex: [''],
-        allergies: [''],
-        chronicConditions: [''],
-        notes: [''],
+
+    this.form = this.fb.group({
+      fullName: ['', Validators.required],
+      age: [''],
+      sex: [''],
+      allergies: [''],
+      chronicConditions: [''],
+      notes: [''],
+    });
+
+    if (this.mode === 'update'){
+
+      if(this._patientId == null){
+        console.log('patientId is null on init');
+        return;
+      }
+
+      this._patientService.getById(this._patientId).subscribe(patient => {
+        const safePatient = {
+          fullName: patient.nickname || '',
+          age: patient.ageYears ?? '',
+          sex: patient.sex || '',
+          allergies: patient.allergies || '',
+          chronicConditions: patient.chronicConditions || '',
+          notes: patient.notes || ''
+        };
+
+        this.form.patchValue(safePatient);
+
       });
-    }
-    else{
-      // const patient = {
-      //   fullName: patient.fullName || '',
-      //   age: patient.age ?? '',
-      //   sex: patient.sex || '',
-      //   allergies: patient.allergies || '',
-      //   chronicConditions: patient.chronicConditions || '',
-      //   notes: patient.notes || ''
-      // };
-      //
-      // this.form.patchValue(safePatient);
+
     }
   }
 

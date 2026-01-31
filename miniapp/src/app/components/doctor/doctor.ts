@@ -25,5 +25,8 @@ export class Doctor {
     }
   }
 
+  goToEditDataForm(){
+    this._router.navigate(['/update-doctor']);
+  }
 
 }

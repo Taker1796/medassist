@@ -1,0 +1,13 @@
+<form [formGroup]="doctorForm">
+
+  <div class="form-control">
+    <label>Имя</label>
+    <input formControlName="nickName" />
+  </div>
+
+  <div class="container">
+    <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+  </div>
+</form>
+
+
