@@ -51,7 +51,7 @@ export class RegistrationService {
     this._http.delete(`${this._baseUrl}${Environment.registrationUrlPath}`)
       .subscribe(value => {
       this.isRegistered = false;
-      this._router.navigate([''])
+      this._router.navigate(['/registration'])
     });
   }
 }
