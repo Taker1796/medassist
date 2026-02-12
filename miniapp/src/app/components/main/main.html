@@ -1,5 +1,4 @@
-<div class="container">
-  <p class="subtitle">Добро пожаловать в Med Assistant!</p>
+ <p class="subtitle">Добро пожаловать в Med Assistant!</p>
   <button (click)=goToDoctor()>Профиль врача</button>
   <button (click)=goToPatients()>Пациенты</button>
 
@@ -7,4 +6,3 @@
     <p>Сессия пациента: {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}</p>
   }
   <app-chat (sendMessageEvent)="onMessageSent($event)"></app-chat>
-</div>

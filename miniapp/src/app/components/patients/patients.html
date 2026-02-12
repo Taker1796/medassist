@@ -1,5 +1,4 @@
-<div class="container">
-  <p class="subtitle">Список пациентов:</p>
+ <p class="subtitle">Список пациентов:</p>
   <div class="chip-table">
     @for (patient of patients$ | async; track patient.id) {
       <div class="chip-cell"
@@ -10,4 +9,3 @@
     }
   </div>
   <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
-</div>

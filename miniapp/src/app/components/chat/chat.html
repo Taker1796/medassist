@@ -1,23 +1,29 @@
-<div class="chat-input-container">
-  <div class="input-wrapper">
-        <textarea
-          #messageInput
-          class="chat-textarea"
-          placeholder="Введите сообщение..."
-          rows="1"
-          (input)="onInput($event)"
-          (keydown)="onKeyDown($event)"
-          [value]="message()"
-        ></textarea>
+<div class="chat-wrapper">
+  <div class="messages">
+    <!-- Здесь будут отображаться сообщения -->
+  </div>
 
-    <button
-      class="send-button"
-      (click)="sendMessage()"
-      [disabled]="!message().trim()"
-    >
-      <svg class="send-icon" viewBox="0 0 24 24" width="20" height="20">
-        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
-      </svg>
-    </button>
+  <div class="chat-input-container">
+    <div class="input-wrapper">
+      <textarea
+        #messageInput
+        class="chat-textarea"
+        placeholder="Введите сообщение..."
+        rows="1"
+        (input)="onInput($event)"
+        (keydown)="onKeyDown($event)"
+        [value]="message()"
+      ></textarea>
+
+      <button
+        class="send-button"
+        (click)="sendMessage()"
+        [disabled]="!message().trim()"
+      >
+        <svg class="send-icon" viewBox="0 0 24 24" width="20" height="20">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </div>

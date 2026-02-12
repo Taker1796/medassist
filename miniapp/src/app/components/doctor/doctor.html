@@ -1,6 +1,4 @@
-<div class="container">
-
-  @if (userData$ | async; as data) {
+ @if (userData$ | async; as data) {
     <div class="user-info">
       <p>Имя пользователя: {{ data.nickname }}</p>
       <p>Специализация: {{ data.specializations?.length ? data.specializations[0].title : 'Не выбрана' }}</p>
@@ -12,4 +10,3 @@
   <button (click)=goToEditDataForm()>Обновить данные</button>
   <button (click)=deleteRegistration()>Удалить регистрацию</button>
   <button routerLink="">Назад</button>
-</div>
