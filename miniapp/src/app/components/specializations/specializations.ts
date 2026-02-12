@@ -54,7 +54,7 @@ export class Specializations {
   private updateSpecialization(){
     const val = this.selected.size > 0 ? this.selected.values().next().value! : null;
 
-    this.meService.changeSpecialization(val).subscribe();
+    this.meService.changeSpecialization(val).subscribe(val => {alert("Специализация указана")});
   }
 
   ngOnInit() {

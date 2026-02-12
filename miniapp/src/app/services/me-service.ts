@@ -8,6 +8,8 @@ import {Specialization} from '../models/specializationModel';
 import {UpdateSpecialization} from '../models/updateSpecializationRequest.model';
 import {TgService} from './tg-service';
 import {RegistrationService} from './registration-service';
+import {SetActivePatientResponse} from '../models/setActivePatientResponse.model';
+import {SetActivePatientRequest} from '../models/setActivePatientRequest.model';
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +52,20 @@ export class MeService {
     }
 
     return this._http.patch<MeResponse>(`${this._baseUrl}${Environment.meUrlPath}/specialization`, body);
+  }
+
+  setSession(id:string):Observable<SetActivePatientResponse> {
+
+    const body: SetActivePatientRequest = {
+      patientId: id
+    }
+
+
+    return this._http.put<SetActivePatientResponse>(`${this._baseUrl}${Environment.meUrlPath}/active-patient`, body);
+  }
+
+  resetSession():Observable<SetActivePatientResponse> {
+    return this._http.delete<SetActivePatientResponse>(`${this._baseUrl}${Environment.meUrlPath}/active-patient`,{});
   }
 }
 

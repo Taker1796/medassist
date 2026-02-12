@@ -61,26 +61,58 @@ button {
 
 .chip-table {
   display: grid;
-  grid-template-columns: repeat(2, auto); /* 2 колонки */
+  grid-template-columns: repeat(3, auto); /* 3 колонки */
   justify-content: center;   /* центрируем таблицу по горизонтали */
   gap: 12px 16px;           /* gap между колонками и рядами */
   margin-top: 50px;          /* можно подвинуть вниз, чтобы было по центру экрана */
+
+  /* Добавляем прокрутку */
+  max-height: calc(5 * (32px + 12px)); /* 4 строки * (высота элемента + gap) */
+  overflow-y: auto;
+  padding-right: 8px; /* Отступ для скроллбара */
 }
 
+/* Стилизация скроллбара (опционально) */
+.chip-table::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chip-table::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.chip-table::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.chip-table::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 .chip-cell {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0 12px;
-  height: 32px;
+  height: 40px;
   border-radius: 16px;
-  background-color: #EDE0FF;
+  background-color: #7F70D8;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
+  color:white;
+
+  /* Управление текстом */
+  max-width: 150px;        /* Максимальная ширина чипа */
+  min-width: 100px;
+  font-size: 14px;        /* Базовый размер шрифта */
+
+  overflow: hidden;       /* Скрываем выходящее */
+  text-overflow: ellipsis; /* Добавляем многоточие */
 }
 
 .chip-cell:hover {
-  background-color: #D1B3FF;
+  background-color: #510FAD;
 }
 
 .chip-cell.selected {
@@ -107,7 +139,6 @@ button {
 .form-control label {
   margin-bottom: 6px;
   font-weight: 600;
-  color: #333;
 }
 
 .form-control.has-error input {

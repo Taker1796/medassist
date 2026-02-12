@@ -2,5 +2,9 @@
   <p class="subtitle">Добро пожаловать в Med Assistant!</p>
   <button (click)=goToDoctor()>Профиль врача</button>
   <button (click)=goToPatients()>Пациенты</button>
-  <button >Начать чат</button>
+
+  @if (userData$ | async; as data) {
+    <p>Сессия пациента: {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}</p>
+  }
+  <app-chat (sendMessageEvent)="onMessageSent($event)"></app-chat>
 </div>

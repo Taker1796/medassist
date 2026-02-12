@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {ChangeDetectorRef, Component, inject} from '@angular/core';
 import {Router, RouterLink} from "@angular/router";
 import {AsyncPipe} from '@angular/common';
 import {TransitionButtons} from '../transition-buttons/transition-buttons';
@@ -22,6 +22,7 @@ export class Patients {
   private refresh$ = new BehaviorSubject<void>(undefined);
   private _meService  = inject(MeService)
   private _patientService = inject(PatientsService);
+  private _cdr = inject(ChangeDetectorRef);
 
   patients$ = this.refresh$.pipe(
     switchMap(() => this._patientService.getList())
@@ -30,23 +31,22 @@ export class Patients {
   selected = new Set<string>();
 
   buttonsConfig = [
-    { label: 'Начать чат', onClick: () => alert('запуск чата') },
-    { label: 'Создать', onClick: () => this.create() },
-    { label: 'Обновить', onClick: () => this.update() },
-    { label: 'Удалить', onClick: () => this.delete() },
+    { label: 'Создать сессию', onClick: () => this.select() },
+    { label: 'Сбросить сессию', onClick: () => this.unselect() },
+    { label: 'Создать пациента', onClick: () => this.create() },
+    { label: 'Обновить пациента', onClick: () => this.update() },
+    { label: 'Удалить пациента', onClick: () => this.delete() },
     { label: 'Назад', routerLink: '' }
   ];
 
   toggle(code: string) {
     if (this.selected.has(code)) {
       this.selected.delete(code);
-      //this.unselect(code);
     } else {
       if (this.selected.size > 0) {
         this.selected.clear();
       }
       this.selected.add(code);
-      this.select();
     }
   }
 
@@ -74,7 +74,20 @@ export class Patients {
 
     const patientId = [...this.selected][0];
 
-    this._patientService.setActive(patientId).subscribe(value => {});
+    this._meService.setSession(patientId).subscribe(value => {
+      this.selected = new Set();
+      this._cdr.detectChanges(); // Принудительное обновление
+      alert('Сессия создана');
+    });
+  }
+
+  unselect() {
+
+    this._meService.resetSession().subscribe(value => {
+      this.selected = new Set();
+      this._cdr.detectChanges(); // Принудительное обновление
+      alert('Сессия удалена');
+    });
   }
 
   patientIsSelected(): boolean {
@@ -101,19 +114,7 @@ export class Patients {
     this.router.navigate(['/upsert-patient'], { state:{mode:"update", patientId: patientId}});
   }
 
-  private setLastSelectedPatient(){
-    this._meService.me().subscribe(meResponse =>{
 
-      let lastSelectedPatientId = meResponse.lastSelectedPatientId;
-      if(lastSelectedPatientId == null || lastSelectedPatientId == ""){
-        return;
-      }
 
-      this.selected.add(lastSelectedPatientId);
-    })
-  }
 
-  ngOnInit(){
-    this.setLastSelectedPatient();
-  }
 }

@@ -4,7 +4,6 @@ import {Environment} from '../environments/environment';
 import {UpsertPatientRequest} from '../models/upsertPatientRequest.model';
 import {Observable, of} from 'rxjs';
 import {PatientResponse} from '../models/patientResponse.model';
-import {SelectPatientResponse} from '../models/selectPatientResponse.model';
 
 @Injectable({
   providedIn: 'root',
@@ -32,9 +31,5 @@ export class PatientsService {
 
   update(body:UpsertPatientRequest, id:string):Observable<UpsertPatientRequest> {
     return this._http.patch<UpsertPatientRequest>(`${this._baseUrl}${this._patientsUrlPath}/${id}`,body);
-  }
-
-  setActive(id:string):Observable<SelectPatientResponse> {
-    return this._http.post<SelectPatientResponse>(`${this._baseUrl}${this._patientsUrlPath}/${id}/setactive`,{});
   }
 }

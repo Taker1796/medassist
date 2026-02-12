@@ -6,5 +6,6 @@ export interface MeResponse {
   telegramUserId: number,
   nickname: string,
   lastSelectedPatientId: string,
+  lastSelectedPatientNickname: string,
   verified: boolean,
 }
