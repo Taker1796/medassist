@@ -1,11 +1,16 @@
- <p class="subtitle">Выберите специализацию:</p>
+<div class="content-wrapper">
+<p class="subtitle">Выберите специализацию:</p>
   <div class="chip-table">
     @for (spec of specializations$ | async; track spec.code) {
       <div class="chip-cell"
            [class.selected]="selected.has(spec.code)"
-           (click)="toggle(spec.code)">
-        {{ spec.title }}
+           (pointerup)="toggle(spec.code)">
+        <span class="chip-text">
+          {{ spec.title }}
+        </span>
       </div>
     }
   </div>
-  <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+</div>
+<app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+

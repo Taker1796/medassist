@@ -1,4 +1,5 @@
-<form [formGroup]="form">
+<div class="content-wrapper">
+<form [formGroup]="form" appBlurOnOutsideTap >
 
   <div class="form-control" [class.has-error]="fullName?.invalid && fullName?.touched">
     <label>Имя</label>
@@ -34,8 +35,7 @@
     <label>Другие заметки</label>
     <input formControlName="notes" />
   </div>
-
-  <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
 </form>
-
+</div>
+<app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
 

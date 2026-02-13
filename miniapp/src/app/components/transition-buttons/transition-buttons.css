@@ -1,3 +1,6 @@
 .transition-buttons-container {
-  margin-top: 10%;
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }

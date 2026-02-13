@@ -4,12 +4,14 @@ import {TransitionButtons} from '../../../transition-buttons/transition-buttons'
 import {Router} from '@angular/router';
 import {MeService} from '../../../../services/me-service';
 import {UpdateMeRequest} from '../../../../models/updateMeRequest.model';
+import {BlurOnOutsideTap} from '../../../../directives/blur-on-outside-tap';
 
 @Component({
   selector: 'app-update',
   imports: [
     ReactiveFormsModule,
-    TransitionButtons
+    TransitionButtons,
+    BlurOnOutsideTap
   ],
   templateUrl: './update-doctor.html',
   styleUrl: './update-doctor.css',

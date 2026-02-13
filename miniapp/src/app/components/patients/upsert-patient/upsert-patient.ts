@@ -4,12 +4,14 @@ import {PatientsService} from '../../../services/patients-service';
 import {UpsertPatientRequest} from '../../../models/upsertPatientRequest.model';
 import {Router} from '@angular/router';
 import {IButtonConfig, TransitionButtons} from '../../transition-buttons/transition-buttons';
+import {BlurOnOutsideTap} from '../../../directives/blur-on-outside-tap';
 
 @Component({
   selector: 'app-upsert-patient',
   imports: [
     ReactiveFormsModule,
-    TransitionButtons
+    TransitionButtons,
+    BlurOnOutsideTap
   ],
   templateUrl: './upsert-patient.html',
   styleUrl: './upsert-patient.css',

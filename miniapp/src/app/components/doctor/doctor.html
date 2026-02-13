@@ -1,12 +1,11 @@
- @if (userData$ | async; as data) {
+<div class="content-wrapper">
+@if (userData$ | async; as data) {
     <div class="user-info">
       <p>Имя пользователя: {{ data.nickname }}</p>
       <p>Специализация: {{ data.specializations?.length ? data.specializations[0].title : 'Не выбрана' }}</p>
       <p>Сессия пациента: {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}</p>
     </div>
   }
+</div>
+<app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
 
-  <button (click)=goToSpecializations()>Выбрать специализацию</button>
-  <button (click)=goToEditDataForm()>Обновить данные</button>
-  <button (click)=deleteRegistration()>Удалить регистрацию</button>
-  <button routerLink="">Назад</button>
