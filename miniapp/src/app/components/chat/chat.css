@@ -1,7 +1,7 @@
 .chat-wrapper {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100%; /* растягиваем на 100% родителя .container */
 }
 
 .messages {
@@ -13,33 +13,33 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end; /* input-wrapper всегда внизу */
-  background: white;
+  background: black;
   border-radius: 15px;
   box-sizing: border-box;
-  padding: 57vh 2% 2% 2%
+  padding: 70vh 2% 2% 2%
 }
 
 .input-wrapper {
   display: flex;
   gap: 12px;
   align-items: center;
-  background: #f3f4f6;
+  background: black;
   border-radius: 24px;
   padding: 8px 8px 8px 20px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid whitesmoke;
 }
 
 .chat-textarea {
   flex: 1;
   border: none;
   background: transparent;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 20px;
   max-height: 150px;
   resize: none;
   outline: none;
   font-family: inherit;
-  color: #1f2937;
+  color: ghostwhite;
   overflow-y: auto;
   padding: 0;
   margin: 0;
@@ -56,9 +56,17 @@
   border: none;
   border-radius: 50%;
   background: #7F70D8;
-  color: white;
+  color: ghostwhite;
   cursor: pointer;
   flex-shrink: 0;
   align-self: center;
   margin: 0;
+}
+.chat-textarea::placeholder {
+  color: white;
+  transition: opacity 0.15s ease;
+}
+
+.chat-textarea:focus::placeholder {
+  opacity: 0;
 }

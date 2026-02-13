@@ -1,0 +1,65 @@
+.header {
+  position: fixed;
+  top: 2%;
+  left: 0;
+  right: 0;
+
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: transparent;
+  z-index: 1100;
+  flex:1;
+}
+
+.burger {
+  position: absolute;
+  left: 5%;
+
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.subtitle {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.side-menu {
+  position: fixed;
+  top: 10%;
+  left: -220px;
+  width: 40%;
+  height: 100%;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0);
+  padding: 60px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  transition: left 0.3s ease;
+  z-index: 1100;
+}
+
+.side-menu.open {
+  left: 0;
+}
+
+.side-menu button {
+  padding: 10px;
+  font-size: 16px;
+}
+
+.content {
+  padding: 16px;
+  margin-top: auto;      /* ⬅️ прижимает вниз */
+
+}
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}

@@ -1,8 +1,24 @@
- <p class="subtitle">Добро пожаловать в Med Assistant!</p>
-  <button (click)=goToDoctor()>Профиль врача</button>
-  <button (click)=goToPatients()>Пациенты</button>
+<div class="content-wrapper" appBlurOnOutsideTap>
+<div class="header">
+  <div class="burger" (click)="toggleMenu()">
+    ☰
+  </div>
+  <p class="subtitle">Med Assistant</p>
+</div>
 
+<nav class="side-menu" [class.open]="menuOpen">
+  <button (click)="goToDoctor()">Профиль врача</button>
+  <button (click)="goToPatients()">Пациенты</button>
+</nav>
+
+<div class="content" (click)="menuOpen = false">
   @if (userData$ | async; as data) {
-    <p>Сессия пациента: {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}</p>
+    <p>
+      Пациент:
+      {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}
+    </p>
   }
+
   <app-chat (sendMessageEvent)="onMessageSent($event)"></app-chat>
+</div>
+</div>

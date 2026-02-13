@@ -1,8 +1,8 @@
-import {ChangeDetectorRef, Component, inject} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {Router, RouterLink} from "@angular/router";
 import {AsyncPipe} from '@angular/common';
-import {TransitionButtons} from '../transition-buttons/transition-buttons';
-import {BehaviorSubject, switchMap} from 'rxjs';
+import {IButtonConfig, TransitionButtons} from '../transition-buttons/transition-buttons';
+import {BehaviorSubject, map, switchMap} from 'rxjs';
 import {PatientsService} from '../../services/patients-service';
 import {MeService} from '../../services/me-service';
 
@@ -15,7 +15,7 @@ import {MeService} from '../../services/me-service';
   templateUrl: './patients.html',
   styleUrl: './patients.css',
 })
-export class Patients {
+export class Patients implements OnInit{
 
   router = inject(Router)
 
@@ -23,6 +23,7 @@ export class Patients {
   private _meService  = inject(MeService)
   private _patientService = inject(PatientsService);
   private _cdr = inject(ChangeDetectorRef);
+  private _endSessionButtonLabel = 'Завершить сессию';
 
   patients$ = this.refresh$.pipe(
     switchMap(() => this._patientService.getList())
@@ -30,14 +31,7 @@ export class Patients {
 
   selected = new Set<string>();
 
-  buttonsConfig = [
-    { label: 'Создать сессию', onClick: () => this.select() },
-    { label: 'Сбросить сессию', onClick: () => this.unselect() },
-    { label: 'Создать пациента', onClick: () => this.create() },
-    { label: 'Обновить пациента', onClick: () => this.update() },
-    { label: 'Удалить пациента', onClick: () => this.delete() },
-    { label: 'Назад', routerLink: '' }
-  ];
+  buttonsConfig: IButtonConfig[] = [];
 
   toggle(code: string) {
     if (this.selected.has(code)) {
@@ -76,7 +70,16 @@ export class Patients {
 
     this._meService.setSession(patientId).subscribe(value => {
       this.selected = new Set();
-      this._cdr.detectChanges(); // Принудительное обновление
+      this.patients$.pipe(
+        map(patients => patients.find(p => p.id === patientId))
+      ).subscribe(value => {
+          if (value) {
+            this.setLabelToEndSessionButton(value.nickname);
+          }
+
+          this._cdr.detectChanges();
+        }
+      );
       alert('Сессия создана');
     });
   }
@@ -85,6 +88,7 @@ export class Patients {
 
     this._meService.resetSession().subscribe(value => {
       this.selected = new Set();
+      this.setLabelToEndSessionButton(null);
       this._cdr.detectChanges(); // Принудительное обновление
       alert('Сессия удалена');
     });
@@ -114,7 +118,36 @@ export class Patients {
     this.router.navigate(['/upsert-patient'], { state:{mode:"update", patientId: patientId}});
   }
 
+  ngOnInit(){
+    this.initButtons();
+  }
 
+  private initButtons(): void {
 
+    this.buttonsConfig = [
+      { label: 'Создать сессию с пациентом', onClick: () => this.select() },
+      { label:  this._endSessionButtonLabel, onClick: () => this.unselect() },
+      { label: 'Создать пациента', onClick: () => this.create() },
+      { label: 'Обновить пациента', onClick: () => this.update() },
+      { label: 'Удалить пациента', onClick: () => this.delete() },
+      { label: 'Назад', routerLink: '' }
+    ];
 
+    this._meService.me().subscribe(me => {
+      if (me.lastSelectedPatientNickname !== null) {
+
+        this.setLabelToEndSessionButton(me.lastSelectedPatientNickname);
+      }
+    });
+  }
+
+  private setLabelToEndSessionButton(patientName: string|null) {
+
+    if(patientName != null){
+      this.buttonsConfig[1].label = this._endSessionButtonLabel + ' [' + patientName +']';
+    }
+    else{
+      this.buttonsConfig[1].label = this._endSessionButtonLabel;
+    }
+  }
 }
