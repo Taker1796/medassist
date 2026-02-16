@@ -45,6 +45,8 @@ export class Specializations {
       }
       this.selected.add(code);
     }
+
+    this.selected = new Set(this.selected);
   }
 
   private register(){

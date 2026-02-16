@@ -7,7 +7,7 @@
 .terms-wrapper {
   display: flex;
   flex-direction: column;
-  height: 73vh;
+  height: 76dvh;
   background: var(--tg-theme-bg-color);
   color: var(--tg-theme-text-color);
 }
@@ -83,7 +83,7 @@ ul, ol {
   gap: 10px;
   font-size: 1rem;
   cursor: pointer;
-  margin-top: 5%;
+  margin-top: 4dvh;
 }
 
 /* Кнопка согласия может быть подключена извне (Angular) */

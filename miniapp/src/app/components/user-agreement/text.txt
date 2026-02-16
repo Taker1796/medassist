@@ -1,71 +1,133 @@
-<header class="terms-header">
-    <h1>Условия использования</h1>
-  </header>
+<div style="
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #ffffff;
+  background: #000000;
+  padding: 20px;
+  line-height: 1.6;
+  text-align: left;
+">
 
-
-  <div class="terms-scroll">
-    <article class="terms-body">
-      <section>
-        <h2>1. Назначение Сервиса</h2>
-        <p>
-          Сервис предоставляет врачам и медицинским работникам возможность получать справочные рекомендации,
-          пояснения и информационные подсказки, сформированные с применением технологий искусственного интеллекта (ИИ).
-        </p>
-        <p class="emphasize">
-          Сервис <strong>не является</strong> медицинской системой, инструментом для постановки диагноза или назначением лечения.
-        </p>
-      </section>
-
-
-      <section>
-        <h2>2. Ограничение ответственности</h2>
-        <ul>
-          <li>Информация носит исключительно рекомендательный и справочный характер.</li>
-          <li>Ответы ИИ могут содержать неточности или устаревшие сведения.</li>
-          <li>Сервис не заменяет очную консультацию, обследования и профессиональный опыт врача.</li>
-          <li>Пользователь несёт ответственность за любые клинические решения, принятые на основе информации.</li>
-        </ul>
-      </section>
-
-
-      <section>
-        <h2>3. Запрет на диагностику</h2>
-        <p class="important">Запрещается использовать Сервис для:</p>
-        <ol>
-          <li>окончательной постановки диагноза;</li>
-          <li>назначения или изменения лечения без профессиональной оценки;</li>
-          <li>принятия решений, влияющих на здоровье пациента, только на основании рекомендаций ИИ.</li>
-        </ol>
-      </section>
-
-
-      <section>
-        <h2>4. Обязанности пользователя</h2>
-        <ul>
-          <li>использовать Сервис только как вспомогательный инструмент;</li>
-          <li>критически оценивать и проверять полученную информацию;</li>
-          <li>не вводить персональные данные пациентов;</li>
-          <li>соблюдать профессиональные и правовые нормы.</li>
-        </ul>
-      </section>
-
-
-      <section>
-        <h2>5. Ограничение ответственности владельца</h2>
-        <ul>
-          <li>Владелец не несёт ответственность за решения пользователя.</li>
-          <li>Не гарантируется точность, актуальность или полнота информации.</li>
-          <li>Сервис предоставляется «как есть».</li>
-        </ul>
-      </section>
-
-
-      <section>
-        <h2>6. Заключительные положения</h2>
-        <p>
-          Используя Сервис, пользователь подтверждает, что понимает: ИИ — вспомогательный инструмент,
-          а ответственность за медицинские решения несёт только пользователь.
-        </p>
-      </section>
-    </article>
+  <div style="
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-align: center;
+  ">
+    Условия использования
   </div>
+
+  <div style="margin-bottom: 24px;">
+    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">
+      1. Назначение Сервиса
+    </div>
+    <div style="font-size: 14px; margin-bottom: 8px;">
+      Сервис предоставляет врачам и медицинским работникам возможность получать
+      справочные рекомендации, пояснения и информационные подсказки, сформированные
+      с применением технологий искусственного интеллекта (ИИ).
+    </div>
+    <div style="
+      font-size: 14px;
+      padding: 12px;
+      border-left: 3px solid #7f70d8;
+      background: rgba(127, 112, 216, 0.1);
+      border-radius: 6px;
+      font-weight: 500;
+      text-align: left;
+    ">
+      Сервис не является медицинской системой, инструментом для постановки диагноза
+      или назначением лечения.
+    </div>
+  </div>
+
+  <div style="margin-bottom: 24px;">
+    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">
+      2. Ограничение ответственности
+    </div>
+    <ul style="
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0;
+      font-size: 14px;
+      text-align: left;
+    ">
+      <li style="margin-bottom: 6px;">Информация носит исключительно рекомендательный и справочный характер.</li>
+      <li style="margin-bottom: 6px;">Ответы ИИ могут содержать неточности или устаревшие сведения.</li>
+      <li style="margin-bottom: 6px;">Сервис не заменяет очную консультацию, обследования и профессиональный опыт врача.</li>
+      <li style="margin-bottom: 6px;">Пользователь несёт ответственность за любые клинические решения, принятые на основе информации.</li>
+    </ul>
+  </div>
+
+  <div style="margin-bottom: 24px;">
+    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">
+      3. Запрет на использование
+    </div>
+    <ul style="
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0;
+      font-size: 14px;
+      text-align: left;
+    ">
+      <li style="margin-bottom: 6px;">Окончательной постановки диагноза;</li>
+      <li style="margin-bottom: 6px;">Назначения или изменения лечения без профессиональной оценки;</li>
+      <li style="margin-bottom: 6px;">Принятия решений, влияющих на здоровье пациента, только на основании рекомендаций ИИ.</li>
+    </ul>
+  </div>
+
+  <div style="margin-bottom: 24px;">
+    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">
+      4. Обязанности пользователя
+    </div>
+    <ul style="
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0;
+      font-size: 14px;
+      text-align: left;
+    ">
+      <li style="margin-bottom: 6px;">Использовать Сервис только как вспомогательный инструмент;</li>
+      <li style="margin-bottom: 6px;">Критически оценивать и проверять полученную информацию;</li>
+      <li style="margin-bottom: 6px;">Не вводить персональные данные пациентов;</li>
+      <li style="margin-bottom: 6px;">Соблюдать профессиональные и правовые нормы.</li>
+    </ul>
+  </div>
+
+  <div style="margin-bottom: 24px;">
+    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">
+      5. Ограничение ответственности владельца
+    </div>
+    <ul style="
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0;
+      font-size: 14px;
+      text-align: left;
+    ">
+      <li style="margin-bottom: 6px;">Владелец не несёт ответственность за решения пользователя.</li>
+      <li style="margin-bottom: 6px;">Не гарантируется точность, актуальность или полнота информации.</li>
+      <li style="margin-bottom: 6px;">Сервис предоставляется <span style="font-style: italic;">«как есть»</span>.</li>
+    </ul>
+  </div>
+
+  <div>
+    <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">
+      6. Заключительные положения
+    </div>
+    <div style="font-size: 14px; margin-bottom: 8px;">
+      Используя Сервис, пользователь подтверждает, что понимает:
+    </div>
+    <div style="
+      font-size: 14px;
+      padding: 12px;
+      border-left: 3px solid #7f70d8;
+      background: rgba(127, 112, 216, 0.1);
+      border-radius: 6px;
+      font-weight: 500;
+      text-align: left;
+    ">
+      ИИ — вспомогательный инструмент, а ответственность за медицинские решения
+      несёт только пользователь.
+    </div>
+  </div>
+
+</div>

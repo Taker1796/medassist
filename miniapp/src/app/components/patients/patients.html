@@ -4,7 +4,7 @@
     @for (patient of patients$ | async; track patient.id) {
       <div class="chip-cell"
            [class.selected]="selected.has(patient.id)"
-           (pointerup)="toggle(patient.id)">
+           (click)="toggle(patient.id)">
         <span class="chip-text">
           {{ patient.nickname }}
         </span>

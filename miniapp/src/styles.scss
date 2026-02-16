@@ -39,8 +39,8 @@ html {
 }
 
 button {
-  width: 70%;
-  padding: 14px;
+  width: 75%;
+  padding: 10px;
   margin-bottom: 12px;
   font-size: 14px;
   border-radius: 24px;
@@ -123,11 +123,15 @@ button {
   font-size: 14px;        /* Базовый размер шрифта */
   border: 1px solid transparent;
   overflow: hidden;       /* Скрываем выходящее */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-.chip-cell:hover {
-  background-color: black;
-  border-color: whitesmoke;
+@media (hover: hover) and (pointer: fine) {
+  .chip-cell:hover {
+    background-color: black;
+    border-color: whitesmoke;
+  }
 }
 
 .chip-cell.selected {

@@ -4,7 +4,7 @@
     @for (spec of specializations$ | async; track spec.code) {
       <div class="chip-cell"
            [class.selected]="selected.has(spec.code)"
-           (pointerup)="toggle(spec.code)">
+           (click)="toggle(spec.code)">
         <span class="chip-text">
           {{ spec.title }}
         </span>

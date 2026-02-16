@@ -42,6 +42,8 @@ export class Patients implements OnInit{
       }
       this.selected.add(code);
     }
+
+    this.selected = new Set(this.selected);
   }
 
   delete(){
