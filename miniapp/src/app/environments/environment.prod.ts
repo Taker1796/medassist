@@ -6,4 +6,5 @@ export const Environment = {
   patientsUrlPath: '/v1/patients',
   staticContentUrlPath: '/v1/static-content',
   meUrlPath: '/v1/me',
+  authUrlPath: '/v1/auth'
 };

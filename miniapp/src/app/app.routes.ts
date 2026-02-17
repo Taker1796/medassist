@@ -10,10 +10,12 @@ import {UserAgreementGuard} from './guards/user-agreement.guard';
 import {SpecializationsGuard} from './guards/specializations.guard';
 import {UpsertPatient} from './components/patients/upsert-patient/upsert-patient';
 import {UpdateDoctor} from './components/doctor/data/update/update-doctor';
+import {Isnottelegram} from './components/errors/isnottelegram/isnottelegram';
+import {AuthGuard} from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '',
-    canActivate: [RegistrationGuard],   // Гвард на родительском уровне
+    canActivate: [AuthGuard, RegistrationGuard],   // Гвард на родительском уровне
     children: [
       { path: '', component: Main },
       { path: 'doctor', component: Doctor },
@@ -22,7 +24,8 @@ export const routes: Routes = [
       { path: 'update-doctor', component: UpdateDoctor },
     ]
   },
-  { path: 'registration', component: Registration },
-  { path: 'specializations', component: Specializations, canActivate: [SpecializationsGuard] },
-  { path: 'user-agreement', component: UserAgreement, canActivate: [UserAgreementGuard] },
+  { path: 'registration', component: Registration, canActivate: [AuthGuard]  },
+  { path: 'isnottelegram', component: Isnottelegram },
+  { path: 'specializations', component: Specializations, canActivate: [AuthGuard, SpecializationsGuard] },
+  { path: 'user-agreement', component: UserAgreement, canActivate: [AuthGuard, UserAgreementGuard] },
 ];
