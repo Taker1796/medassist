@@ -18,21 +18,13 @@ export class AuthService {
   private _tgService = inject(TgService);
   private _cookiesService = inject(CookieService);
   private _router = inject(Router);
-  private _token: string | null = null;
+  private _token = this._cookiesService.get('token') || null;
 
   get IsAuth(){
-    if(!this._token){
-      this._token = this._cookiesService.get('token');
-    }
-
     return !!this._token;
   }
 
   get GetToken(){
-    if(!this._token){
-      this._token = this._cookiesService.get('token');
-    }
-
     return this._token;
   }
 
