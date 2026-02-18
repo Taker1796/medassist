@@ -50,17 +50,18 @@ export class AuthService {
       console.log('Request body:', JSON.stringify(body, null, 2));
 
       return this._http.post<AuthResponseModel>(`${this._baseUrl}${Environment.authUrlPath}/token`, body).pipe(
-        tap(response => {
-          if(response.accessToken != null && response.accessToken != "") {
-            this._token = response.accessToken;
-            this._cookiesService.set('token', response.accessToken);
-          }
-          else{
-            this.logout();
-          }
-        }),
 
-        map(response => response.accessToken != null && response.accessToken != ""),
+        map(response => {
+          if (!response?.accessToken) {
+            this.logout();
+            return false;
+          }
+
+          this._token = response.accessToken;
+          this._cookiesService.set('token', response.accessToken);
+
+          return true;
+        }),
 
         catchError(error => {
 
