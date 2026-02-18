@@ -10,6 +10,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.GetToken;
 
+  //никогда не трогаем auth-запрос
+  if (req.url.includes('/token')) {
+    return next(req);
+  }
+
   if(!token){
     return next(req);
   }
@@ -59,10 +64,6 @@ const refreshToken =
         );
       })
     )
-  }
-
-  if(req.url.includes('token')){
-    return next(setToken(req, authService.GetToken!));
   }
 
   return isRefreshing$.pipe(

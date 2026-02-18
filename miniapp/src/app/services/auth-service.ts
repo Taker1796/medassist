@@ -29,6 +29,10 @@ export class AuthService {
   }
 
   get GetToken(){
+    if(!this._token){
+      this._token = this._cookiesService.get('token');
+    }
+
     return this._token;
   }
 
