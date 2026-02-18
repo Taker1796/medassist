@@ -23,7 +23,7 @@ export const routes: Routes = [
       { path: 'update-doctor', component: UpdateDoctor },
     ]
   },
-  { path: 'registration', component: Registration, canActivate: [AuthAndRegistrationGuard]  },
+  { path: 'registration', component: Registration },
   { path: 'isnottelegram', component: Isnottelegram },
   { path: 'specializations', component: Specializations, canActivate: [AuthAndRegistrationGuard, SpecializationsGuard] },
   { path: 'user-agreement', component: UserAgreement, canActivate: [AuthAndRegistrationGuard, UserAgreementGuard] },
