@@ -14,6 +14,7 @@ export const AuthGuard= ()=> {
 
   return authService.Authenticate().pipe(
     map(isAllow => {
+      console.log('Token after Authenticate:', authService.GetToken);
       if (isAllow) return true;
       return router.createUrlTree(['/isnottelegram']);
     })

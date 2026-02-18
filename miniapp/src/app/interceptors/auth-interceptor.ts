@@ -7,13 +7,13 @@ let isRefreshing$ = new BehaviorSubject(false);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
-  const authService = inject(AuthService);
-  const token = authService.GetToken;
-
   //никогда не трогаем auth-запрос
   if (req.url.includes('/token')) {
     return next(req);
   }
+
+  const authService = inject(AuthService);
+  const token = authService.GetToken;
 
   if(!token){
     return next(req);
