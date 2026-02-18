@@ -36,11 +36,11 @@ export class AuthService {
 
     if (this._tgService.initData) {
 
-      const body: AuthRequestModel = {
+      const body = {
         type: "telegram_init_data",
-        payload: JSON.stringify({
-            initData: this._tgService.initData
-          })
+        payload: {
+          initData: `${this._tgService.initData}`
+        }
       }
 
       console.log('Request body:', JSON.stringify(body, null, 2));
