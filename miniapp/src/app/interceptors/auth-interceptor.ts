@@ -1,9 +1,9 @@
 import {HttpHandlerFn, HttpInterceptorFn, HttpRequest} from '@angular/common/http';
 import {AuthService} from '../services/auth-service';
 import {inject} from '@angular/core';
-import {catchError, switchMap, throwError} from 'rxjs';
+import {BehaviorSubject, catchError, filter, switchMap, tap, throwError} from 'rxjs';
 
-let isRefreshing = false;
+let isRefreshing$ = new BehaviorSubject(false);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
@@ -14,7 +14,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  if(isRefreshing){
+  if(isRefreshing$.value){
     return refreshToken(authService, req, next);
   }
 
@@ -34,15 +34,13 @@ const refreshToken =
    req : HttpRequest<any>,
    next: HttpHandlerFn) => {
 
-  if(!isRefreshing){
-    isRefreshing = true;
+  if(!isRefreshing$.value){
+    isRefreshing$.next(true);
 
     return authService.Authenticate().pipe(
       //switchMap здесь нужен, чтобы
       //после успешного refresh токена — выполнить исходный HTTP-запрос и вернуть ЕГО результат
       switchMap(result => {
-
-        isRefreshing = false;
 
         let token = authService.GetToken;
         if(!token){
@@ -51,12 +49,25 @@ const refreshToken =
 
         //next в данном случае выполняет исходный запрос(req) повторно
         //ты сам в коде это указываешь - next -> выполни запрос
-        return next(setToken(req, token));
+        return next(setToken(req, token)).pipe(
+          tap(() => {
+            isRefreshing$.next(false);
+          })
+        );
       })
     )
   }
 
-  return next(setToken(req, authService.GetToken!));
+  if(req.url.includes('token')){
+    return next(setToken(req, authService.GetToken!));
+  }
+
+  return isRefreshing$.pipe(
+    filter(isRefreshing => !isRefreshing),
+    switchMap(resp => {
+      return next(setToken(req, authService.GetToken!));
+    })
+  );
 }
 
 const setToken =

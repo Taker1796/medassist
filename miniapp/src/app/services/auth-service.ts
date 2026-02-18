@@ -37,8 +37,8 @@ export class AuthService {
     if (this._tgService.initData) {
 
       const body: AuthRequestModel = {
-        type: "",
-        payload: ""
+        type: "telegram_init_data",
+        payload: `{\"initData\": ${this._tgService.initData}}`
       }
 
       this._http.post<AuthResponseModel>(`${this._baseUrl}${Environment.authUrlPath}/token`, body).pipe(
