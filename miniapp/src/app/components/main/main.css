@@ -2,7 +2,7 @@
   left: 0;
   right: 0;
 
-  height: 56px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,12 +11,12 @@
   z-index: 1100;
   flex:1;
   position: sticky;
-  top: env(safe-area-inset-top);
+  top: 1dvh;
 }
 
 .burger {
   position: absolute;
-  left: 3dvh;
+  left: 1dvh;
 
   font-size: 24px;
   background: none;
@@ -55,7 +55,7 @@
 }
 
 .content {
-  padding: 16px;
+  padding: 26px;
   margin-top: auto;      /* ⬅️ прижимает вниз */
 
 }

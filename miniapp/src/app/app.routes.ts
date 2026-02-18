@@ -15,6 +15,7 @@ import {Isnottelegram} from './components/errors/isnottelegram/isnottelegram';
 export const routes: Routes = [
   { path: '',
       // Гвард на родительском уровне
+    canActivate: [AuthAndRegistrationGuard],
     children: [
       { path: '', component: Main },
       { path: 'doctor', component: Doctor },
