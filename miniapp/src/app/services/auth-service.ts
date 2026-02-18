@@ -41,7 +41,7 @@ export class AuthService {
         payload: `{\"initData\": ${this._tgService.initData}}`
       }
 
-      this._http.post<AuthResponseModel>(`${this._baseUrl}${Environment.authUrlPath}/token`, body).pipe(
+      return this._http.post<AuthResponseModel>(`${this._baseUrl}${Environment.authUrlPath}/token`, body).pipe(
         tap(response => {
           if(response.accessToken != null && response.accessToken != "") {
             this._token = response.accessToken;
@@ -63,9 +63,10 @@ export class AuthService {
         })
       );
     }
-
-    this.logout();
-    return of(false);
+    else{
+      this.logout();
+      return of(false);
+    }
   }
 
   logout(){
