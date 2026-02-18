@@ -25,6 +25,6 @@ export const routes: Routes = [
   },
   { path: 'registration', component: Registration },
   { path: 'isnottelegram', component: Isnottelegram },
-  { path: 'specializations', component: Specializations, canActivate: [AuthAndRegistrationGuard, SpecializationsGuard] },
-  { path: 'user-agreement', component: UserAgreement, canActivate: [AuthAndRegistrationGuard, UserAgreementGuard] },
+  { path: 'specializations', component: Specializations, canActivate: [SpecializationsGuard] },
+  { path: 'user-agreement', component: UserAgreement, canActivate: [UserAgreementGuard] },
 ];
