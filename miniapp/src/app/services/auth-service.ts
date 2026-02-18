@@ -38,10 +38,10 @@ export class AuthService {
 
       const body: AuthRequestModel = {
         type: "telegram_init_data",
-        payload: `{\"initData\":\"${this._tgService.initData}\"}`
+        payload: `{"initData":"${this._tgService.initData}"}`
       }
 
-      console.log(body)
+      console.log("request " + body);
 
       return this._http.post<AuthResponseModel>(`${this._baseUrl}${Environment.authUrlPath}/token`, body).pipe(
         tap(response => {
