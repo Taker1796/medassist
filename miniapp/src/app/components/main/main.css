@@ -11,13 +11,12 @@
   z-index: 1100;
   flex:1;
   position: sticky;
-  top: 1dvh;
+  top: 1%;
 }
 
 .burger {
   position: absolute;
-  left: 1dvh;
-
+  left: 1%;
   font-size: 24px;
   background: none;
   border: none;
