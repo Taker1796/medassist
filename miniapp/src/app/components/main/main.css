@@ -16,7 +16,7 @@
 
 .burger {
   position: absolute;
-  left: 5%;
+  left: 3dvh;
 
   font-size: 24px;
   background: none;
@@ -33,7 +33,7 @@
 .side-menu {
   position: fixed;
   top: 10%;
-  left: -220px;
+  left: -320px;
   width: 40%;
   height: 100%;
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0);
@@ -50,7 +50,8 @@
 
 .side-menu button {
   padding: 10px;
-  font-size: 16px;
+  font-size: 14px;
+  min-width: 17dvh;
 }
 
 .content {

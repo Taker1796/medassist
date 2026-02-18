@@ -3,7 +3,12 @@
   <div class="burger" (click)="toggleMenu()">
     ☰
   </div>
-  <p class="subtitle">Med Assistant</p>
+  @if (userData$ | async; as data) {
+    <p>
+      Пациент:
+      {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}
+    </p>
+  }
 </div>
 
 <nav class="side-menu" [class.open]="menuOpen">
@@ -12,13 +17,6 @@
 </nav>
 
 <div class="content" (click)="menuOpen = false">
-  @if (userData$ | async; as data) {
-    <p>
-      Пациент:
-      {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}
-    </p>
-  }
-
   <app-chat (sendMessageEvent)="onMessageSent($event)"></app-chat>
 </div>
 </div>

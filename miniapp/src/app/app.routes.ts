@@ -11,10 +11,10 @@ import {SpecializationsGuard} from './guards/specializations.guard';
 import {UpsertPatient} from './components/patients/upsert-patient/upsert-patient';
 import {UpdateDoctor} from './components/doctor/data/update/update-doctor';
 import {Isnottelegram} from './components/errors/isnottelegram/isnottelegram';
-
+//canActivate: [AuthAndRegistrationGuard],
 export const routes: Routes = [
   { path: '',
-    canActivate: [AuthAndRegistrationGuard],   // Гвард на родительском уровне
+      // Гвард на родительском уровне
     children: [
       { path: '', component: Main },
       { path: 'doctor', component: Doctor },
