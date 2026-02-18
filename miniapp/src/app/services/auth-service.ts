@@ -41,6 +41,8 @@ export class AuthService {
         payload: `{\"initData\":\"${this._tgService.initData}\"}`
       }
 
+      console.log(body)
+
       return this._http.post<AuthResponseModel>(`${this._baseUrl}${Environment.authUrlPath}/token`, body).pipe(
         tap(response => {
           if(response.accessToken != null && response.accessToken != "") {
