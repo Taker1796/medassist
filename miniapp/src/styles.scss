@@ -6,19 +6,15 @@ $text-color: var(--tg-theme-text-color, #222);
 $btn-color: #000000;
 
 body{
-  font-family: 'JetBrains Mono', monospace;
-  //background-image: url('/assets/background.png'); /* путь к вашей картинке */
-  //background-size: cover;    /* чтобы изображение покрывало весь экран */
-  //background-position: center;
-  //background-repeat: no-repeat;
-
+  font-family: 'Inter', sans-serif; /* правильно */
+  font-weight: 400; /* normal вес */
+  font-style: normal;
 }
 html {
   margin: 0;
   padding: 0;
   background-color: $bg-color;
   color: $text-color;
-
 }
 
 .container {
@@ -26,8 +22,8 @@ html {
   text-align: center;
   color: ghostwhite;
   background-color: black;
-  min-height: 92vh;
-  max-height: 92vh;
+  min-height: 96vh;
+  max-height: 96vh;
   display: flex;
   flex-direction: column;
 }
@@ -201,4 +197,26 @@ input, textarea, select {
   font-size: 16px;
 }
 
-/* You can add global styles to this file, and also import other style files */
+/* Firefox */
+* {
+  scrollbar-width: thin;                 /* тонкая полоса */
+  scrollbar-color: #2a2a2a transparent; /* цвет бегунка и трека */
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 6px; /* ширина полосы прокрутки */
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent; /* фон полосы */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #2a2a2a; /* цвет бегунка */
+  border-radius: 3px;         /* скругление бегунка */
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #2a2a2a; /* цвет при наведении */
+}

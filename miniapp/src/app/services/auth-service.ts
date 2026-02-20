@@ -30,7 +30,16 @@ export class AuthService {
 
   Authenticate(): Observable<boolean> {
 
-    if (this._tgService.initData) {
+    if(!Environment.production){
+      const body = {
+        type: "api_key",
+        payload: {}
+      }
+
+      return this.Auth(body);
+    }
+
+    if (Environment.production && this._tgService.initData) {
 
       const body = {
         type: "telegram_init_data",
@@ -41,28 +50,7 @@ export class AuthService {
 
       console.log('Request body:', JSON.stringify(body, null, 2));
 
-      return this._http.post<AuthResponseModel>(`${this._baseUrl}${Environment.authUrlPath}/token`, body).pipe(
-
-        map(response => {
-          if (!response?.accessToken) {
-            this.logout();
-            return false;
-          }
-
-          this._token = response.accessToken;
-          this._cookiesService.set('token', response.accessToken);
-
-          return true;
-        }),
-
-        catchError(error => {
-
-          this.logout();
-
-          console.error('Ошибка запроса:', error);
-          return of(false);
-        })
-      );
+      return this.Auth(body);
     }
     else{
       this.logout();
@@ -74,5 +62,30 @@ export class AuthService {
     this._token = null;
     this._cookiesService.delete('token');
     this._router.navigate(['/isnottelegram']);
+  }
+
+  private Auth(body: object){
+    return this._http.post<AuthResponseModel>(`${this._baseUrl}${Environment.authUrlPath}/token`, body).pipe(
+
+      map(response => {
+        if (!response?.accessToken) {
+          this.logout();
+          return false;
+        }
+
+        this._token = response.accessToken;
+        this._cookiesService.set('token', response.accessToken);
+
+        return true;
+      }),
+
+      catchError(error => {
+
+        this.logout();
+
+        console.error('Ошибка запроса:', error);
+        return of(false);
+      })
+    );
   }
 }

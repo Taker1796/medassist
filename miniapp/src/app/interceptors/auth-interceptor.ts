@@ -2,18 +2,32 @@ import {HttpHandlerFn, HttpInterceptorFn, HttpRequest} from '@angular/common/htt
 import {AuthService} from '../services/auth-service';
 import {inject} from '@angular/core';
 import {BehaviorSubject, catchError, filter, switchMap, tap, throwError} from 'rxjs';
+import {Environment} from '../environments/environment';
 
 let isRefreshing$ = new BehaviorSubject(false);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
+  const authService = inject(AuthService);
+  const token = authService.GetToken;
+
+  if(!Environment.production){
+
+    if (req.url.includes('/token')) {
+      return next(req.clone({
+        setHeaders: {
+          Authorization: `ApiKey ma_dev_CFcqmRsL65yL1qaF32yky7ntL6sVduttRcsT8t_md1s`
+        }
+      }));
+    }
+
+    return next(setToken(req, token!));
+  }
+
   //никогда не трогаем auth-запрос
   if (req.url.includes('/token')) {
     return next(req);
   }
-
-  const authService = inject(AuthService);
-  const token = authService.GetToken;
 
   if(!token){
     return next(req);
@@ -28,7 +42,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     tap(token => console.log('Me Request body:', JSON.stringify(req, null, 2))),
 
     catchError(err => {
-      if(err.status == 403) {
+      if(err.status == 401) {
         return refreshToken(authService, req, next);
       }
 

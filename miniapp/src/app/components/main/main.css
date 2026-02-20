@@ -2,14 +2,14 @@
   left: 0;
   right: 0;
 
-  height: 40px;
+  height: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
 
   background: transparent;
   z-index: 1100;
-  flex:1;
+  flex:0.3;
   position: sticky;
   top: 1%;
 }

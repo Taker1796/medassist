@@ -1,20 +1,32 @@
-import {Component, output, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, inject, output, signal, ViewChild} from '@angular/core';
 import{ FormsModule} from '@angular/forms';
+
+interface ChatMessage {
+  text: string;
+  isMine: boolean;
+}
 
 @Component({
   selector: 'app-chat',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './chat.html',
   styleUrl: './chat.css',
 })
+
+
 export class Chat {
   messageText = '';
-
   // Сигнал для хранения текста сообщения
   message = signal('');
-
   // Output для отправки сообщения родительскому компоненту
   sendMessageEvent = output<string>();
+  messages: ChatMessage[] = [];
+  isTyping = false;
+  showScrollButton = false;
+  private isUserNearBottom = true;
+  private _cdr = inject(ChangeDetectorRef);
+
+  @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   // Обработка ввода текста
   onInput(event: Event): void {
@@ -37,23 +49,63 @@ export class Chat {
     }
   }
 
-  // Отправка сообщения
-  sendMessage(): void {
-    const messageText = this.message().trim();
+  sendMessage() {
+    if (!this.messageText.trim()) return;
 
-    if (messageText) {
-      // Отправляем сообщение родительскому компоненту
-      this.sendMessageEvent.emit(messageText);
+    this.messages.push({
+      text: this.messageText,
+      isMine: true
+    });
 
-      // Очищаем поле ввода
-      this.message.set('');
+    const userText = this.messageText;
+    this.messageText = '';
 
-      // Сбрасываем высоту textarea
-      const textarea = document.querySelector('.chat-textarea') as HTMLTextAreaElement;
-      if (textarea) {
-        textarea.value = '';
-        textarea.style.height = 'auto';
-      }
-    }
+    // скроллим **после рендера**
+    setTimeout(() => {
+      this.scrollToBottom(true);
+    }, 0);
+
+    this.fakeBotResponse(userText);
+  }
+
+  fakeBotResponse(text: string) {
+    this.isTyping = true;
+
+    setTimeout(() => {
+      this.isTyping = false;
+
+      this.messages.push({
+        text: 'Ответ на: ' + text,
+        isMine: false
+      });
+
+      this._cdr.detectChanges();
+      this.handleAutoScroll();
+    }, 1000);
+  }
+
+  onScroll() {
+    const el = this.messagesContainer.nativeElement;
+
+    const threshold = 100; // px
+    this.isUserNearBottom =
+      el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+
+    this.showScrollButton = !this.isUserNearBottom;
+  }
+
+  // вызываем при добавлении нового сообщения или скролле
+  handleAutoScroll() {
+    this.showScrollButton = !this.isUserNearBottom;
+  }
+
+  // при клике прокручиваем вниз
+  scrollToBottom(smooth = false) {
+    const el = this.messagesContainer.nativeElement;
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: smooth ? 'smooth' : 'auto'
+    });
+    this.showScrollButton = false; // скрываем кнопку после скролла
   }
 }

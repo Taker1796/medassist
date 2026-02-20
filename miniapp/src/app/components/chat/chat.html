@@ -1,27 +1,52 @@
 <div class="chat-wrapper">
-  <div class="messages">
-    <!-- Здесь будут отображаться сообщения -->
+  <div
+    class="messages"
+    #messagesContainer
+    (scroll)="onScroll()"
+  >
+
+    @for (msg of messages; track msg) {
+    <div
+      class="message"
+      [class.my-message]="msg.isMine"
+      [class.bot-message]="!msg.isMine"
+    >
+      {{ msg.text }}
+    </div>
+    }
+    @if (isTyping) {
+    <div class="typing-indicator">
+      Печатает...
+    </div>
+    }
   </div>
 
+  <!-- Кнопка новых сообщений -->
+  @if (showScrollButton) {
+    <button
+      class="scroll-bottom-btn"
+      [class.show]="showScrollButton"
+      (click)="scrollToBottom(true)"
+    >
+      ⬇ Новые сообщения
+    </button>
+  }
   <div class="chat-input-container">
     <div class="input-wrapper">
       <textarea
-        #messageInput
         class="chat-textarea"
+        [(ngModel)]="messageText"
         placeholder="Введите сообщение..."
         rows="1"
-        (input)="onInput($event)"
         (keydown)="onKeyDown($event)"
       ></textarea>
 
       <button
         class="send-button"
         (click)="sendMessage()"
-        [disabled]="!message().trim()"
+        [disabled]="!messageText.trim()"
       >
-        <svg class="send-icon" viewBox="0 0 24 24" width="20" height="20">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
-        </svg>
+        ➤
       </button>
     </div>
   </div>
