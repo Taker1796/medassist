@@ -44,6 +44,7 @@
       <button
         class="send-button"
         (click)="sendMessage()"
+        (touchstart)="sendMessage()"
         [disabled]="!messageText.trim()"
       >
         ➤
