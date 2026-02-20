@@ -17,7 +17,6 @@ import {BlurOnOutsideTap} from '../../directives/blur-on-outside-tap';
   styleUrl: './main.css',
 })
 export class Main {
-  messages: string[] = [];
   private _router = inject(Router);
   private _meService = inject(MeService);
   userData$ = this._meService.me();
@@ -38,10 +37,4 @@ export class Main {
   goToPatients(){
     this._router.navigate(['/patients']);
   }
-
-  onMessageSent(message: string): void {
-    this.messages.push(message);
-    alert('Сообщение отправлено:' +message);
-  }
-
 }

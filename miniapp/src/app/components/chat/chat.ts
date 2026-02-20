@@ -1,5 +1,9 @@
 import {ChangeDetectorRef, Component, ElementRef, inject, output, signal, ViewChild} from '@angular/core';
 import{ FormsModule} from '@angular/forms';
+import {HttpClient} from '@angular/common/http';
+import {LlmService} from '../../services/llm-service';
+import {LlmRequest} from '../../models/llmRequest.model';
+import {catchError, of, tap} from 'rxjs';
 
 interface ChatMessage {
   text: string;
@@ -16,22 +20,21 @@ interface ChatMessage {
 
 export class Chat {
   messageText = '';
-  // Сигнал для хранения текста сообщения
-  message = signal('');
   // Output для отправки сообщения родительскому компоненту
   sendMessageEvent = output<string>();
   messages: ChatMessage[] = [];
   isTyping = false;
   showScrollButton = false;
-  private isUserNearBottom = true;
+  private _isUserNearBottom = true;
   private _cdr = inject(ChangeDetectorRef);
+  private _llmService = inject(LlmService);
+  private _conversationId: string|null = null;
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   // Обработка ввода текста
   onInput(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
-    this.message.set(textarea.value);
     this.autoResize(textarea);
   }
 
@@ -65,38 +68,58 @@ export class Chat {
       this.scrollToBottom(true);
     }, 0);
 
-    this.fakeBotResponse(userText);
-  }
-
-  fakeBotResponse(text: string) {
     this.isTyping = true;
 
+    const body: LlmRequest = {
+      conversationId: this._conversationId,
+      requestId:crypto.randomUUID(),
+      text:userText
+    }
+    this._llmService.ask(body).pipe(
+      catchError(err => {
+        alert('Произошла ошибка. Попробуйте перезагрузить страницу')
+        console.log(err);
+        return of(null);
+      })
+    ).
+    subscribe(response => {
+
+      if(!response){
+        return;
+      }
+
+      this._conversationId = response.conversationId;
+      this.handleBotResponse(response.answer);
+    })
+  }
+
+  handleBotResponse(text: string) {
+    this.isTyping = false;
+
+    this.messages.push({
+      text:  text,
+      isMine: false
+    });
     setTimeout(() => {
-      this.isTyping = false;
-
-      this.messages.push({
-        text: 'Ответ на: ' + text,
-        isMine: false
-      });
-
-      this._cdr.detectChanges();
-      this.handleAutoScroll();
-    }, 1000);
+      this.scrollToBottom(true);
+    }, 0);
+    this._cdr.detectChanges();
+    this.handleAutoScroll();
   }
 
   onScroll() {
     const el = this.messagesContainer.nativeElement;
 
     const threshold = 100; // px
-    this.isUserNearBottom =
+    this._isUserNearBottom =
       el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
 
-    this.showScrollButton = !this.isUserNearBottom;
+    this.showScrollButton = !this._isUserNearBottom;
   }
 
   // вызываем при добавлении нового сообщения или скролле
   handleAutoScroll() {
-    this.showScrollButton = !this.isUserNearBottom;
+    this.showScrollButton = !this._isUserNearBottom;
   }
 
   // при клике прокручиваем вниз
