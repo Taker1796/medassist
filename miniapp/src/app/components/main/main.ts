@@ -4,6 +4,7 @@ import {Chat} from '../chat/chat';
 import {MeService} from '../../services/me-service';
 import {AsyncPipe} from '@angular/common';
 import {BlurOnOutsideTap} from '../../directives/blur-on-outside-tap';
+import {Environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-main',
@@ -24,6 +25,7 @@ export class Main {
 
   constructor(router: Router) {
     this._router = router;
+    console.log('Environment is prod: '+Environment.production);
   }
 
   toggleMenu() {

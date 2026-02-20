@@ -77,6 +77,7 @@ export class Chat {
     }
     this._llmService.ask(body).pipe(
       catchError(err => {
+        this.isTyping = false;
         alert('Произошла ошибка. Попробуйте перезагрузить страницу')
         console.log(err);
         return of(null);
