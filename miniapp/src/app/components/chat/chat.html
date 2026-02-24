@@ -34,10 +34,12 @@
   <div class="chat-input-container">
     <div class="input-wrapper">
       <textarea
+        #chatTextarea
         class="chat-textarea"
         [(ngModel)]="messageText"
         placeholder="Введите сообщение..."
         rows="1"
+        (input)="onInput($event)"
         (keydown)="onKeyDown($event)"
       ></textarea>
 

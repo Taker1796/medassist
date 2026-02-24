@@ -31,6 +31,7 @@ export class Chat {
   private _conversationId: string|null = null;
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
+  @ViewChild('chatTextarea') chatTextarea!: ElementRef<HTMLTextAreaElement>;
 
   // Обработка ввода текста
   onInput(event: Event): void {
@@ -62,6 +63,12 @@ export class Chat {
 
     const userText = this.messageText;
     this.messageText = '';
+    setTimeout(() => {
+      const textarea = this.chatTextarea?.nativeElement;
+      if (textarea) {
+        this.autoResize(textarea);
+      }
+    }, 0);
 
     // скроллим **после рендера**
     setTimeout(() => {
