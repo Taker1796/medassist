@@ -146,7 +146,10 @@ export class Patients implements OnInit{
   private setLabelToEndSessionButton(patientName: string|null) {
 
     if(patientName != null){
-      this.buttonsConfig[1].label = this._endSessionButtonLabel + ' [' + patientName +']';
+      const displayName =
+        patientName.length > 15 ? patientName.slice(0, 12) + '...' : patientName;
+      this.buttonsConfig[1].label =
+        this._endSessionButtonLabel + ' [' + displayName + ']';
     }
     else{
       this.buttonsConfig[1].label = this._endSessionButtonLabel;
