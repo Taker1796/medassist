@@ -4,3 +4,9 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
+.transition-buttons-container button {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

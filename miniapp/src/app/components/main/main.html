@@ -6,7 +6,13 @@
   @if (userData$ | async; as data) {
     <p>
       Пациент:
-      {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}
+      {{
+        data.lastSelectedPatientNickname
+          ? (data.lastSelectedPatientNickname.length > 15
+              ? (data.lastSelectedPatientNickname | slice:0:12) + '...'
+              : data.lastSelectedPatientNickname)
+          : ' - '
+      }}
     </p>
   }
 </div>

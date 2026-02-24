@@ -2,7 +2,7 @@ import {Component, inject} from '@angular/core';
 import {Router, RouterOutlet} from '@angular/router';
 import {Chat} from '../chat/chat';
 import {MeService} from '../../services/me-service';
-import {AsyncPipe} from '@angular/common';
+import {AsyncPipe, SlicePipe} from '@angular/common';
 import {BlurOnOutsideTap} from '../../directives/blur-on-outside-tap';
 import {Environment} from '../../environments/environment';
 
@@ -11,7 +11,8 @@ import {Environment} from '../../environments/environment';
   imports: [
     Chat,
     AsyncPipe,
-    BlurOnOutsideTap
+    BlurOnOutsideTap,
+    SlicePipe
 
   ],
   templateUrl: './main.html',
