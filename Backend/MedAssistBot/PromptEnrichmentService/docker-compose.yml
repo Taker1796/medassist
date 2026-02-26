@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: prompt_enrichment_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: prompts
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - prompt_enrichment_pgdata:/var/lib/postgresql/data
+  prompt-enrichment-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prompt_enrichment_service
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=prompts;Username=postgres;Password=postgres
+      Llm__Endpoint: https://llm.muk.i234.me/v1/generate
+      ApiKey: fe7ca238-92e3-4d80-b18e-4f0dc9c6af25
+    ports:
+      - "8080:8080"
+
+volumes:
+  prompt_enrichment_pgdata:

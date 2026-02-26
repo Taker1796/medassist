@@ -1,0 +1,20 @@
+1. Открой терминал в папке сервиса Папка: PromptEnrichmentService
+2. Запусти сборку и контейнеры
+docker compose up -d --build
+3. Проверь, что всё поднялось
+docker compose ps
+4. Применить миграции Если миграции ещё не применены:
+dotnet ef database update --project PromptEnrichmentService/PromptEnrichmentService.csproj
+
+
+Если ты менял код или compose, нужно пересобрать образ и перезапустить.
+Из папки PromptEnrichmentService:
+docker compose up -d --build
+Если хочешь полностью пересоздать контейнеры:
+docker compose down
+docker compose up -d --build
+Если нужно сохранить БД — не используй -v.
+
+-d — запуск в detached режиме (в фоне, без логов в терминале).
+--build — пересобрать образ, если изменился код или Dockerfile.
+Без --build Docker может запустить старый образ.

@@ -45,7 +45,7 @@ public class Worker : BackgroundService
                 replyMarkup: new InlineKeyboardMarkup(
                     InlineKeyboardButton.WithWebApp(
                         "Push me and then just touch me",
-                        new WebAppInfo { Url = "https://wondrous-dango-581ca1.netlify.app" }
+                        new WebAppInfo { Url = "https://taker1796.github.io/medassist" }
                     )
                 )
             );

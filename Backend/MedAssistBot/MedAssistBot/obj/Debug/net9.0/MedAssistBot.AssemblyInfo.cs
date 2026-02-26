@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MedAssistBot")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6b1b8698d1aed837d602bd0d1c911a5267a2a87d")]
 [assembly: System.Reflection.AssemblyProductAttribute("MedAssistBot")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MedAssistBot")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

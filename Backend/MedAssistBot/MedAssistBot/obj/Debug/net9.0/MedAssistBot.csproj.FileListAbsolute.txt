@@ -48,3 +48,4 @@ C:\Users\asalmin\Documents\MedAssist\Backend\MedAssistBot\MedAssistBot\obj\Debug
 C:\Users\asalmin\Documents\MedAssist\Backend\MedAssistBot\MedAssistBot\obj\Debug\net9.0\MedAssistBot.pdb
 C:\Users\asalmin\Documents\MedAssist\Backend\MedAssistBot\MedAssistBot\obj\Debug\net9.0\MedAssistBot.genruntimeconfig.cache
 C:\Users\asalmin\Documents\MedAssist\Backend\MedAssistBot\MedAssistBot\obj\Debug\net9.0\ref\MedAssistBot.dll
+C:\Users\asalmin\Documents\MedAssist\Backend\MedAssistBot\MedAssistBot\obj\Debug\net9.0\MedAssistBot.sourcelink.json
