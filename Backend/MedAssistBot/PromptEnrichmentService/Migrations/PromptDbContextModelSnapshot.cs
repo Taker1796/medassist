@@ -38,9 +38,8 @@ namespace PromptEnrichmentService.Migrations
                     b.Property<bool>("IsDefault")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("SpecialtyCode")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                    b.Property<int?>("SpecialtyId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("TemplateText")
                         .IsRequired()
@@ -49,9 +48,51 @@ namespace PromptEnrichmentService.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SpecialtyCode");
+                    b.HasIndex("IsDefault");
+
+                    b.HasIndex("SpecialtyId");
 
                     b.ToTable("PromptTemplates");
+                });
+
+            modelBuilder.Entity("PromptEnrichmentService.Models.Specialty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Specialties");
+                });
+
+            modelBuilder.Entity("PromptEnrichmentService.Models.PromptTemplate", b =>
+                {
+                    b.HasOne("PromptEnrichmentService.Models.Specialty", "Specialty")
+                        .WithMany("PromptTemplates")
+                        .HasForeignKey("SpecialtyId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Specialty");
+                });
+
+            modelBuilder.Entity("PromptEnrichmentService.Models.Specialty", b =>
+                {
+                    b.Navigation("PromptTemplates");
                 });
 #pragma warning restore 612, 618
         }

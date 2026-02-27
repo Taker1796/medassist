@@ -1,0 +1,38 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# .NET build artifacts
+**/bin/
+**/obj/
+**/out/
+**/TestResults/
+
+# Logs
+*.log
+logs/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+
+# Local environment/config
+.env
+.env.*
+appsettings.Development.json
+secrets.json
+
+# Coverage
+coverage/
+coverage.*
+*.coverage
+*.coveragexml

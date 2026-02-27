@@ -1,18 +1,11 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace PromptEnrichmentService.Models;
 
-public class PromptTemplate
+public class PromptTemplateResponse
 {
     public int Id { get; set; }
-
-    public int? SpecialtyId { get; set; }
-    public Specialty? Specialty { get; set; }
-
-    [MaxLength(4096)]
+    public string? SpecialtyCode { get; set; }
+    public string? SpecialtyName { get; set; }
     public string TemplateText { get; set; } = string.Empty;
-
     public bool IsDefault { get; set; }
-
     public DateTime CreatedAtUtc { get; set; }
 }
