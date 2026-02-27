@@ -1,0 +1,21 @@
+<div class="shell">
+  <header class="topbar">
+    <button class="burger" type="button" (click)="toggleMenu()" aria-label="Открыть меню">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <div class="overlay" [class.open]="isMenuOpen()" (click)="closeMenu()"></div>
+
+  <aside class="sidebar" [class.open]="isMenuOpen()">
+    <nav>
+      <a routerLink="/templates" routerLinkActive="active" (click)="closeMenu()">Шаблоны</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

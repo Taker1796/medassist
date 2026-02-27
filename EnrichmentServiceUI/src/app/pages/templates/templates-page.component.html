@@ -1,0 +1,71 @@
+<section class="templates-page">
+  <div class="field-group">
+    <label for="specialization">Специализация</label>
+    <select
+      id="specialization"
+      [disabled]="isLoadingSpecializations()"
+      [ngModel]="selectedSpecialization()"
+      (ngModelChange)="onSpecializationChange($event)"
+    >
+      <option [ngValue]="defaultOption">Не выбрана</option>
+      @for (item of specializations(); track item) {
+        <option [ngValue]="item">{{ item }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="workspace">
+    <div class="template-column">
+      <textarea
+        [value]="templateText()"
+        (input)="onTemplateInput($any($event.target).value)"
+        [disabled]="isLoadingTemplate()"
+        placeholder="Введите или отредактируйте шаблон"
+      ></textarea>
+
+      <div class="actions">
+        <button type="button" class="secondary" (click)="clearTemplate()">Удалить</button>
+        <button type="button" class="primary" (click)="saveTemplate()">Сохранить</button>
+      </div>
+
+      @if (status()) {
+        <p class="status">{{ status() }}</p>
+      }
+    </div>
+
+    <div class="dialog-column">
+      <h3>Диалог</h3>
+
+      <div class="chat-history" #chatHistory>
+        @if (!chatMessages().length) {
+          <p class="empty">Задайте вопрос, чтобы получить ответ от бэкенда.</p>
+        }
+
+        @for (message of chatMessages(); track $index) {
+          <div class="chat-row" [class.user]="message.role === 'user'" [class.assistant]="message.role === 'assistant'">
+            <div class="chat-role">
+              {{ message.role === 'user' ? 'Вы' : 'Ассистент' }}
+            </div>
+            <div class="chat-message">
+              {{ message.text }}
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="chat-composer">
+        <div class="chat-input-row">
+          <textarea
+            class="question-input"
+            [value]="questionText()"
+            (input)="onQuestionInput($any($event.target).value)"
+            placeholder="Напишите сообщение"
+          ></textarea>
+          <button type="button" class="primary" [disabled]="isSendingQuestion() || !questionText().trim()" (click)="sendQuestion()">
+            {{ isSendingQuestion() ? 'Отправка...' : 'Спросить' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

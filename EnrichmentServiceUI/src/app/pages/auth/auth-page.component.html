@@ -1,0 +1,25 @@
+<div class="auth-page">
+  <form class="auth-card" (ngSubmit)="submit()">
+    <h1>Доступ по API ключу</h1>
+    <p class="hint">Введите API ключ для доступа к разделам приложения</p>
+
+    <label for="apiKey">API key</label>
+    <input
+      id="apiKey"
+      name="apiKey"
+      type="password"
+      [(ngModel)]="apiKey"
+      required
+      autocomplete="off"
+      placeholder="Введите ключ"
+    />
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <button type="submit" [disabled]="isLoading() || !apiKey.trim()">
+      {{ isLoading() ? 'Проверка...' : 'Войти' }}
+    </button>
+  </form>
+</div>
