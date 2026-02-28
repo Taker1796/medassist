@@ -21,7 +21,26 @@ public class ApiKeyMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        // Let CORS preflight pass without API key checks only in Development.
+        
+        /*При CORS (фронт и бэк на разных доменах) браузер сначала шлёт preflight OPTIONS.
+           •
+           Это проверка “можно ли потом отправить POST/GET”.
+           •
+           В preflight нет тела и обычно нет  X-Api-Key значения.*/
+        if (_environment.IsDevelopment() && HttpMethods.IsOptions(context.Request.Method))
+        {
+            await _next(context);
+            return;
+        }
+
         if (_environment.IsDevelopment() && IsSwaggerRequest(context.Request.Path))
+        {
+            await _next(context);
+            return;
+        }
+
+        if (IsAuthUI(context.Request.Path))
         {
             await _next(context);
             return;
@@ -44,6 +63,11 @@ public class ApiKeyMiddleware
         await _next(context);
     }
 
+    private static bool IsAuthUI(PathString path)
+    {
+        return path.StartsWithSegments("/v1/auth-ui");
+    }
+    
     private static bool IsSwaggerRequest(PathString path)
     {
         return path.StartsWithSegments("/swagger");

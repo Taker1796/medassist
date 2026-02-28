@@ -1,17 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { MockBackendService } from './mock-backend.service';
+import BackendService from './backend.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly backend = inject(MockBackendService);
+  private readonly backend = inject(BackendService);
 
   private readonly storageKey = 'enrichment-api-key';
   private readonly validatedAtKey = 'enrichment-api-key-validated-at';
 
-  // 10 minutes. Change this constant to adjust re-auth period.
-  private readonly keyTtlMs = 10 * 60 * 1000;
+  // 1 hour. Change this constant to adjust re-auth period.
+  private readonly keyTtlMs = 60 * 60 * 1000;
 
   startSessionGuard(router: Router): void {
     setInterval(() => {

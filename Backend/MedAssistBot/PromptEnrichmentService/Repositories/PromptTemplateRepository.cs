@@ -19,17 +19,12 @@ public class PromptTemplateRepository : IPromptTemplateRepository
 
         if (normalizedSpecialtyCode != null)
         {
-            var match = await _dbContext.PromptTemplates
+            return await _dbContext.PromptTemplates
                 .Include(p => p.Specialty)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(
                     p => p.Specialty != null && p.Specialty.Code == normalizedSpecialtyCode,
                     cancellationToken);
-
-            if (match != null)
-            {
-                return match;
-            }
         }
 
         return await _dbContext.PromptTemplates
@@ -49,12 +44,30 @@ public class PromptTemplateRepository : IPromptTemplateRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<PromptTemplate> CreateAsync(
+    public async Task<(PromptTemplate Template, bool Created)> UpsertAsync(
+        int? templateId,
         string? specialtyCode,
         string templateText,
         bool isDefault,
         CancellationToken cancellationToken)
     {
+        if (templateId.HasValue)
+        {
+            var existing = await _dbContext.PromptTemplates
+                .Include(p => p.Specialty)
+                .FirstOrDefaultAsync(p => p.Id == templateId.Value, cancellationToken);
+
+            if (existing != null)
+            {
+                existing.Specialty = await GetOrCreateSpecialtyAsync(specialtyCode, cancellationToken);
+                existing.TemplateText = templateText;
+                existing.IsDefault = isDefault;
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                return (existing, false);
+            }
+        }
+
         var specialty = await GetOrCreateSpecialtyAsync(specialtyCode, cancellationToken);
         var template = new PromptTemplate
         {
@@ -66,31 +79,7 @@ public class PromptTemplateRepository : IPromptTemplateRepository
 
         _dbContext.PromptTemplates.Add(template);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        return template;
-    }
-
-    public async Task<PromptTemplate?> UpdateAsync(
-        int templateId,
-        string? specialtyCode,
-        string templateText,
-        bool isDefault,
-        CancellationToken cancellationToken)
-    {
-        var existing = await _dbContext.PromptTemplates
-            .Include(p => p.Specialty)
-            .FirstOrDefaultAsync(p => p.Id == templateId, cancellationToken);
-
-        if (existing == null)
-        {
-            return null;
-        }
-
-        existing.Specialty = await GetOrCreateSpecialtyAsync(specialtyCode, cancellationToken);
-        existing.TemplateText = templateText;
-        existing.IsDefault = isDefault;
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return existing;
+        return (template, true);
     }
 
     public async Task<bool> DeleteAsync(int templateId, CancellationToken cancellationToken)

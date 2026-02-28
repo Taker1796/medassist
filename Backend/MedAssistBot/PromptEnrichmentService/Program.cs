@@ -6,6 +6,19 @@ using PromptEnrichmentService.Repositories;
 using PromptEnrichmentService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowFrontend", policy =>
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+    });
+}
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null; // PascalCase
@@ -62,6 +75,7 @@ if (app.Environment.IsDevelopment())
 
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("AllowFrontend");
 }
 
 //app.UseHttpsRedirection();
@@ -70,4 +84,3 @@ app.UseMiddleware<ApiKeyMiddleware>();
 app.MapControllers();
 
 app.Run();
-

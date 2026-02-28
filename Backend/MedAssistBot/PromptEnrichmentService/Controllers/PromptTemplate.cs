@@ -42,35 +42,12 @@ public class PromptTemplateController : ControllerBase
         return Ok(templates.Select(ToResponse));
     }
 
-    [HttpPost]
+    [HttpPost("upsert")]
     [ProducesResponseType(typeof(PromptTemplateResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> Create(
-        [FromBody] PromptTemplateUpsertRequest request,
-        CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrWhiteSpace(request.TemplateText))
-        {
-            return BadRequest("TemplateText обязателен");
-        }
-
-        var created = await _promptTemplateRepository.CreateAsync(
-            request.SpecialtyCode,
-            request.TemplateText.Trim(),
-            request.IsDefault,
-            cancellationToken);
-
-        return Created($"/v1/prompt-templates/{created.Id}", ToResponse(created));
-    }
-
-    [HttpPut("{templateId:int}")]
     [ProducesResponseType(typeof(PromptTemplateResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update(
-        [FromRoute] int templateId,
+    public async Task<IActionResult> Upsert(
         [FromBody] PromptTemplateUpsertRequest request,
         CancellationToken cancellationToken)
     {
@@ -79,18 +56,19 @@ public class PromptTemplateController : ControllerBase
             return BadRequest("TemplateText обязателен");
         }
 
-        var updated = await _promptTemplateRepository.UpdateAsync(
-            templateId,
+        var (template, created) = await _promptTemplateRepository.UpsertAsync(
+            request.TemplateId,
             request.SpecialtyCode,
             request.TemplateText.Trim(),
             request.IsDefault,
             cancellationToken);
-        if (updated == null)
+
+        if (created)
         {
-            return NotFound($"Шаблон с Id={templateId} не найден");
+            return Created($"/v1/prompt-templates/{template.Id}", ToResponse(template));
         }
 
-        return Ok(ToResponse(updated));
+        return Ok(ToResponse(template));
     }
 
     [HttpDelete("{templateId:int}")]

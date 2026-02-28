@@ -1,6 +1,9 @@
 import { Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MockBackendService } from '../../core/mock-backend.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { finalize } from 'rxjs';
+import BackendService from '../../core/backend.service';
+import {Specialization} from '../../models/specialization.model';
 
 type ChatMessage = {
   role: 'user' | 'assistant';
@@ -15,20 +18,21 @@ type ChatMessage = {
   styleUrl: './templates-page.component.scss'
 })
 export class TemplatesPageComponent {
-  private readonly backend = inject(MockBackendService);
+  private readonly backend = inject(BackendService);
 
   @ViewChild('chatHistory')
   private chatHistoryRef?: ElementRef<HTMLDivElement>;
 
   readonly defaultOption = '';
 
-  specializations = signal<string[]>([]);
+  specializations = signal<Specialization[]>([]);
   selectedSpecialization = signal(this.defaultOption);
   templateText = signal('');
 
   isLoadingSpecializations = signal(true);
   isLoadingTemplate = signal(false);
   status = signal('');
+  statusIsError = signal(false);
 
   questionText = signal('');
   isSendingQuestion = signal(false);
@@ -39,22 +43,40 @@ export class TemplatesPageComponent {
       this.specializations.set(items);
       this.isLoadingSpecializations.set(false);
     });
+
+    this.loadTemplateForSelection(this.defaultOption);
   }
 
   onSpecializationChange(value: string): void {
     this.selectedSpecialization.set(value);
     this.status.set('');
+    this.statusIsError.set(false);
+    this.chatMessages.set([]);
+    this.questionText.set('');
+    this.loadTemplateForSelection(value);
+  }
 
-    if (!value) {
-      this.templateText.set('');
-      return;
-    }
-
+  private loadTemplateForSelection(specialization: string): void {
     this.isLoadingTemplate.set(true);
-    this.backend.getTemplateBySpecialization(value).subscribe((template) => {
-      this.templateText.set(template);
-      this.isLoadingTemplate.set(false);
-    });
+    this.backend
+      .getTemplateBySpecialization(specialization)
+      .pipe(finalize(() => this.isLoadingTemplate.set(false)))
+      .subscribe({
+        next: (template) => {
+          this.templateText.set(template);
+          this.statusIsError.set(false);
+        },
+        error: (error: unknown) => {
+          this.templateText.set('');
+          this.statusIsError.set(true);
+          if (error instanceof HttpErrorResponse && error.status === 404) {
+            this.status.set('Шаблон не найден');
+            return;
+          }
+
+          this.status.set('Не удалось загрузить шаблон');
+        }
+      });
   }
 
   onTemplateInput(value: string): void {
@@ -62,18 +84,34 @@ export class TemplatesPageComponent {
   }
 
   clearTemplate(): void {
-    this.templateText.set('');
-    this.status.set('Шаблон очищен');
+    this.backend.deleteTemplate().subscribe({
+      next: (deleted) => {
+        if (!deleted) {
+          this.statusIsError.set(true);
+          this.status.set('Шаблон не найден в базе для удаления');
+          return;
+        }
+
+        this.templateText.set('');
+        this.statusIsError.set(false);
+        this.status.set('Шаблон удален');
+      },
+      error: () => {
+        this.statusIsError.set(true);
+        this.status.set('Не удалось удалить шаблон');
+      }
+    });
   }
 
   saveTemplate(): void {
     const specialization = this.selectedSpecialization();
-    if (!specialization) {
-      this.status.set('Сначала выберите специализацию');
+    const specializationName = this.specializations().find((item) => item.code === specialization)?.name ?? 'Не выбрана';
+    if(!confirm('Сохранить шаблон для специализации "'+specializationName +'"?')){
       return;
     }
 
     this.backend.saveTemplate(specialization, this.templateText()).subscribe(() => {
+      this.statusIsError.set(false);
       this.status.set('Шаблон сохранен');
     });
   }

@@ -4,6 +4,8 @@ namespace PromptEnrichmentService.Models;
 
 public class PromptTemplateUpsertRequest
 {
+    public int? TemplateId { get; set; }
+
     [MaxLength(64)]
     public string? SpecialtyCode { get; set; }
 

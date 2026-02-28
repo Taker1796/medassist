@@ -8,8 +8,8 @@
       (ngModelChange)="onSpecializationChange($event)"
     >
       <option [ngValue]="defaultOption">Не выбрана</option>
-      @for (item of specializations(); track item) {
-        <option [ngValue]="item">{{ item }}</option>
+      @for (item of specializations(); track item.code) {
+        <option [ngValue]="item.code">{{ item.name }}</option>
       }
     </select>
   </div>
@@ -29,7 +29,7 @@
       </div>
 
       @if (status()) {
-        <p class="status">{{ status() }}</p>
+        <p class="status" [class.error]="statusIsError()">{{ status() }}</p>
       }
     </div>
 
@@ -38,7 +38,7 @@
 
       <div class="chat-history" #chatHistory>
         @if (!chatMessages().length) {
-          <p class="empty">Задайте вопрос, чтобы получить ответ от бэкенда.</p>
+          <p class="empty">Задайте вопрос.</p>
         }
 
         @for (message of chatMessages(); track $index) {
@@ -62,7 +62,7 @@
             placeholder="Напишите сообщение"
           ></textarea>
           <button type="button" class="primary" [disabled]="isSendingQuestion() || !questionText().trim()" (click)="sendQuestion()">
-            {{ isSendingQuestion() ? 'Отправка...' : 'Спросить' }}
+            {{ isSendingQuestion() ? 'Отправка...' : 'Отправить' }}
           </button>
         </div>
       </div>
