@@ -1,0 +1,9 @@
+services:
+  enrichment-service-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: enrichment-service-ui
+    ports:
+      - "8081:80"
+    restart: unless-stopped
