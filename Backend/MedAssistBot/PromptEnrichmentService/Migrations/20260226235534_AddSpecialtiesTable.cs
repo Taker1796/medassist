@@ -1,10 +1,14 @@
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using PromptEnrichmentService.Data;
 
 #nullable disable
 
 namespace PromptEnrichmentService.Migrations;
 
+[DbContext(typeof(PromptDbContext))]
+[Migration("20260226235534_AddSpecialtiesTable")]
 public partial class AddSpecialtiesTable : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)

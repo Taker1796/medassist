@@ -14,4 +14,5 @@ public class Specialty
     public string? Name { get; set; }
 
     public ICollection<PromptTemplate> PromptTemplates { get; set; } = new List<PromptTemplate>();
+    public ICollection<PacientCard> PacientCards { get; set; } = new List<PacientCard>();
 }

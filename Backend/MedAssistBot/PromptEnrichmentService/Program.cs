@@ -29,6 +29,7 @@ builder.Services.Configure<LlmOptions>(builder.Configuration.GetSection("Llm"));
 builder.Services.AddHttpClient<LlmClient>();
 builder.Services.AddScoped<PromptTemplateService>();
 builder.Services.AddScoped<IPromptTemplateRepository, PromptTemplateRepository>();
+builder.Services.AddScoped<IPatientCardRepository, PatientCardRepository>();
 builder.Services.AddDbContext<PromptDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("Postgres");
@@ -66,11 +67,13 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    // Apply EF Core migrations on startup (dev-only).
     using (var scope = app.Services.CreateScope())
     {
+        var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DbMigration");
         var db = scope.ServiceProvider.GetRequiredService<PromptDbContext>();
-        db.Database.Migrate();
+        var pending = (await db.Database.GetPendingMigrationsAsync()).ToArray();
+        logger.LogInformation("EF pending migrations: {Migrations}", pending.Length == 0 ? "(none)" : string.Join(", ", pending));
+        await db.Database.MigrateAsync();
     }
 
     app.UseSwagger();

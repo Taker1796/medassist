@@ -24,12 +24,12 @@ public class Enrichment : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)] 
     public async Task<IActionResult> Post([FromBody] AddPromptRequest request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.Text))
+        if (string.IsNullOrWhiteSpace(request.DoctorId))
         {
             return BadRequest("Отсутствует текст для обогащения");
         }
         
-        var enrichedText = await _templateService.BuildEnrichedText(request.Text, request.SpecialtyCode, cancellationToken);
+        var enrichedText = await _templateService.BuildEnrichedText(request.DoctorId, request.DoctorSpecializationCode, cancellationToken);
         var llmResponse = await _llmClient.SendAsync(enrichedText, cancellationToken);
 
         var response = new AddPromptResponse
