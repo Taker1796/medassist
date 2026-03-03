@@ -23,26 +23,26 @@ class BackendService {
   getSpecializations(): Observable<Specialization[]> {
     const url = `${this._baseUrl}/${Environment.promptTemplates}`;
 
-    return this._http.get<Template[]>(url).pipe(
+    return this._http.get<Specialization[]>(url).pipe(
       map((templates) => {
         const uniqueByCode = new Map<string, Specialization>();
 
         for (const template of templates) {
-          const code = template.SpecialtyCode?.trim();
-          const name = template.SpecialtyName?.trim();
+          const code = template.Code.trim();
+          const name = template.Name.trim();
 
           if (!code || !name || uniqueByCode.has(code)) {
             continue;
           }
 
-          uniqueByCode.set(code, { code, name });
+          uniqueByCode.set(code, { Code: code, Name: name });
         }
 
         const items = Array.from(uniqueByCode.values());
 
         // Keep the same lookup shape as before (code -> display name), but fill it from DB.
         this.specializations = items.reduce<Record<string, string>>((acc, item) => {
-          acc[item.code] = item.name;
+          acc[item.Code] = item.Name;
           return acc;
         }, {});
 

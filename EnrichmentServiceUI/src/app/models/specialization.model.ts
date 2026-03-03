@@ -1,4 +1,4 @@
 export interface Specialization {
-  code: string;
-  name: string;
+  Code: string;
+  Name: string;
 }

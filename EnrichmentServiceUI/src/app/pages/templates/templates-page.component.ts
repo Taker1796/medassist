@@ -105,7 +105,7 @@ export class TemplatesPageComponent {
 
   saveTemplate(): void {
     const specialization = this.selectedSpecialization();
-    const specializationName = this.specializations().find((item) => item.code === specialization)?.name ?? 'Не выбрана';
+    const specializationName = this.specializations().find((item) => item.Code === specialization)?.Name ?? 'Не выбрана';
     if(!confirm('Сохранить шаблон для специализации "'+specializationName +'"?')){
       return;
     }

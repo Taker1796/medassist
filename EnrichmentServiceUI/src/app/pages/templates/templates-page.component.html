@@ -1,6 +1,6 @@
 <section class="templates-page">
   <div class="field-group">
-    <label for="specialization">Специализация</label>
+    <label for="specialization">Шаблон</label>
     <select
       id="specialization"
       [disabled]="isLoadingSpecializations()"
@@ -8,8 +8,8 @@
       (ngModelChange)="onSpecializationChange($event)"
     >
       <option [ngValue]="defaultOption">Не выбрана</option>
-      @for (item of specializations(); track item.code) {
-        <option [ngValue]="item.code">{{ item.name }}</option>
+      @for (item of specializations(); track item.Code) {
+        <option [ngValue]="item.Code">{{ item.Name }}</option>
       }
     </select>
   </div>
