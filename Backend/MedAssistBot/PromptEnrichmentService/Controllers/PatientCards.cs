@@ -80,7 +80,18 @@ public class PatientCardsController : ControllerBase
                     .Replace("{oldSummary}", existing.Summary)
                     .Replace("{newSummary}", request.Summary.Trim());
 
-                var mergedByLlm = await _llmClient.MergeSummaryStubAsync(mergePrompt, cancellationToken);
+                var data = new EnrichedData()
+                {
+                    Messages = new[]
+                    {
+                        new Message()
+                        {
+                            Content = mergePrompt,
+                            Role = LlmRoles.User
+                        }
+                    }
+                };
+                var mergedByLlm = await _llmClient.SendAsync(data, cancellationToken);
                 if (!string.IsNullOrWhiteSpace(mergedByLlm))
                 {
                     summaryToSave = mergedByLlm.Trim();
