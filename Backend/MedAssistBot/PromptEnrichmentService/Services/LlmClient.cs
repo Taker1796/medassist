@@ -15,7 +15,7 @@ public class LlmClient
         _options = options.Value;
     }
 
-    public async Task<string?> SendAsync(string enrichedText, CancellationToken cancellationToken)
+    public async Task<string?> SendAsync(EnrichedData enrichedData, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(_options.Endpoint))
         {
@@ -26,7 +26,7 @@ public class LlmClient
         {
             Content = JsonContent.Create(new LlmRequest
             {
-                Prompt = enrichedText
+                Messages = enrichedData.Messages
             })
         };
 
@@ -40,5 +40,11 @@ public class LlmClient
 
         var payload = await response.Content.ReadFromJsonAsync<LlmResponse>(cancellationToken: cancellationToken);
         return payload?.Content;
+    }
+
+    public Task<string?> MergeSummaryStubAsync(string mergePrompt, CancellationToken cancellationToken)
+    {
+        // Stub: пока возвращаем промпт как "ответ LLM", реальный вызов добавим позже.
+        return Task.FromResult<string?>(mergePrompt);
     }
 }

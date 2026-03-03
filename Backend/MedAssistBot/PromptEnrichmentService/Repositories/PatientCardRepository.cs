@@ -13,8 +13,18 @@ public class PatientCardRepository : IPatientCardRepository
         _dbContext = dbContext;
     }
 
+    public async Task<PacientCard?> GetByPatientIdAndSpecialtyAsync(long patientId, string specialtyCode, CancellationToken cancellationToken)
+    {
+        var normalizedSpecialtyCode = NormalizeSpecialtyCodeForLookup(specialtyCode);
+
+        return await _dbContext.PacientCards
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                p => p.PatientId == patientId && p.SpecialtyCode == normalizedSpecialtyCode,
+                cancellationToken);
+    }
+
     public async Task<PacientCard> CreateAsync(
-        long doctorId,
         long patientId,
         string specialtyCode,
         string summary,
@@ -23,36 +33,20 @@ public class PatientCardRepository : IPatientCardRepository
         var normalizedSpecialtyCode = NormalizeSpecialtyCode(specialtyCode);
         var normalizedSummary = summary.Trim();
 
-        var doctor = await GetOrCreateDoctorAsync(doctorId, cancellationToken);
-        var specialty = await GetOrCreateSpecialtyAsync(normalizedSpecialtyCode, cancellationToken);
-
         var pacientCard = new PacientCard
         {
             PatientId = patientId,
-            Specialty = specialty,
+            SpecialtyCode = normalizedSpecialtyCode,
             Summary = normalizedSummary
         };
 
         _dbContext.PacientCards.Add(pacientCard);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        _dbContext.PacientCardDoctors.Add(new PacientCardDoctor
-        {
-            PacientCardId = pacientCard.Id,
-            DoctorId = doctor.Id
-        });
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return await _dbContext.PacientCards
-            .Include(p => p.Specialty)
-            .Include(p => p.PacientCardDoctors)
-            .ThenInclude(pd => pd.Doctor)
-            .FirstAsync(p => p.Id == pacientCard.Id, cancellationToken);
+        return pacientCard;
     }
 
     public async Task<PacientCard?> UpdateSummaryAsync(
-        long doctorId,
         long patientId,
         string specialtyCode,
         string summary,
@@ -62,13 +56,8 @@ public class PatientCardRepository : IPatientCardRepository
         var normalizedSummary = summary.Trim();
 
         var pacientCard = await _dbContext.PacientCards
-            .Include(p => p.Specialty)
-            .Include(p => p.PacientCardDoctors)
-            .ThenInclude(pd => pd.Doctor)
             .FirstOrDefaultAsync(
-                p => p.PatientId == patientId
-                     && p.Specialty.Code == normalizedSpecialtyCode
-                     && p.PacientCardDoctors.Any(pd => pd.Doctor.DocorId == doctorId),
+                p => p.PatientId == patientId && p.SpecialtyCode == normalizedSpecialtyCode,
                 cancellationToken);
 
         if (pacientCard == null)
@@ -97,46 +86,6 @@ public class PatientCardRepository : IPatientCardRepository
         return cards.Count;
     }
 
-    private async Task<Doctor> GetOrCreateDoctorAsync(long doctorId, CancellationToken cancellationToken)
-    {
-        var existing = await _dbContext.Doctors
-            .FirstOrDefaultAsync(d => d.DocorId == doctorId, cancellationToken);
-
-        if (existing != null)
-        {
-            return existing;
-        }
-
-        var doctor = new Doctor
-        {
-            DocorId = doctorId
-        };
-
-        _dbContext.Doctors.Add(doctor);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return doctor;
-    }
-
-    private async Task<Specialty> GetOrCreateSpecialtyAsync(string specialtyCode, CancellationToken cancellationToken)
-    {
-        var existing = await _dbContext.Specialties
-            .FirstOrDefaultAsync(s => s.Code == specialtyCode, cancellationToken);
-
-        if (existing != null)
-        {
-            return existing;
-        }
-
-        var specialty = new Specialty
-        {
-            Code = specialtyCode
-        };
-
-        _dbContext.Specialties.Add(specialty);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return specialty;
-    }
-
     private static string NormalizeSpecialtyCode(string specialtyCode)
     {
         if (string.IsNullOrWhiteSpace(specialtyCode))
@@ -145,5 +94,10 @@ public class PatientCardRepository : IPatientCardRepository
         }
 
         return specialtyCode.Trim();
+    }
+
+    private static string NormalizeSpecialtyCodeForLookup(string? specialtyCode)
+    {
+        return string.IsNullOrWhiteSpace(specialtyCode) ? string.Empty : specialtyCode.Trim();
     }
 }

@@ -4,14 +4,8 @@ namespace PromptEnrichmentService.Models;
 
 public class PromptTemplateUpsertRequest
 {
-    public int? TemplateId { get; set; }
-
     [MaxLength(64)]
-    public string? SpecialtyCode { get; set; }
+    public string? Code { get; set; }
 
-    [Required]
-    [MaxLength(4096)]
-    public string TemplateText { get; set; } = string.Empty;
-
-    public bool IsDefault { get; set; }
+    public string? Text { get; set; }
 }

@@ -3,7 +3,6 @@ namespace PromptEnrichmentService.Models;
 public class PatientCardResponse
 {
     public int Id { get; set; }
-    public long DoctorId { get; set; }
     public long PatientId { get; set; }
     public string SpecialtyCode { get; set; } = string.Empty;
     public string Summary { get; set; } = string.Empty;

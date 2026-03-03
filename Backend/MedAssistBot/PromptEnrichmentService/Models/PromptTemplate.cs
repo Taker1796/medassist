@@ -4,15 +4,14 @@ namespace PromptEnrichmentService.Models;
 
 public class PromptTemplate
 {
-    public int Id { get; set; }
+    [Key]
+    [MaxLength(64)]
+    public string Code { get; set; } = string.Empty;
 
-    public int? SpecialtyId { get; set; }
-    public Specialty? Specialty { get; set; }
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
 
-    [MaxLength(4096)]
-    public string TemplateText { get; set; } = string.Empty;
+    public string Text { get; set; } = string.Empty;
 
     public bool IsDefault { get; set; }
-
-    public DateTime CreatedAtUtc { get; set; }
 }

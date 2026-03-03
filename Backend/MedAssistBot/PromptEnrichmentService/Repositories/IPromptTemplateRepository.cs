@@ -4,8 +4,9 @@ namespace PromptEnrichmentService.Repositories;
 
 public interface IPromptTemplateRepository
 {
-    Task<PromptTemplate?> GetBySpecialtyOrDefaultAsync(string? specialtyCode, CancellationToken cancellationToken);
+    Task<PromptTemplate?> GetByCodeAsync(string? code, CancellationToken cancellationToken);
+    Task<PromptTemplate?> GetDefaultAsync(CancellationToken cancellationToken);
     Task<IReadOnlyCollection<PromptTemplate>> GetAllAsync(CancellationToken cancellationToken);
-    Task<(PromptTemplate Template, bool Created)> UpsertAsync(int? templateId, string? specialtyCode, string templateText, bool isDefault, CancellationToken cancellationToken);
-    Task<bool> DeleteAsync(int templateId, CancellationToken cancellationToken);
+    Task<PromptTemplate?> UpdateTextAsync(string? code, string? text, CancellationToken cancellationToken);
+    Task<bool> DeleteAsync(string code, CancellationToken cancellationToken);
 }

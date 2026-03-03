@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using PromptEnrichmentService.Constants;
 using PromptEnrichmentService.Models;
 using PromptEnrichmentService.Repositories;
+using PromptEnrichmentService.Services;
 
 namespace PromptEnrichmentService.Controllers;
 
@@ -10,10 +12,17 @@ namespace PromptEnrichmentService.Controllers;
 public class PatientCardsController : ControllerBase
 {
     private readonly IPatientCardRepository _patientCardRepository;
+    private readonly IPromptTemplateRepository _promptTemplateRepository;
+    private readonly LlmClient _llmClient;
 
-    public PatientCardsController(IPatientCardRepository patientCardRepository)
+    public PatientCardsController(
+        IPatientCardRepository patientCardRepository,
+        IPromptTemplateRepository promptTemplateRepository,
+        LlmClient llmClient)
     {
         _patientCardRepository = patientCardRepository;
+        _promptTemplateRepository = promptTemplateRepository;
+        _llmClient = llmClient;
     }
 
     [HttpPost]
@@ -22,34 +31,18 @@ public class PatientCardsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Create([FromBody] PatientCardUpsertRequest request, CancellationToken cancellationToken)
     {
-        if (request.DoctorId <= 0)
-        {
-            return BadRequest("DoctorId должен быть больше 0");
-        }
-
         if (request.PatientId <= 0)
         {
             return BadRequest("PatientId должен быть больше 0");
         }
-
-        if (string.IsNullOrWhiteSpace(request.SpecialtyCode))
-        {
-            return BadRequest("SpecialtyCode обязателен");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Summary))
-        {
-            return BadRequest("Summary обязателен");
-        }
-
+        
         var created = await _patientCardRepository.CreateAsync(
-            request.DoctorId,
             request.PatientId,
             request.SpecialtyCode,
             request.Summary,
             cancellationToken);
 
-        return Created($"/v1/patient-cards/{created.Id}", ToResponse(created, request.DoctorId));
+        return Created($"/v1/patient-cards/{created.Id}", ToResponse(created));
     }
 
     [HttpPut]
@@ -59,39 +52,58 @@ public class PatientCardsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update([FromBody] PatientCardUpsertRequest request, CancellationToken cancellationToken)
     {
-        if (request.DoctorId <= 0)
-        {
-            return BadRequest("DoctorId должен быть больше 0");
-        }
-
         if (request.PatientId <= 0)
         {
             return BadRequest("PatientId должен быть больше 0");
         }
 
-        if (string.IsNullOrWhiteSpace(request.SpecialtyCode))
+        var existing = await _patientCardRepository.GetByPatientIdAndSpecialtyAsync(
+            request.PatientId,
+            request.SpecialtyCode,
+            cancellationToken);
+
+        if (existing == null)
         {
-            return BadRequest("SpecialtyCode обязателен");
+            return NotFound("Запись patient card не найдена по specialtyCode + patientId");
         }
 
-        if (string.IsNullOrWhiteSpace(request.Summary))
+        var summaryToSave = existing.Summary;
+        if (!string.IsNullOrWhiteSpace(request.Summary))
         {
-            return BadRequest("Summary обязателен");
+            var mergeTemplate = await _promptTemplateRepository.GetByCodeAsync(
+                SystemTemplates.MergeSummary,
+                cancellationToken);
+
+            if (mergeTemplate != null && !string.IsNullOrWhiteSpace(mergeTemplate.Text))
+            {
+                var mergePrompt = mergeTemplate.Text
+                    .Replace("{oldSummary}", existing.Summary)
+                    .Replace("{newSummary}", request.Summary.Trim());
+
+                var mergedByLlm = await _llmClient.MergeSummaryStubAsync(mergePrompt, cancellationToken);
+                if (!string.IsNullOrWhiteSpace(mergedByLlm))
+                {
+                    summaryToSave = mergedByLlm.Trim();
+                }
+            }
+            else
+            {
+                summaryToSave = request.Summary.Trim();
+            }
         }
 
         var updated = await _patientCardRepository.UpdateSummaryAsync(
-            request.DoctorId,
             request.PatientId,
             request.SpecialtyCode,
-            request.Summary,
+            summaryToSave,
             cancellationToken);
 
         if (updated == null)
         {
-            return NotFound("Запись patient card не найдена по doctorId + specialtyCode + patientId");
+            return NotFound("Запись patient card не найдена по specialtyCode + patientId");
         }
 
-        return Ok(ToResponse(updated, request.DoctorId));
+        return Ok(ToResponse(updated));
     }
 
     [HttpDelete("{patientId:long}")]
@@ -114,14 +126,13 @@ public class PatientCardsController : ControllerBase
         return NoContent();
     }
 
-    private static PatientCardResponse ToResponse(PacientCard patientCard, long doctorId)
+    private static PatientCardResponse ToResponse(PacientCard patientCard)
     {
         return new PatientCardResponse
         {
             Id = patientCard.Id,
-            DoctorId = doctorId,
             PatientId = patientCard.PatientId,
-            SpecialtyCode = patientCard.Specialty.Code,
+            SpecialtyCode = patientCard.SpecialtyCode,
             Summary = patientCard.Summary
         };
     }

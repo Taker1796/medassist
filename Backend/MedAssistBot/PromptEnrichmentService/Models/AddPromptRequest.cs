@@ -2,8 +2,6 @@ namespace PromptEnrichmentService.Models;
 
 public class AddPromptRequest
 {
-    public string DoctorId { get; set; } = string.Empty;
-    
     public string? PatientId { get; set; }
     
     public string DoctorSpecializationCode { get; set; } = string.Empty;
