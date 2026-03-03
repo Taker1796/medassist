@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {Observable, delay, of, map, tap} from 'rxjs';
+import {Observable, of, map, tap} from 'rxjs';
 import {Environment} from '../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {Template} from '../models/template.model';
@@ -9,14 +9,7 @@ import {LlmResponse} from '../models/llmResponse.model';
 
 @Injectable({ providedIn: 'root' })
 class BackendService {
-  private readonly specializations: Record<string, string> = {
-    cardiology: 'Кардиология',
-    neurology: 'Неврология',
-    pediatrics: 'Педиатрия',
-    dermatology: 'Дерматология',
-    therapy: 'Therapy / Internal medicine',
-    psychiatry:'Психиатрия'
-  };
+  private specializations: Record<string, string> = {};
 
   private _baseUrl = Environment.apiUrl
   private _http: HttpClient = inject(HttpClient);
@@ -28,8 +21,34 @@ class BackendService {
   }
 
   getSpecializations(): Observable<Specialization[]> {
-    const options = Object.entries(this.specializations).map(([code, name]) => ({ code, name }));
-    return of(options).pipe(delay(350));
+    const url = `${this._baseUrl}/${Environment.promptTemplates}`;
+
+    return this._http.get<Template[]>(url).pipe(
+      map((templates) => {
+        const uniqueByCode = new Map<string, Specialization>();
+
+        for (const template of templates) {
+          const code = template.SpecialtyCode?.trim();
+          const name = template.SpecialtyName?.trim();
+
+          if (!code || !name || uniqueByCode.has(code)) {
+            continue;
+          }
+
+          uniqueByCode.set(code, { code, name });
+        }
+
+        const items = Array.from(uniqueByCode.values());
+
+        // Keep the same lookup shape as before (code -> display name), but fill it from DB.
+        this.specializations = items.reduce<Record<string, string>>((acc, item) => {
+          acc[item.code] = item.name;
+          return acc;
+        }, {});
+
+        return items;
+      })
+    );
   }
 
   getTemplateBySpecialization(specialization: string): Observable<string> {
@@ -50,7 +69,7 @@ class BackendService {
     const rawSpecialization = _specialization?.trim() ?? '';
     const isDefault = rawSpecialization.length === 0;
     const specialtyCode = isDefault ? '' : this.resolveSpecializationCode(rawSpecialization);
-    const url = `${this._baseUrl}/${Environment.promptTemplates}/upsert`;
+    const url = `${this._baseUrl}/${Environment.promptTemplates}/text`;
 
     let body: UpsertTemplateModel = {
       TemplateId: this._currentSpecialtyCode === specialtyCode ? this._currentTemplateId : null,
@@ -59,7 +78,7 @@ class BackendService {
       IsDefault: isDefault
     };
 
-    return this._http.post<Template>(url, body).pipe(
+    return this._http.patch<Template>(url, body).pipe(
       tap((template) => {
         this._currentTemplateId = template?.Id ?? null;
         this._currentSpecialtyCode = specialtyCode;
