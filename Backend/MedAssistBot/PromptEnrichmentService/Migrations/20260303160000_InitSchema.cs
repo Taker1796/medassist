@@ -42,21 +42,19 @@ public partial class InitSchema : Migration
                 table.PrimaryKey("PK_pacientCards", x => x.Id);
             });
 
-        migrationBuilder.InsertData(
-            table: "PromptTemplates",
-            columns: new[] { "Code", "Name", "Text", "IsDefault" },
-            values: new object[,]
-            {
-                { "cardiology", "Кардиология", "", false },
-                { "neurology", "Неврология", "", false },
-                { "pediatrics", "Педиатрия", "", false },
-                { "dermatology", "Дерматология", "", false },
-                { "therapy", "Therapy / Internal medicine", "", false },
-                { "psychiatry", "Психиатрия", "", false },
-                { "mergeSummary", "mergeSummary", "", false },
-                { "insertSummary", "insertSummary", "", false },
-                { "", "", "", true }
-            });
+        migrationBuilder.Sql("""
+            INSERT INTO "PromptTemplates" ("Code", "Name", "Text", "IsDefault")
+            VALUES
+                ('cardiology', 'Кардиология', '', FALSE),
+                ('neurology', 'Неврология', '', FALSE),
+                ('pediatrics', 'Педиатрия', '', FALSE),
+                ('dermatology', 'Дерматология', '', FALSE),
+                ('therapy', 'Therapy / Internal medicine', '', FALSE),
+                ('psychiatry', 'Психиатрия', '', FALSE),
+                ('mergeSummary', 'mergeSummary', '', FALSE),
+                ('insertSummary', 'insertSummary', '', FALSE),
+                ('', '', '', TRUE);
+            """);
 
         migrationBuilder.CreateIndex(
             name: "IX_pacientCards_patientId_specialtyCode",
