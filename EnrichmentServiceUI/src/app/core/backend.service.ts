@@ -53,7 +53,7 @@ class BackendService {
 
   getTemplateBySpecialization(specialization: string): Observable<string> {
     const specializationKey = this.resolveSpecializationCode(specialization);
-    const url = `${this._baseUrl}/${Environment.promptTemplates}/resolve?specialtyCode=${specializationKey}`;
+    const url = `${this._baseUrl}/${Environment.promptTemplates}/resolve?code=${specializationKey}`;
     this._currentSpecialtyCode = specializationKey;
     this._currentTemplateId = null;
 
