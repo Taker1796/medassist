@@ -22,7 +22,9 @@ public class PromptTemplateController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetResolved([FromQuery] string? code, CancellationToken cancellationToken)
     {
-        var template = await _promptTemplateRepository.GetByCodeAsync(code, cancellationToken);
+        var template = string.IsNullOrWhiteSpace(code)
+            ? await _promptTemplateRepository.GetDefaultAsync(cancellationToken)
+            : await _promptTemplateRepository.GetByCodeAsync(code, cancellationToken);
         if (template == null)
         {
             return NotFound("Шаблон не найден");
