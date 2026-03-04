@@ -22,7 +22,7 @@ public class PromptTemplateService
         _memoryCache = memoryCache;
     }
 
-    public async Task<EnrichedData> BuildEnrichedText(Guid patientId, string specialtyCode, Message[] messages, CancellationToken cancellationToken)
+    public async Task<EnrichedData> BuildEnrichedText(Guid? patientId, string specialtyCode, Message[] messages, CancellationToken cancellationToken)
     {
         var template = string.IsNullOrWhiteSpace(specialtyCode)
             ? await _promptTemplateRepository.GetDefaultAsync(cancellationToken)
@@ -33,13 +33,13 @@ public class PromptTemplateService
             throw new TemplateNotFoundException(specialtyCode);
         }
 
-        if (patientId == Guid.Empty)
+        if (!patientId.HasValue || patientId.Value == Guid.Empty)
         {
             return await BuildEnrichedMessages(template.Text, messages, cancellationToken: cancellationToken);
         }
         
 
-        var patientCard = await _patientCardRepository.GetByPatientIdAndSpecialtyAsync(patientId, specialtyCode, cancellationToken);
+        var patientCard = await _patientCardRepository.GetByPatientIdAndSpecialtyAsync(patientId.Value, specialtyCode, cancellationToken);
         if (patientCard == null)
         {
             return await BuildEnrichedMessages(template.Text, messages, cancellationToken: cancellationToken);
