@@ -29,8 +29,8 @@ namespace PromptEnrichmentService.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("PatientId")
-                        .HasColumnType("bigint")
+                    b.Property<Guid>("PatientId")
+                        .HasColumnType("uuid")
                         .HasColumnName("patientId");
 
                     b.Property<string>("SpecialtyCode")

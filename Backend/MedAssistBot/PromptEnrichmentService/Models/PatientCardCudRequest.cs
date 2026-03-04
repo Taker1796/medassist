@@ -4,7 +4,7 @@ namespace PromptEnrichmentService.Models;
 
 public class PatientCardUpsertRequest
 {
-    public long PatientId { get; set; }
+    public Guid PatientId { get; set; }
 
     [Required]
     [MaxLength(64)]

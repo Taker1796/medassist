@@ -28,7 +28,7 @@ public class PromptDbContext : DbContext
         {
             entity.ToTable("pacientCards");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.PatientId).HasColumnName("patientId");
+            entity.Property(e => e.PatientId).HasColumnName("patientId").HasColumnType("uuid");
             entity.Property(e => e.SpecialtyCode).IsRequired().HasMaxLength(64).HasColumnName("specialtyCode");
             entity.Property(e => e.Summary).IsRequired().HasColumnName("summary");
             entity.HasIndex(e => new { e.PatientId, e.SpecialtyCode }).IsUnique();

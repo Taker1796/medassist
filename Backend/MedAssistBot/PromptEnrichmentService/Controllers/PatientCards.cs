@@ -25,21 +25,30 @@ public class PatientCardsController : ControllerBase
         _llmClient = llmClient;
     }
 
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<PatientCardResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    {
+        var cards = await _patientCardRepository.GetAllAsync(cancellationToken);
+        return Ok(cards.Select(ToResponse).ToList());
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(PatientCardResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Create([FromBody] PatientCardUpsertRequest request, CancellationToken cancellationToken)
     {
-        if (request.PatientId <= 0)
+        if (request.PatientId == Guid.Empty)
         {
-            return BadRequest("PatientId должен быть больше 0");
+            return BadRequest("PatientId должен быть валидным UUID");
         }
         
         var created = await _patientCardRepository.CreateAsync(
             request.PatientId,
             request.SpecialtyCode,
-            request.Summary,
+            request.Summary ?? string.Empty,
             cancellationToken);
 
         return Created($"/v1/patient-cards/{created.Id}", ToResponse(created));
@@ -52,9 +61,9 @@ public class PatientCardsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update([FromBody] PatientCardUpsertRequest request, CancellationToken cancellationToken)
     {
-        if (request.PatientId <= 0)
+        if (request.PatientId == Guid.Empty)
         {
-            return BadRequest("PatientId должен быть больше 0");
+            return BadRequest("PatientId должен быть валидным UUID");
         }
 
         var existing = await _patientCardRepository.GetByPatientIdAndSpecialtyAsync(
@@ -117,15 +126,16 @@ public class PatientCardsController : ControllerBase
         return Ok(ToResponse(updated));
     }
 
-    [HttpDelete("{patientId:long}")]
+    [HttpDelete("{patientId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteByPatientId([FromRoute] long patientId, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteByPatientId([FromRoute] Guid patientId, CancellationToken cancellationToken)
     {
-        if (patientId <= 0)
+        if (patientId == Guid.Empty)
         {
-            return BadRequest("PatientId должен быть больше 0");
+            return BadRequest("PatientId должен быть валидным UUID");
         }
 
         var deleted = await _patientCardRepository.DeleteByPatientIdAsync(patientId, cancellationToken);

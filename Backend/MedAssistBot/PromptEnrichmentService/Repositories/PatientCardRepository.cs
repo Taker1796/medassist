@@ -13,7 +13,15 @@ public class PatientCardRepository : IPatientCardRepository
         _dbContext = dbContext;
     }
 
-    public async Task<PacientCard?> GetByPatientIdAndSpecialtyAsync(long patientId, string specialtyCode, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<PacientCard>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        return await _dbContext.PacientCards
+            .AsNoTracking()
+            .OrderBy(p => p.Id)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<PacientCard?> GetByPatientIdAndSpecialtyAsync(Guid patientId, string specialtyCode, CancellationToken cancellationToken)
     {
         var normalizedSpecialtyCode = NormalizeSpecialtyCodeForLookup(specialtyCode);
 
@@ -25,7 +33,7 @@ public class PatientCardRepository : IPatientCardRepository
     }
 
     public async Task<PacientCard> CreateAsync(
-        long patientId,
+        Guid patientId,
         string specialtyCode,
         string summary,
         CancellationToken cancellationToken)
@@ -47,7 +55,7 @@ public class PatientCardRepository : IPatientCardRepository
     }
 
     public async Task<PacientCard?> UpdateSummaryAsync(
-        long patientId,
+        Guid patientId,
         string specialtyCode,
         string summary,
         CancellationToken cancellationToken)
@@ -70,7 +78,7 @@ public class PatientCardRepository : IPatientCardRepository
         return pacientCard;
     }
 
-    public async Task<int> DeleteByPatientIdAsync(long patientId, CancellationToken cancellationToken)
+    public async Task<int> DeleteByPatientIdAsync(Guid patientId, CancellationToken cancellationToken)
     {
         var cards = await _dbContext.PacientCards
             .Where(p => p.PatientId == patientId)
