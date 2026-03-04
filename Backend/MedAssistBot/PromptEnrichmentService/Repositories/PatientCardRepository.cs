@@ -21,9 +21,9 @@ public class PatientCardRepository : IPatientCardRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<PacientCard?> GetByPatientIdAndSpecialtyAsync(Guid patientId, string specialtyCode, CancellationToken cancellationToken)
+    public async Task<PacientCard?> GetByPatientIdAndSpecialtyAsync(Guid patientId, string? specialtyCode, CancellationToken cancellationToken)
     {
-        var normalizedSpecialtyCode = NormalizeSpecialtyCodeForLookup(specialtyCode);
+        var normalizedSpecialtyCode = NormalizeSpecialtyCode(specialtyCode);
 
         return await _dbContext.PacientCards
             .AsNoTracking()
@@ -34,12 +34,12 @@ public class PatientCardRepository : IPatientCardRepository
 
     public async Task<PacientCard> CreateAsync(
         Guid patientId,
-        string specialtyCode,
-        string summary,
+        string? specialtyCode,
+        string? summary,
         CancellationToken cancellationToken)
     {
         var normalizedSpecialtyCode = NormalizeSpecialtyCode(specialtyCode);
-        var normalizedSummary = summary.Trim();
+        var normalizedSummary = NormalizeSummary(summary);
 
         var pacientCard = new PacientCard
         {
@@ -56,12 +56,12 @@ public class PatientCardRepository : IPatientCardRepository
 
     public async Task<PacientCard?> UpdateSummaryAsync(
         Guid patientId,
-        string specialtyCode,
-        string summary,
+        string? specialtyCode,
+        string? summary,
         CancellationToken cancellationToken)
     {
         var normalizedSpecialtyCode = NormalizeSpecialtyCode(specialtyCode);
-        var normalizedSummary = summary.Trim();
+        var normalizedSummary = NormalizeSummary(summary);
 
         var pacientCard = await _dbContext.PacientCards
             .FirstOrDefaultAsync(
@@ -94,18 +94,13 @@ public class PatientCardRepository : IPatientCardRepository
         return cards.Count;
     }
 
-    private static string NormalizeSpecialtyCode(string specialtyCode)
+    private static string? NormalizeSpecialtyCode(string? specialtyCode)
     {
-        if (string.IsNullOrWhiteSpace(specialtyCode))
-        {
-            throw new ArgumentException("SpecialtyCode обязателен", nameof(specialtyCode));
-        }
-
-        return specialtyCode.Trim();
+        return string.IsNullOrWhiteSpace(specialtyCode) ? null : specialtyCode.Trim();
     }
 
-    private static string NormalizeSpecialtyCodeForLookup(string? specialtyCode)
+    private static string? NormalizeSummary(string? summary)
     {
-        return string.IsNullOrWhiteSpace(specialtyCode) ? string.Empty : specialtyCode.Trim();
+        return string.IsNullOrWhiteSpace(summary) ? null : summary.Trim();
     }
 }

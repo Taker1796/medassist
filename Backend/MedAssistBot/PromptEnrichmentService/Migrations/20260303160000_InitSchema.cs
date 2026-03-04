@@ -34,8 +34,8 @@ public partial class InitSchema : Migration
                 Id = table.Column<int>(type: "integer", nullable: false)
                     .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                 patientId = table.Column<Guid>(type: "uuid", nullable: false),
-                specialtyCode = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                summary = table.Column<string>(type: "text", nullable: false)
+                specialtyCode = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                summary = table.Column<string>(type: "text", nullable: true)
             },
             constraints: table =>
             {

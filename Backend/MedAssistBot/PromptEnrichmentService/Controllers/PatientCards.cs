@@ -156,16 +156,16 @@ public class PatientCardsController : ControllerBase
         {
             Id = patientCard.Id,
             PatientId = patientCard.PatientId,
-            SpecialtyCode = patientCard.SpecialtyCode,
-            Summary = patientCard.Summary
+            SpecialtyCode = patientCard.SpecialtyCode ?? string.Empty,
+            Summary = patientCard.Summary ?? string.Empty
         };
     }
 
-    private static string SerializeSummary(PatientCardSummaryRequest? summary)
+    private static string? SerializeSummary(PatientCardSummaryRequest? summary)
     {
         if (summary == null)
         {
-            return string.Empty;
+            return null;
         }
 
         return JsonSerializer.Serialize(summary);

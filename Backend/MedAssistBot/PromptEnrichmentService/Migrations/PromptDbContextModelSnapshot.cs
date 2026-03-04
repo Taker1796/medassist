@@ -34,13 +34,11 @@ namespace PromptEnrichmentService.Migrations
                         .HasColumnName("patientId");
 
                     b.Property<string>("SpecialtyCode")
-                        .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("specialtyCode");
 
                     b.Property<string>("Summary")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("summary");
 
