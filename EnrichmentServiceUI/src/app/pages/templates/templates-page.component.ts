@@ -109,13 +109,7 @@ export class TemplatesPageComponent {
       Text: this.templateText()
     };
 
-    if (!payload.Code) {
-      this.statusIsError.set(true);
-      this.status.set('Выберите шаблон');
-      return;
-    }
-
-    const templateName = this.templates().find((item) => item.Code === payload.Code)?.Name ?? 'Не выбрана';
+    const templateName = this.templates().find((item) => item.Code === payload.Code)?.Name ?? 'По умолчанию';
     if(!confirm('Сохранить шаблон "' + templateName + '"?')){
       return;
     }
