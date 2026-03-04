@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using PromptEnrichmentService.Constants;
 using PromptEnrichmentService.Models;
 using PromptEnrichmentService.Repositories;
@@ -48,7 +49,7 @@ public class PatientCardsController : ControllerBase
         var created = await _patientCardRepository.CreateAsync(
             request.PatientId,
             request.SpecialtyCode,
-            request.Summary ?? string.Empty,
+            SerializeSummary(request.Summary),
             cancellationToken);
 
         return Created($"/v1/patient-cards/{created.Id}", ToResponse(created));
@@ -77,8 +78,10 @@ public class PatientCardsController : ControllerBase
         }
 
         var summaryToSave = existing.Summary;
-        if (!string.IsNullOrWhiteSpace(request.Summary))
+        if (request.Summary != null)
         {
+            var requestSummary = SerializeSummary(request.Summary);
+
             var mergeTemplate = await _promptTemplateRepository.GetByCodeAsync(
                 SystemTemplates.MergeSummary,
                 cancellationToken);
@@ -87,7 +90,7 @@ public class PatientCardsController : ControllerBase
             {
                 var mergePrompt = mergeTemplate.Text
                     .Replace("{oldSummary}", existing.Summary)
-                    .Replace("{newSummary}", request.Summary.Trim());
+                    .Replace("{newSummary}", requestSummary);
 
                 var data = new EnrichedData()
                 {
@@ -108,7 +111,7 @@ public class PatientCardsController : ControllerBase
             }
             else
             {
-                summaryToSave = request.Summary.Trim();
+                summaryToSave = requestSummary;
             }
         }
 
@@ -156,5 +159,15 @@ public class PatientCardsController : ControllerBase
             SpecialtyCode = patientCard.SpecialtyCode,
             Summary = patientCard.Summary
         };
+    }
+
+    private static string SerializeSummary(PatientCardSummaryRequest? summary)
+    {
+        if (summary == null)
+        {
+            return string.Empty;
+        }
+
+        return JsonSerializer.Serialize(summary);
     }
 }
