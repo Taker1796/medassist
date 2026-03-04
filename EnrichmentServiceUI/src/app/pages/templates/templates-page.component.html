@@ -16,21 +16,79 @@
 
   <div class="workspace">
     <div class="template-column">
-      <textarea
-        [value]="templateText()"
-        (input)="onTemplateInput($any($event.target).value)"
-        [disabled]="isLoadingTemplate()"
-        placeholder="Введите или отредактируйте шаблон"
-      ></textarea>
+      <div class="editor-panel">
+        <textarea
+          [value]="templateText()"
+          (input)="onTemplateInput($any($event.target).value)"
+          [disabled]="isLoadingTemplate()"
+          placeholder="Введите или отредактируйте шаблон"
+        ></textarea>
 
-      <div class="actions">
-        <button type="button" class="secondary" (click)="clearTemplate()">Удалить</button>
-        <button type="button" class="primary" (click)="saveTemplate()">Сохранить</button>
+        <div class="actions">
+          <button type="button" class="secondary" (click)="clearTemplate()">Удалить</button>
+          <button type="button" class="primary" (click)="saveTemplate()">Сохранить</button>
+        </div>
+
+        @if (status()) {
+          <p class="status" [class.error]="statusIsError()">{{ status() }}</p>
+        }
       </div>
 
-      @if (status()) {
-        <p class="status" [class.error]="statusIsError()">{{ status() }}</p>
-      }
+      <div class="grid-panel">
+        <div class="grid-toolbar">
+          <input
+            type="text"
+            class="grid-search"
+            [value]="searchTemplateId()"
+            (input)="onSearchTemplateId($any($event.target).value)"
+            placeholder="Поиск по PatientId"
+          />
+          <button type="button" class="secondary" (click)="refreshGridRows()" [disabled]="isLoadingGrid()">
+            {{ isLoadingGrid() ? 'Обновление...' : 'Обновить' }}
+          </button>
+        </div>
+
+        <div class="grid-scroll">
+          <table class="templates-grid">
+            <colgroup>
+              <col [style.width.px]="columnWidths().Id" />
+              <col [style.width.px]="columnWidths().PatientId" />
+              <col [style.width.px]="columnWidths().SpecialtyCode" />
+              <col [style.width.px]="columnWidths().Summary" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="sortable" (click)="toggleGridSort('Id')">
+                  <span class="th-label">Id {{ getSortMark('Id') }}</span>
+                  <span class="resize-handle" (mousedown)="startResizeColumn('Id', $event)"></span>
+                </th>
+                <th class="sortable" (click)="toggleGridSort('PatientId')">
+                  <span class="th-label">PatientId {{ getSortMark('PatientId') }}</span>
+                  <span class="resize-handle" (mousedown)="startResizeColumn('PatientId', $event)"></span>
+                </th>
+                <th class="sortable" (click)="toggleGridSort('SpecialtyCode')">
+                  <span class="th-label">SpecialtyCode {{ getSortMark('SpecialtyCode') }}</span>
+                  <span class="resize-handle" (mousedown)="startResizeColumn('SpecialtyCode', $event)"></span>
+                </th>
+                <th>
+                  <span class="th-label">Summary</span>
+                  <span class="resize-handle" (mousedown)="startResizeColumn('Summary', $event)"></span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of filteredTemplateRows(); track row.Id) {
+                <tr (click)="selectPatientCard(row)" [class.selected-row]="isSelectedPatientRow(row)">
+                  <td>{{ row.Id }}</td>
+                  <td>{{ row.PatientId }}</td>
+                  <td>{{ row.SpecialtyCode }}</td>
+                  <td>{{ row.Summary }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <div class="dialog-column">
@@ -61,7 +119,12 @@
             (input)="onQuestionInput($any($event.target).value)"
             placeholder="Напишите сообщение"
           ></textarea>
-          <button type="button" class="primary" [disabled]="isSendingQuestion() || !questionText().trim()" (click)="sendQuestion()">
+          <button
+            type="button"
+            class="primary"
+            [disabled]="isSendingQuestion() || !questionText().trim()"
+            (click)="sendQuestion()"
+          >
             {{ isSendingQuestion() ? 'Отправка...' : 'Отправить' }}
           </button>
         </div>

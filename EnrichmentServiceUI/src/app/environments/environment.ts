@@ -4,4 +4,5 @@ export const Environment = {
   authUIUrlPath:'v1/auth-ui',
   promptTemplates:'v1/prompt-templates',
   enrichUrlPath:'v1/enrich',
+  patientCardsUrlPath:'v1/patient-cards',
 };

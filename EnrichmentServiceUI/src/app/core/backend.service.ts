@@ -6,6 +6,8 @@ import {Template} from '../models/template.model';
 import {UpsertTemplateModel} from '../models/upsertTemplate.model';
 import {TemplateOption} from '../models/template-option.model';
 import {LlmResponse} from '../models/llmResponse.model';
+import {PatientCard} from '../models/patient-card.model';
+import {AskDialogQuestionModel} from '../models/ask-dialog-question.model';
 
 @Injectable({ providedIn: 'root' })
 class BackendService {
@@ -48,6 +50,11 @@ class BackendService {
         return items;
       })
     );
+  }
+
+  getPatientCards(): Observable<PatientCard[]> {
+    const url = `${this._baseUrl}/${Environment.patientCardsUrlPath}`;
+    return this._http.get<PatientCard[]>(url);
   }
 
   getTemplateByCode(templateCode: string): Observable<string> {
@@ -97,10 +104,10 @@ class BackendService {
     );
   }
 
-  askDialogQuestion(question: string, templateCode: string): Observable<string> {
+  askDialogQuestion(payload: AskDialogQuestionModel): Observable<string> {
     const url = `${this._baseUrl}/${Environment.enrichUrlPath}`;
 
-    return this._http.post<LlmResponse>(url, { Text: question, SpecialtyCode: templateCode }).pipe(
+    return this._http.post<LlmResponse>(url, payload).pipe(
       map(response => response.LlmResponse)
     );
   }

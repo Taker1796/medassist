@@ -45,14 +45,22 @@ select {
 
 .template-column {
   display: grid;
-  grid-template-rows: 1fr auto auto;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  overflow: hidden;
+}
+
+.editor-panel {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
   gap: 12px;
 }
 
-.template-column textarea {
+.editor-panel textarea {
   width: 100%;
   height: 100%;
-  min-height: 420px;
+  min-height: 210px;
   resize: vertical;
   overflow: auto;
   border-radius: 10px;
@@ -67,6 +75,99 @@ select {
 .actions {
   display: flex;
   gap: 10px;
+}
+
+.grid-panel {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 10px;
+}
+
+.grid-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.grid-search {
+  width: 220px;
+  max-width: 100%;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #b7cce3;
+  padding: 0 10px;
+  font-size: 14px;
+}
+
+.grid-scroll {
+  min-height: 0;
+  border: 1px solid #d8e2ef;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.templates-grid {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.templates-grid th,
+.templates-grid td {
+  border-bottom: 1px solid #e8edf4;
+  border-right: 1px solid #eef2f7;
+  padding: 8px 10px;
+  text-align: left;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.templates-grid tbody tr {
+  cursor: pointer;
+}
+
+.templates-grid tbody tr.selected-row {
+  background: #e7f1ff;
+}
+
+.templates-grid th {
+  position: sticky;
+  top: 0;
+  background: #f7fbff;
+  color: #1a3f68;
+  z-index: 1;
+  user-select: none;
+  padding-right: 14px;
+}
+
+.templates-grid th.sortable {
+  cursor: pointer;
+}
+
+.templates-grid th.sortable:hover {
+  background: #ecf5ff;
+}
+
+.th-label {
+  display: inline-block;
+  padding-right: 6px;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 3;
+}
+
+.templates-grid td:nth-child(4) {
+  white-space: pre-wrap;
+  min-width: 220px;
 }
 
 button {
@@ -219,8 +320,12 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .template-column textarea {
-    min-height: 300px;
+  .template-column {
+    grid-template-rows: auto auto;
+  }
+
+  .editor-panel textarea {
+    min-height: 180px;
   }
 
   .chat-history {
