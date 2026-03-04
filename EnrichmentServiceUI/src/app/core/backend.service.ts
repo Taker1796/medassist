@@ -4,28 +4,27 @@ import {Environment} from '../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {Template} from '../models/template.model';
 import {UpsertTemplateModel} from '../models/upsertTemplate.model';
-import {Specialization} from '../models/specialization.model';
+import {TemplateOption} from '../models/template-option.model';
 import {LlmResponse} from '../models/llmResponse.model';
 
 @Injectable({ providedIn: 'root' })
 class BackendService {
-  private specializations: Record<string, string> = {};
+  private templatesByCode: Record<string, string> = {};
 
   private _baseUrl = Environment.apiUrl
   private _http: HttpClient = inject(HttpClient);
   private _currentTemplateId: number | null = null;
-  private _currentSpecialtyCode: string | null = null;
 
   validateApiKey(apiKey: string): Observable<boolean> {
     return this._http.post<boolean>(`${this._baseUrl}/${Environment.authUIUrlPath}`, {"ApiKey": apiKey});
   }
 
-  getSpecializations(): Observable<Specialization[]> {
+  getTemplates(): Observable<TemplateOption[]> {
     const url = `${this._baseUrl}/${Environment.promptTemplates}`;
 
-    return this._http.get<Specialization[]>(url).pipe(
+    return this._http.get<TemplateOption[]>(url).pipe(
       map((templates) => {
-        const uniqueByCode = new Map<string, Specialization>();
+        const uniqueByCode = new Map<string, TemplateOption>();
 
         for (const template of templates) {
           const code = template.Code.trim();
@@ -41,7 +40,7 @@ class BackendService {
         const items = Array.from(uniqueByCode.values());
 
         // Keep the same lookup shape as before (code -> display name), but fill it from DB.
-        this.specializations = items.reduce<Record<string, string>>((acc, item) => {
+        this.templatesByCode = items.reduce<Record<string, string>>((acc, item) => {
           acc[item.Code] = item.Name;
           return acc;
         }, {});
@@ -51,37 +50,32 @@ class BackendService {
     );
   }
 
-  getTemplateBySpecialization(specialization: string): Observable<string> {
-    const specializationKey = this.resolveSpecializationCode(specialization);
-    const url = `${this._baseUrl}/${Environment.promptTemplates}/resolve?code=${specializationKey}`;
-    this._currentSpecialtyCode = specializationKey;
+  getTemplateByCode(templateCode: string): Observable<string> {
+    const resolvedTemplateCode = this.resolveTemplateCode(templateCode);
+    const url = `${this._baseUrl}/${Environment.promptTemplates}/resolve?code=${resolvedTemplateCode}`;
     this._currentTemplateId = null;
 
     return this._http.get<Template>(url).pipe(
       tap((template) => {
         this._currentTemplateId = template?.Id ?? null;
       }),
-      map((template) => template?.TemplateText ?? '')
+      map((template) => template?.Text ?? '')
     );
   }
 
-  saveTemplate(_specialization: string, _template: string): Observable<boolean> {
-    const rawSpecialization = _specialization?.trim() ?? '';
-    const isDefault = rawSpecialization.length === 0;
-    const specialtyCode = isDefault ? '' : this.resolveSpecializationCode(rawSpecialization);
+  saveTemplate(payload: UpsertTemplateModel): Observable<boolean> {
+    const code = this.resolveTemplateCode(payload.Code ?? '');
+    const text = payload.Text ?? '';
     const url = `${this._baseUrl}/${Environment.promptTemplates}/text`;
 
-    let body: UpsertTemplateModel = {
-      TemplateId: this._currentSpecialtyCode === specialtyCode ? this._currentTemplateId : null,
-      SpecialtyCode: specialtyCode,
-      TemplateText: _template,
-      IsDefault: isDefault
+    const body: UpsertTemplateModel = {
+      Code: code,
+      Text: text
     };
 
     return this._http.patch<Template>(url, body).pipe(
       tap((template) => {
         this._currentTemplateId = template?.Id ?? null;
-        this._currentSpecialtyCode = specialtyCode;
       }),
       map(() => true)
     );
@@ -103,23 +97,23 @@ class BackendService {
     );
   }
 
-  askDialogQuestion(question: string, specialization: string): Observable<string> {
+  askDialogQuestion(question: string, templateCode: string): Observable<string> {
     const url = `${this._baseUrl}/${Environment.enrichUrlPath}`;
 
-    return this._http.post<LlmResponse>(url, { Text: question, SpecialtyCode: specialization }).pipe(
+    return this._http.post<LlmResponse>(url, { Text: question, SpecialtyCode: templateCode }).pipe(
       map(response => response.LlmResponse)
     );
   }
 
-  private resolveSpecializationCode(specialization: string): string {
-    const trimmed = specialization.trim();
+  private resolveTemplateCode(templateCode: string): string {
+    const trimmed = templateCode.trim();
 
     // If caller already passed a known code.
-    if (this.specializations[trimmed]) {
+    if (this.templatesByCode[trimmed]) {
       return trimmed;
     }
 
-    const foundEntry = Object.entries(this.specializations).find(([, displayName]) => displayName === trimmed);
+    const foundEntry = Object.entries(this.templatesByCode).find(([, displayName]) => displayName === trimmed);
     if (foundEntry) {
       return foundEntry[0];
     }

@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import BackendService from '../../core/backend.service';
-import {Specialization} from '../../models/specialization.model';
+import {TemplateOption} from '../../models/template-option.model';
 
 type ChatMessage = {
   role: 'user' | 'assistant';
@@ -25,11 +25,11 @@ export class TemplatesPageComponent {
 
   readonly defaultOption = '';
 
-  specializations = signal<Specialization[]>([]);
-  selectedSpecialization = signal(this.defaultOption);
+  templates = signal<TemplateOption[]>([]);
+  selectedTemplate = signal(this.defaultOption);
   templateText = signal('');
 
-  isLoadingSpecializations = signal(true);
+  isLoadingTemplates = signal(true);
   isLoadingTemplate = signal(false);
   status = signal('');
   statusIsError = signal(false);
@@ -39,16 +39,16 @@ export class TemplatesPageComponent {
   chatMessages = signal<ChatMessage[]>([]);
 
   constructor() {
-    this.backend.getSpecializations().subscribe((items) => {
-      this.specializations.set(items);
-      this.isLoadingSpecializations.set(false);
+    this.backend.getTemplates().subscribe((items) => {
+      this.templates.set(items);
+      this.isLoadingTemplates.set(false);
     });
 
     this.loadTemplateForSelection(this.defaultOption);
   }
 
-  onSpecializationChange(value: string): void {
-    this.selectedSpecialization.set(value);
+  onTemplateChange(value: string): void {
+    this.selectedTemplate.set(value);
     this.status.set('');
     this.statusIsError.set(false);
     this.chatMessages.set([]);
@@ -56,10 +56,10 @@ export class TemplatesPageComponent {
     this.loadTemplateForSelection(value);
   }
 
-  private loadTemplateForSelection(specialization: string): void {
+  private loadTemplateForSelection(templateCode: string): void {
     this.isLoadingTemplate.set(true);
     this.backend
-      .getTemplateBySpecialization(specialization)
+      .getTemplateByCode(templateCode)
       .pipe(finalize(() => this.isLoadingTemplate.set(false)))
       .subscribe({
         next: (template) => {
@@ -104,13 +104,23 @@ export class TemplatesPageComponent {
   }
 
   saveTemplate(): void {
-    const specialization = this.selectedSpecialization();
-    const specializationName = this.specializations().find((item) => item.Code === specialization)?.Name ?? 'Не выбрана';
-    if(!confirm('Сохранить шаблон для специализации "'+specializationName +'"?')){
+    const payload = {
+      Code: this.selectedTemplate().trim(),
+      Text: this.templateText()
+    };
+
+    if (!payload.Code) {
+      this.statusIsError.set(true);
+      this.status.set('Выберите шаблон');
       return;
     }
 
-    this.backend.saveTemplate(specialization, this.templateText()).subscribe(() => {
+    const templateName = this.templates().find((item) => item.Code === payload.Code)?.Name ?? 'Не выбрана';
+    if(!confirm('Сохранить шаблон "' + templateName + '"?')){
+      return;
+    }
+
+    this.backend.saveTemplate(payload).subscribe(() => {
       this.statusIsError.set(false);
       this.status.set('Шаблон сохранен');
     });
@@ -132,7 +142,7 @@ export class TemplatesPageComponent {
     this.scrollChatToBottom();
 
     this.backend
-      .askDialogQuestion(question, this.selectedSpecialization())
+      .askDialogQuestion(question, this.selectedTemplate())
       .subscribe((answer) => {
         this.chatMessages.update((messages) => [...messages, { role: 'assistant', text: answer }]);
         this.isSendingQuestion.set(false);

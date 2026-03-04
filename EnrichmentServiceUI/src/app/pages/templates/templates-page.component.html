@@ -1,14 +1,14 @@
 <section class="templates-page">
   <div class="field-group">
-    <label for="specialization">Шаблон</label>
+    <label for="template">Шаблон</label>
     <select
-      id="specialization"
-      [disabled]="isLoadingSpecializations()"
-      [ngModel]="selectedSpecialization()"
-      (ngModelChange)="onSpecializationChange($event)"
+      id="template"
+      [disabled]="isLoadingTemplates()"
+      [ngModel]="selectedTemplate()"
+      (ngModelChange)="onTemplateChange($event)"
     >
       <option [ngValue]="defaultOption">Не выбрана</option>
-      @for (item of specializations(); track item.Code) {
+      @for (item of templates(); track item.Code) {
         <option [ngValue]="item.Code">{{ item.Name }}</option>
       }
     </select>

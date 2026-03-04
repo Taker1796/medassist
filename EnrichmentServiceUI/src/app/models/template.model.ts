@@ -1,9 +1,9 @@
 export interface Template
 {
   "Id": number,
-  "SpecialtyCode": string,
-  "SpecialtyName": string,
-  "TemplateText": string,
+  "Code": string,
+  "Name": string,
+  "Text": string,
   "IsDefault": boolean,
   "CreatedAtUtc": string
 }
