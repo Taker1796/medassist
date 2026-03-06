@@ -10,10 +10,10 @@ public class PatientCardUpsertRequest
     [MaxLength(64)]
     public string? SpecialtyCode { get; set; }
 
-    public PatientCardSummaryRequest? Summary { get; set; }
+    public PatientCardHistoryRequest? History { get; set; }
 }
 
-public class PatientCardSummaryRequest
+public class PatientCardHistoryRequest
 {
     [JsonPropertyName("sex")]
     public int Sex { get; set; }

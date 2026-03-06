@@ -37,7 +37,6 @@ public class PromptTemplateService
         {
             return await BuildEnrichedMessages(template.Text, messages, cancellationToken: cancellationToken);
         }
-        
 
         var patientCard = await _patientCardRepository.GetByPatientIdAndSpecialtyAsync(patientId.Value, specialtyCode, cancellationToken);
         if (patientCard == null)
@@ -45,13 +44,13 @@ public class PromptTemplateService
             return await BuildEnrichedMessages(template.Text, messages, cancellationToken: cancellationToken);
         }
 
-        return await BuildEnrichedMessages(template.Text, messages, patientCard.Summary, cancellationToken);
+        return await BuildEnrichedMessages(template.Text, messages, patientCard.History, cancellationToken);
     }
 
     private async Task<EnrichedData> BuildEnrichedMessages(
         string systemPrompt,
         Message[] messages,
-        string? summary = null,
+        string? patientHistory = null,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(systemPrompt))
@@ -64,53 +63,19 @@ public class PromptTemplateService
             throw new ArgumentNullException(nameof(messages));
         }
 
+        systemPrompt = systemPrompt.Replace("{patientHistory}", !string.IsNullOrWhiteSpace(patientHistory) ? patientHistory : string.Empty);
+
         var systemMessage = new Message()
         {
             Content = systemPrompt,
             Role = LlmRoles.System,
         };
-
+        
         var enrichedMessages = new EnrichedData()
         {
             Messages = new[] { systemMessage }.Concat(messages).ToArray()
         };
-
-        if (string.IsNullOrWhiteSpace(summary))
-        {
-            return enrichedMessages;
-        }
-
-        var lastUserMessage = messages.LastOrDefault(m => string.Equals(m.Role, LlmRoles.User, StringComparison.OrdinalIgnoreCase));
-        if (lastUserMessage != null)
-        {
-            var insertSummaryPrompt = await GetInsertSummaryPromptAsync(cancellationToken);
-            if (string.IsNullOrWhiteSpace(insertSummaryPrompt))
-            {
-                lastUserMessage.Content = summary + ". " + lastUserMessage.Content;
-            }
-            else
-            {
-                lastUserMessage.Content = insertSummaryPrompt.Replace("{summary}", summary) + ". " + lastUserMessage.Content;
-            }
-        }
-
+        
         return enrichedMessages;
-    }
-
-    private async Task<string?> GetInsertSummaryPromptAsync(CancellationToken cancellationToken)
-    {
-        if (_memoryCache.TryGetValue<string>(SystemTemplates.InsertSummary, out var cachedValue))
-        {
-            return cachedValue;
-        }
-
-        var template = await _promptTemplateRepository.GetByCodeAsync(SystemTemplates.InsertSummary, cancellationToken);
-        if (template == null || string.IsNullOrWhiteSpace(template.Text))
-        {
-            return null;
-        }
-
-        _memoryCache.Set(SystemTemplates.InsertSummary, template.Text);
-        return template.Text;
     }
 }

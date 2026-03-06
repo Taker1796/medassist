@@ -41,10 +41,5 @@ public class LlmClient
         var payload = await response.Content.ReadFromJsonAsync<LlmResponse>(cancellationToken: cancellationToken);
         return payload?.Content;
     }
-
-    public Task<string?> MergeSummaryStubAsync(string mergePrompt, CancellationToken cancellationToken)
-    {
-        // Stub: пока возвращаем промпт как "ответ LLM", реальный вызов добавим позже.
-        return Task.FromResult<string?>(mergePrompt);
-    }
+    
 }

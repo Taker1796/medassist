@@ -35,7 +35,7 @@ public partial class InitSchema : Migration
                     .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                 patientId = table.Column<Guid>(type: "uuid", nullable: false),
                 specialtyCode = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
-                summary = table.Column<string>(type: "text", nullable: true)
+                history = table.Column<string>(type: "text", nullable: true)
             },
             constraints: table =>
             {
@@ -51,8 +51,7 @@ public partial class InitSchema : Migration
                 ('dermatology', 'Дерматология', '', FALSE),
                 ('therapy', 'Therapy / Internal medicine', '', FALSE),
                 ('psychiatry', 'Психиатрия', '', FALSE),
-                ('mergeSummary', 'mergeSummary', '', FALSE),
-                ('insertSummary', 'insertSummary', '', FALSE),
+                ('gynecology', 'Гинекология', '', FALSE),
                 ('', '', '', TRUE);
             """);
 

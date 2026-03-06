@@ -35,17 +35,17 @@ public class PatientCardRepository : IPatientCardRepository
     public async Task<PacientCard> CreateAsync(
         Guid patientId,
         string? specialtyCode,
-        string? summary,
+        string? history,
         CancellationToken cancellationToken)
     {
         var normalizedSpecialtyCode = NormalizeSpecialtyCode(specialtyCode);
-        var normalizedSummary = NormalizeSummary(summary);
+        var normalizedHistory = NormalizeHistory(history);
 
         var pacientCard = new PacientCard
         {
             PatientId = patientId,
             SpecialtyCode = normalizedSpecialtyCode,
-            Summary = normalizedSummary
+            History = normalizedHistory
         };
 
         _dbContext.PacientCards.Add(pacientCard);
@@ -54,14 +54,14 @@ public class PatientCardRepository : IPatientCardRepository
         return pacientCard;
     }
 
-    public async Task<PacientCard?> UpdateSummaryAsync(
+    public async Task<PacientCard?> UpdateHistoryAsync(
         Guid patientId,
         string? specialtyCode,
-        string? summary,
+        string? history,
         CancellationToken cancellationToken)
     {
         var normalizedSpecialtyCode = NormalizeSpecialtyCode(specialtyCode);
-        var normalizedSummary = NormalizeSummary(summary);
+        var normalizedHistory = NormalizeHistory(history);
 
         var pacientCard = await _dbContext.PacientCards
             .FirstOrDefaultAsync(
@@ -73,7 +73,7 @@ public class PatientCardRepository : IPatientCardRepository
             return null;
         }
 
-        pacientCard.Summary = normalizedSummary;
+        pacientCard.History = normalizedHistory;
         await _dbContext.SaveChangesAsync(cancellationToken);
         return pacientCard;
     }
@@ -99,8 +99,8 @@ public class PatientCardRepository : IPatientCardRepository
         return string.IsNullOrWhiteSpace(specialtyCode) ? null : specialtyCode.Trim();
     }
 
-    private static string? NormalizeSummary(string? summary)
+    private static string? NormalizeHistory(string? history)
     {
-        return string.IsNullOrWhiteSpace(summary) ? null : summary.Trim();
+        return string.IsNullOrWhiteSpace(history) ? null : history.Trim();
     }
 }

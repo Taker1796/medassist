@@ -54,7 +54,7 @@
               <col [style.width.px]="columnWidths().Id" />
               <col [style.width.px]="columnWidths().PatientId" />
               <col [style.width.px]="columnWidths().SpecialtyCode" />
-              <col [style.width.px]="columnWidths().Summary" />
+              <col [style.width.px]="columnWidths().History" />
             </colgroup>
             <thead>
               <tr>
@@ -71,8 +71,8 @@
                   <span class="resize-handle" (mousedown)="startResizeColumn('SpecialtyCode', $event)"></span>
                 </th>
                 <th>
-                  <span class="th-label">Summary</span>
-                  <span class="resize-handle" (mousedown)="startResizeColumn('Summary', $event)"></span>
+                  <span class="th-label">History</span>
+                  <span class="resize-handle" (mousedown)="startResizeColumn('History', $event)"></span>
                 </th>
               </tr>
             </thead>
@@ -82,7 +82,7 @@
                   <td>{{ row.Id }}</td>
                   <td>{{ row.PatientId }}</td>
                   <td>{{ row.SpecialtyCode }}</td>
-                  <td>{{ row.Summary }}</td>
+                  <td>{{ row.History }}</td>
                 </tr>
               }
             </tbody>

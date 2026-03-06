@@ -38,9 +38,9 @@ namespace PromptEnrichmentService.Migrations
                         .HasColumnType("character varying(64)")
                         .HasColumnName("specialtyCode");
 
-                    b.Property<string>("Summary")
+                    b.Property<string>("History")
                         .HasColumnType("text")
-                        .HasColumnName("summary");
+                        .HasColumnName("history");
 
                     b.HasKey("Id");
 

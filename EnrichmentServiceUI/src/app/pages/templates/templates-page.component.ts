@@ -12,7 +12,7 @@ type ChatMessage = {
   text: string;
 };
 type GridSortField = 'Id' | 'PatientId' | 'SpecialtyCode';
-type GridColumnField = 'Id' | 'PatientId' | 'SpecialtyCode' | 'Summary';
+type GridColumnField = 'Id' | 'PatientId' | 'SpecialtyCode' | 'History' | 'Summary';
 
 @Component({
   selector: 'app-templates-page',
@@ -49,6 +49,7 @@ export class TemplatesPageComponent implements OnDestroy {
     Id: 90,
     PatientId: 140,
     SpecialtyCode: 220,
+    History: 520,
     Summary: 520
   });
   readonly gridSort = signal<{ field: GridSortField; direction: 'asc' | 'desc' }>({
@@ -259,7 +260,7 @@ export class TemplatesPageComponent implements OnDestroy {
       .getPatientCards()
       .pipe(finalize(() => this.isLoadingGrid.set(false)))
       .subscribe({
-        next: (rows) => this.patientCardRows.set(rows ?? []),
+        next: (rows: PatientCard[]) => this.patientCardRows.set(rows),
         error: () => this.patientCardRows.set([])
       });
   }

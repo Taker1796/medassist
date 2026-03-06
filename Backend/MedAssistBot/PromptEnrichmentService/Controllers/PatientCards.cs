@@ -49,7 +49,7 @@ public class PatientCardsController : ControllerBase
         var created = await _patientCardRepository.CreateAsync(
             request.PatientId,
             request.SpecialtyCode,
-            SerializeSummary(request.Summary),
+            SerializeHistory(request.History),
             cancellationToken);
 
         return Created($"/v1/patient-cards/{created.Id}", ToResponse(created));
@@ -66,59 +66,13 @@ public class PatientCardsController : ControllerBase
         {
             return BadRequest("PatientId должен быть валидным UUID");
         }
-
-        var existing = await _patientCardRepository.GetByPatientIdAndSpecialtyAsync(
+        
+        var requestHistory = SerializeHistory(request.History);
+        
+        var updated = await _patientCardRepository.UpdateHistoryAsync(
             request.PatientId,
             request.SpecialtyCode,
-            cancellationToken);
-
-        if (existing == null)
-        {
-            return NotFound("Запись patient card не найдена по specialtyCode + patientId");
-        }
-
-        var summaryToSave = existing.Summary;
-        if (request.Summary != null)
-        {
-            var requestSummary = SerializeSummary(request.Summary);
-
-            var mergeTemplate = await _promptTemplateRepository.GetByCodeAsync(
-                SystemTemplates.MergeSummary,
-                cancellationToken);
-
-            if (mergeTemplate != null && !string.IsNullOrWhiteSpace(mergeTemplate.Text))
-            {
-                var mergePrompt = mergeTemplate.Text
-                    .Replace("{oldSummary}", existing.Summary)
-                    .Replace("{newSummary}", requestSummary);
-
-                var data = new EnrichedData()
-                {
-                    Messages = new[]
-                    {
-                        new Message()
-                        {
-                            Content = mergePrompt,
-                            Role = LlmRoles.User
-                        }
-                    }
-                };
-                var mergedByLlm = await _llmClient.SendAsync(data, cancellationToken);
-                if (!string.IsNullOrWhiteSpace(mergedByLlm))
-                {
-                    summaryToSave = mergedByLlm.Trim();
-                }
-            }
-            else
-            {
-                summaryToSave = requestSummary;
-            }
-        }
-
-        var updated = await _patientCardRepository.UpdateSummaryAsync(
-            request.PatientId,
-            request.SpecialtyCode,
-            summaryToSave,
+            requestHistory,
             cancellationToken);
 
         if (updated == null)
@@ -157,17 +111,17 @@ public class PatientCardsController : ControllerBase
             Id = patientCard.Id,
             PatientId = patientCard.PatientId,
             SpecialtyCode = patientCard.SpecialtyCode ?? string.Empty,
-            Summary = patientCard.Summary ?? string.Empty
+            History = patientCard.History ?? string.Empty
         };
     }
 
-    private static string? SerializeSummary(PatientCardSummaryRequest? summary)
+    private static string? SerializeHistory(PatientCardHistoryRequest? history)
     {
-        if (summary == null)
+        if (history == null)
         {
             return null;
         }
 
-        return JsonSerializer.Serialize(summary);
+        return JsonSerializer.Serialize(history);
     }
 }

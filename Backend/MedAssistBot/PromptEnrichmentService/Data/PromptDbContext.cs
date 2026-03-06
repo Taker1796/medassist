@@ -30,7 +30,7 @@ public class PromptDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PatientId).HasColumnName("patientId").HasColumnType("uuid");
             entity.Property(e => e.SpecialtyCode).HasMaxLength(64).HasColumnName("specialtyCode");
-            entity.Property(e => e.Summary).HasColumnName("summary");
+            entity.Property(e => e.History).HasColumnName("history");
             entity.HasIndex(e => new { e.PatientId, e.SpecialtyCode }).IsUnique();
         });
     }
