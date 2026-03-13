@@ -1,24 +1,26 @@
-<div class="content-wrapper">
-  <section class="list-section">
-    <p class="subtitle">Список пациентов:</p>
-    <p class="list-hint">Выберите одного пациента, чтобы продолжить.</p>
-    @if (patients$ | async; as patients) {
-      <div class="chip-table" [class.scrollable]="patients.length > 8">
-        @for (patient of patients; track patient.id) {
-          <div class="chip-cell"
-               [class.selected]="selected.has(patient.id)"
-               (click)="toggle(patient.id)">
-            <span class="chip-text">
-              {{ patient.nickname }}
-            </span>
-          </div>
-        } @empty {
-          <p class="empty-state">Пациенты пока не добавлены.</p>
-        }
-      </div>
-    } @else {
-      <p class="empty-state">Пациенты пока не добавлены.</p>
-    }
-  </section>
-</div>
-<app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+<app-menu-shell [showHome]="true" title="Пациенты">
+  <div class="content-wrapper">
+    <section class="list-section">
+      <p class="subtitle">Список пациентов:</p>
+      <p class="list-hint">Выберите одного пациента, чтобы продолжить.</p>
+      @if (patients$ | async; as patients) {
+        <div class="chip-table" [class.scrollable]="patients.length > 8">
+          @for (patient of patients; track patient.id) {
+            <div class="chip-cell"
+                 [class.selected]="selected.has(patient.id)"
+                 (click)="toggle(patient.id)">
+              <span class="chip-text">
+                {{ patient.nickname }}
+              </span>
+            </div>
+          } @empty {
+            <p class="empty-state">Пациенты пока не добавлены.</p>
+          }
+        </div>
+      } @else {
+        <p class="empty-state">Пациенты пока не добавлены.</p>
+      }
+    </section>
+  </div>
+  <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+</app-menu-shell>

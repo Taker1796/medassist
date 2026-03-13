@@ -7,12 +7,14 @@ import {PatientsService} from '../../services/patients-service';
 import {MeService} from '../../services/me-service';
 import {PatientResponse} from '../../models/patientResponse.model';
 import {MeResponse} from '../../models/meResponse.model';
+import {MenuShell} from '../menu-shell/menu-shell';
 
 @Component({
   selector: 'app-patients',
   imports: [
     AsyncPipe,
-    TransitionButtons
+    TransitionButtons,
+    MenuShell
   ],
   templateUrl: './patients.html',
   styleUrl: './patients.css',
@@ -25,7 +27,7 @@ export class Patients implements OnInit{
   private _meService  = inject(MeService)
   private _patientService = inject(PatientsService);
   private _cdr = inject(ChangeDetectorRef);
-  private _endSessionButtonLabel = 'Завершить сессию';
+  private _endSessionButtonLabel = 'Завершить приём';
 
   patients$ = this.refresh$.pipe(
     switchMap(() => this._patientService.getList())
@@ -85,7 +87,7 @@ export class Patients implements OnInit{
           this._cdr.detectChanges();
         }
       );
-      alert('Сессия создана');
+      this.router.navigate(['/consultation']);
     });
   }
 
@@ -95,7 +97,7 @@ export class Patients implements OnInit{
       this.selected = new Set();
       this.setLabelToEndSessionButton(null);
       this._cdr.detectChanges(); // Принудительное обновление
-      alert('Сессия удалена');
+      alert('Приём завершен');
     });
   }
 
@@ -131,7 +133,7 @@ export class Patients implements OnInit{
   private initButtons(): void {
 
     this.buttonsConfig = [
-      { label: 'Создать сессию с пациентом', onClick: () => this.select() },
+      { label: 'Начать приём', onClick: () => this.select() },
       { label:  this._endSessionButtonLabel, onClick: () => this.unselect() },
       { label: 'Создать пациента', onClick: () => this.create() },
       { label: 'Обновить пациента', onClick: () => this.update() },

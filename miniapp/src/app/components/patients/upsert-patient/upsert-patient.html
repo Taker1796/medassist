@@ -1,40 +1,42 @@
-<div class="content-wrapper">
-<form class="form" [formGroup]="form" appBlurOnOutsideTap >
+<app-menu-shell [showHome]="true" title="Пациент">
+  <div class="content-wrapper">
+    <form class="form" [formGroup]="form" appBlurOnOutsideTap >
 
-  <div class="form-control" [class.has-error]="fullName?.invalid && fullName?.touched">
-    <label>Имя</label>
-    <input formControlName="fullName" />
-    @if (fullName?.invalid && fullName?.touched) {
-      <div class="fieldRequiredError">
-        Поле обязательно
+      <div class="form-control" [class.has-error]="fullName?.invalid && fullName?.touched">
+        <label>Имя</label>
+        <input formControlName="fullName" />
+        @if (fullName?.invalid && fullName?.touched) {
+          <div class="fieldRequiredError">
+            Поле обязательно
+          </div>
+        }
       </div>
-    }
-  </div>
 
-  <div class="form-control">
-    <label>Возраст</label>
-    <input type="number" formControlName="age" />
-  </div>
+      <div class="form-control">
+        <label>Возраст</label>
+        <input type="number" formControlName="age" />
+      </div>
 
-  <div class="form-control">
-    <label>Пол</label>
-    <input type="number" formControlName="sex" />
-  </div>
+      <div class="form-control">
+        <label>Пол</label>
+        <input type="number" formControlName="sex" />
+      </div>
 
-  <div class="form-control">
-    <label>Аллергии</label>
-    <input formControlName="allergies" />
-  </div>
+      <div class="form-control">
+        <label>Аллергии</label>
+        <input formControlName="allergies" />
+      </div>
 
-  <div class="form-control">
-    <label>Хронические заболевания</label>
-    <input formControlName="chronicConditions" />
-  </div>
+      <div class="form-control">
+        <label>Хронические заболевания</label>
+        <input formControlName="chronicConditions" />
+      </div>
 
-  <div class="form-control">
-    <label>Другие заметки</label>
-    <input formControlName="notes" />
+      <div class="form-control">
+        <label>Другие заметки</label>
+        <input formControlName="notes" />
+      </div>
+    </form>
   </div>
-</form>
-</div>
-<app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+  <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+</app-menu-shell>

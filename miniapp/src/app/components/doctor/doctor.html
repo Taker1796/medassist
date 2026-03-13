@@ -1,11 +1,12 @@
-<div class="content-wrapper">
-@if (userData$ | async; as data) {
-    <div class="user-info">
-      <p>Имя пользователя: {{ data.nickname }}</p>
-      <p>Специализация: {{ data.specializations?.length ? data.specializations[0].title : 'Не выбрана' }}</p>
-      <p>Сессия пациента: {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}</p>
-    </div>
-  }
-</div>
-<app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
-
+<app-menu-shell [showHome]="true" title="Профиль врача">
+  <div class="content-wrapper">
+    @if (userData$ | async; as data) {
+      <div class="user-info">
+        <p>Имя пользователя: {{ data.nickname }}</p>
+        <p>Специализация: {{ data.specializations?.length ? data.specializations[0].title : 'Не выбрана' }}</p>
+        <p>Сессия пациента: {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}</p>
+      </div>
+    }
+  </div>
+  <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+</app-menu-shell>

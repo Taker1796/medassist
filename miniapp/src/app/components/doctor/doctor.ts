@@ -4,12 +4,14 @@ import {RegistrationService} from '../../services/registration-service';
 import {MeService} from '../../services/me-service';
 import {AsyncPipe} from '@angular/common';
 import {TransitionButtons} from '../transition-buttons/transition-buttons';
+import {MenuShell} from '../menu-shell/menu-shell';
 
 @Component({
   selector: 'app-doctor',
   imports: [
     AsyncPipe,
-    TransitionButtons
+    TransitionButtons,
+    MenuShell
   ],
   templateUrl: './doctor.html',
   styleUrl: './doctor.css',

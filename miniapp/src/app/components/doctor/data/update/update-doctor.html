@@ -1,9 +1,11 @@
-<div class="content-wrapper">
-<form class="form" [formGroup]="doctorForm" appBlurOnOutsideTap>
-  <div class="form-control">
-    <label>Имя</label>
-    <input formControlName="nickName" />
+<app-menu-shell [showHome]="true" title="Данные врача">
+  <div class="content-wrapper">
+    <form class="form" [formGroup]="doctorForm" appBlurOnOutsideTap>
+      <div class="form-control">
+        <label>Имя</label>
+        <input formControlName="nickName" />
+      </div>
+    </form>
   </div>
-</form>
-</div>
-<app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+  <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
+</app-menu-shell>

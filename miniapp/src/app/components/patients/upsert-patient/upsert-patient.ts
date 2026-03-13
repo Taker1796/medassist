@@ -6,13 +6,15 @@ import {Router} from '@angular/router';
 import {IButtonConfig, TransitionButtons} from '../../transition-buttons/transition-buttons';
 import {BlurOnOutsideTap} from '../../../directives/blur-on-outside-tap';
 import {PatientResponse} from '../../../models/patientResponse.model';
+import {MenuShell} from '../../menu-shell/menu-shell';
 
 @Component({
   selector: 'app-upsert-patient',
   imports: [
     ReactiveFormsModule,
     TransitionButtons,
-    BlurOnOutsideTap
+    BlurOnOutsideTap,
+    MenuShell
   ],
   templateUrl: './upsert-patient.html',
   styleUrl: './upsert-patient.css',

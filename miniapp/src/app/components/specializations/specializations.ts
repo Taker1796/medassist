@@ -9,6 +9,7 @@ import {Router} from '@angular/router';
 import {RegistrationService} from '../../services/registration-service';
 import {IButtonConfig, TransitionButtons} from '../transition-buttons/transition-buttons';
 import {MeService} from '../../services/me-service';
+import {MenuShell} from '../menu-shell/menu-shell';
 
 @Component({
   selector: 'app-specializations',
@@ -16,7 +17,8 @@ import {MeService} from '../../services/me-service';
     AsyncPipe,
     MatChipsModule,
     CommonModule,
-    TransitionButtons
+    TransitionButtons,
+    MenuShell
   ],
   templateUrl: './specializations.html',
   styleUrl: './specializations.css',

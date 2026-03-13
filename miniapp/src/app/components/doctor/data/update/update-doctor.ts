@@ -6,13 +6,15 @@ import {MeService} from '../../../../services/me-service';
 import {UpdateMeRequest} from '../../../../models/updateMeRequest.model';
 import {BlurOnOutsideTap} from '../../../../directives/blur-on-outside-tap';
 import {MeResponse} from '../../../../models/meResponse.model';
+import {MenuShell} from '../../../menu-shell/menu-shell';
 
 @Component({
   selector: 'app-update',
   imports: [
     ReactiveFormsModule,
     TransitionButtons,
-    BlurOnOutsideTap
+    BlurOnOutsideTap,
+    MenuShell
   ],
   templateUrl: './update-doctor.html',
   styleUrl: './update-doctor.css',

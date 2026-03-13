@@ -1,41 +1,23 @@
 import {Component, inject} from '@angular/core';
 import {Router} from '@angular/router';
-import {Chat} from '../chat/chat';
-import {MeService} from '../../services/me-service';
-import {AsyncPipe, SlicePipe} from '@angular/common';
-import {BlurOnOutsideTap} from '../../directives/blur-on-outside-tap';
-import {Environment} from '../../environments/environment';
+import {MenuShell} from '../menu-shell/menu-shell';
 
 @Component({
   selector: 'app-main',
   imports: [
-    Chat,
-    AsyncPipe,
-    BlurOnOutsideTap,
-    SlicePipe
-
+    MenuShell
   ],
   templateUrl: './main.html',
   styleUrl: './main.css',
 })
 export class Main {
   private _router = inject(Router);
-  private _meService = inject(MeService);
-  userData$ = this._meService.me();
-  menuOpen = false;
-  constructor() {
-    console.log('Environment is prod: '+Environment.production);
-  }
-
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
-  }
-
-  goToDoctor(){
-    this._router.navigate(['/doctor']);
-  }
 
   goToPatients(){
     this._router.navigate(['/patients']);
+  }
+
+  goToAskAi(): void {
+    this._router.navigate(['/ask-ai']);
   }
 }
