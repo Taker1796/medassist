@@ -1,6 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {RegistrationService} from './services/registration-service';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +9,6 @@ import {RegistrationService} from './services/registration-service';
   imports: [RouterOutlet]
 })
 export class AppComponent implements OnInit {
-
-  registrationService: RegistrationService = inject(RegistrationService);
   constructor() {}
 
   ngOnInit() {

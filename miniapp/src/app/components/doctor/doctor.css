@@ -1,17 +1,32 @@
 .user-info {
-  margin-bottom: 20px;
-  padding: 15px;
-  border-radius: 5px;
-  text-align: right;
-  background-color: transparent;
+  width: min(100%, 640px);
+  margin: 0 auto;
+  padding: clamp(14px, 2vw, 20px);
+  border-radius: 12px;
+  text-align: left;
+  background: rgba(43, 54, 72, 0.68);
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
 }
 
 .user-info p {
-  margin: 5px 0;
-  font-size: 16px;
+  margin: 0 0 10px;
+  font-size: clamp(14px, 1.8vw, 16px);
 }
+
+.user-info p:last-child {
+  margin-bottom: 0;
+}
+
 :host {
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 640px) {
+  .user-info {
+    border-radius: 10px;
+  }
 }

@@ -1,139 +1,144 @@
 @import 'fonts';
 
-// Переменные цветов Telegram
-$bg-color: var(--tg-theme-bg-color, #f4f4f4);
-$text-color: var(--tg-theme-text-color, #222);
-$btn-color: #000000;
-
-body{
-  font-family: 'Inter', sans-serif; /* правильно */
-  font-weight: 400; /* normal вес */
-  font-style: normal;
+:root {
+  --bg-color: var(--tg-theme-bg-color, #161b24);
+  --text-color: var(--tg-theme-text-color, #e7edf7);
+  --muted-text-color: rgba(231, 237, 247, 0.72);
+  --surface-color: #202938;
+  --surface-soft-color: #2b3648;
+  --accent-color: #78a6ff;
+  --border-color: rgba(231, 237, 247, 0.18);
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --content-max-width: 960px;
 }
-html {
+
+html,
+body {
+  height: 100%;
   margin: 0;
   padding: 0;
-  background-color: $bg-color;
-  color: $text-color;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.45;
+}
+
+app-root {
+  display: block;
+  min-height: 100%;
 }
 
 .container {
-  padding: 5px;
-  text-align: center;
-  color: ghostwhite;
-  background-color: black;
-  min-height: 96vh;
-  max-height: 96vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+  padding: clamp(12px, 2vw, 20px);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  background: radial-gradient(circle at top left, #273247, #1a2130 55%, #141a25 100%);
 }
 
 .content-wrapper {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 button {
-  width: 75%;
-  padding: 10px;
-  margin-bottom: 12px;
+  width: min(100%, 360px);
+  min-height: 44px;
+  padding: 10px 16px;
+  margin: 0;
   font-size: 14px;
   border-radius: 24px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s ease, opacity 0.2s ease;
   font-family: inherit;
-  background-color: $btn-color;
-  border-color: whitesmoke;
-  color: white;
+  background-color: var(--surface-soft-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
   font-style: normal;
   font-weight: 500;
+  box-sizing: border-box;
+}
 
-  &:hover {
-    background-color: darken($btn-color, 10%);
+@media (hover: hover) and (pointer: fine) {
+  button:hover {
+    background-color: #34435c;
   }
+}
 
-  // ----------------------------
-  // Стиль для disabled кнопки
-  // ----------------------------
-  &:disabled {
-    background-color: lighten($btn-color, 25%);
-    cursor: not-allowed;
-    opacity: 0.6;
-    pointer-events: none; // отключение hover/click
-  }
+button:disabled {
+  background-color: #374056;
+  border-color: rgba(231, 237, 247, 0.12);
+  cursor: not-allowed;
+  opacity: 0.65;
+  pointer-events: none;
+}
 
-  // Чтобы hover НЕ срабатывал на disabled
-  &:disabled:hover {
-    background-color: lighten($btn-color, 25%);
-  }
+button:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: clamp(14px, 1.8vw, 16px);
+  color: var(--muted-text-color);
 }
 
 .chip-table {
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr)); /* 2 колонки */
-  justify-content: center;   /* центрируем таблицу по горизонтали */
-  gap: 12px 16px;           /* gap между колонками и рядами */
-
-  /* Добавляем прокрутку */
-  max-height: calc(5 * (32px + 12px)); /* 4 строки * (высота элемента + gap) */
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+  padding-right: 2px;
+  max-height: clamp(280px, 52vh, 480px);
   overflow-y: auto;
-  padding-right: 8px; /* Отступ для скроллбара */
-  width: fit-content;   /*  КЛЮЧ */
-  margin: 50px auto 0;  /* центрируем блок */
-
+  box-sizing: border-box;
 }
 
-/* Стилизация скроллбара (опционально) */
-.chip-table::-webkit-scrollbar {
-  width: 6px;
-}
-
-.chip-table::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-.chip-table::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-.chip-table::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
 .chip-cell {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0 12px;
-  height: 40px;
+  min-height: 44px;
   border-radius: 16px;
-  background-color: #928585;
+  background-color: #2f3a4d;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-  color:white;
-  /* Управление текстом */
-  max-width: 150px;        /* Максимальная ширина чипа */
-  min-width: 100px;
-  font-size: 14px;        /* Базовый размер шрифта */
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  color: var(--text-color);
   border: 1px solid transparent;
-  overflow: hidden;       /* Скрываем выходящее */
+  overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  box-sizing: border-box;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .chip-cell:hover {
-    background-color: black;
-    border-color: whitesmoke;
+    background-color: #3b4860;
+    border-color: var(--border-color);
   }
 }
 
 .chip-cell.selected {
-  background-color: black;
-  color: white;
-  border-color: whitesmoke;
+  background-color: #4f6186;
+  color: var(--text-color);
+  border-color: rgba(231, 237, 247, 0.26);
 }
 
 .chip-text {
@@ -145,78 +150,97 @@ button {
 }
 
 .form {
-  max-width: 400px;
-  margin: 20px auto;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  width: min(100%, 560px);
+  margin: 0 auto;
+  padding: clamp(14px, 2vw, 20px);
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  box-sizing: border-box;
 }
 
 .form-control {
   display: flex;
   flex-direction: column;
-  margin: 0 auto 16px;
-  width: 70%;
+  gap: 6px;
+  width: 100%;
 }
 
 .form-control label {
-  margin-bottom: 6px;
   font-weight: 600;
+  font-size: 14px;
 }
 
 .form-control.has-error input {
-  border-color: #d32f2f;
+  border-color: #ff8d8d;
 }
 
 .form-control input {
+  width: 100%;
+  min-height: 42px;
   padding: 10px 14px;
-  border-radius: 24px;
-  border: 1px solid #ccc;
-  transition: border-color .2s, box-shadow .2s;
-  background-color: black;
-  color: white;
+  border-radius: 14px;
+  border: 1px solid rgba(231, 237, 247, 0.24);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: rgba(19, 25, 35, 0.55);
+  color: var(--text-color);
+  box-sizing: border-box;
 }
 
 .form-control input:focus {
-  border-color: #3f51b5;
-  box-shadow: 0 0 0 3px rgba(63, 81, 181, .2);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(127, 112, 216, 0.2);
   outline: none;
 }
-.fieldRequiredError{
-  color: #d32f2f;
+
+.fieldRequiredError {
+  color: #ffabab;
   font-size: 12px;
-  margin-top: 4px;
 }
-/*для ios, чтобы форма не оставалась увеличенной
-после ввода в input*/
-input, textarea, select {
+
+input,
+textarea,
+select {
   font-size: 16px;
 }
 
-/* Firefox */
 * {
-  scrollbar-width: thin;                 /* тонкая полоса */
-  scrollbar-color: #2a2a2a transparent; /* цвет бегунка и трека */
+  scrollbar-width: thin;
+  scrollbar-color: #4d5c78 transparent;
 }
 
-/* Chrome, Edge, Safari */
 *::-webkit-scrollbar {
-  width: 6px; /* ширина полосы прокрутки */
+  width: 6px;
 }
 
 *::-webkit-scrollbar-track {
-  background: transparent; /* фон полосы */
+  background: transparent;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #2a2a2a; /* цвет бегунка */
-  border-radius: 3px;         /* скругление бегунка */
+  background-color: #4d5c78;
+  border-radius: 3px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #2a2a2a; /* цвет при наведении */
+  background-color: #5b6c8c;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 10px;
+  }
+
+  .chip-table {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  button {
+    width: 100%;
+  }
 }

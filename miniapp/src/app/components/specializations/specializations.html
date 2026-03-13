@@ -1,16 +1,24 @@
 <div class="content-wrapper">
-<p class="subtitle">Выберите специализацию:</p>
-  <div class="chip-table">
-    @for (spec of specializations$ | async; track spec.code) {
-      <div class="chip-cell"
-           [class.selected]="selected.has(spec.code)"
-           (click)="toggle(spec.code)">
-        <span class="chip-text">
-          {{ spec.title }}
-        </span>
+  <section class="list-section">
+    <p class="subtitle">Выберите специализацию:</p>
+    <p class="list-hint">Можно выбрать только одну специализацию.</p>
+    @if (specializations$ | async; as specializations) {
+      <div class="chip-table" [class.scrollable]="specializations.length > 8">
+        @for (spec of specializations; track spec.code) {
+          <div class="chip-cell"
+               [class.selected]="selected.has(spec.code)"
+               (click)="toggle(spec.code)">
+            <span class="chip-text">
+              {{ spec.title }}
+            </span>
+          </div>
+        } @empty {
+          <p class="empty-state">Список специализаций пока недоступен.</p>
+        }
       </div>
+    } @else {
+      <p class="empty-state">Список специализаций пока недоступен.</p>
     }
-  </div>
+  </section>
 </div>
 <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
-

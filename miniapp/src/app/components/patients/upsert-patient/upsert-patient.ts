@@ -5,6 +5,7 @@ import {UpsertPatientRequest} from '../../../models/upsertPatientRequest.model';
 import {Router} from '@angular/router';
 import {IButtonConfig, TransitionButtons} from '../../transition-buttons/transition-buttons';
 import {BlurOnOutsideTap} from '../../../directives/blur-on-outside-tap';
+import {PatientResponse} from '../../../models/patientResponse.model';
 
 @Component({
   selector: 'app-upsert-patient',
@@ -23,7 +24,7 @@ export class UpsertPatient implements OnInit {
   private _router = inject(Router);
   private readonly _patientId: string|null = null;
 
-  mode: string|null  = null;
+  mode: 'create' | 'update' | null = null;
   buttonsConfig: IButtonConfig[] = [];
 
 
@@ -58,7 +59,7 @@ export class UpsertPatient implements OnInit {
     }
 
     if(this.mode === 'create'){
-      this._patientService.create(body).subscribe(val => {
+      this._patientService.create(body).subscribe((val: UpsertPatientRequest) => {
           alert(`Пациент ${val.nickname} создан!`);
           this._router.navigate(['/patients']);
         }
@@ -72,7 +73,7 @@ export class UpsertPatient implements OnInit {
         return;
       }
 
-      this._patientService.update(body, this._patientId).subscribe(val => {
+      this._patientService.update(body, this._patientId).subscribe((val: UpsertPatientRequest) => {
 
           alert(`Пациент ${val.nickname} обновлен!`);
           this._router.navigate(['/patients']);
@@ -104,7 +105,7 @@ export class UpsertPatient implements OnInit {
         return;
       }
 
-      this._patientService.getById(this._patientId).subscribe(patient => {
+      this._patientService.getById(this._patientId).subscribe((patient: PatientResponse) => {
         const safePatient = {
           fullName: patient.nickname || '',
           age: patient.ageYears ?? '',

@@ -1,0 +1,23 @@
+.header {
+  margin: auto;
+  width: min(100%, 540px);
+  padding: clamp(16px, 3vw, 24px);
+  text-align: center;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: rgba(43, 54, 72, 0.72);
+  box-sizing: border-box;
+}
+
+.subtitle {
+  margin: 0 0 10px;
+}
+
+.subtitle:last-child {
+  margin-bottom: 0;
+}
+
+:host {
+  display: flex;
+  flex: 1;
+}

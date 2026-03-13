@@ -1,12 +1,11 @@
 import {Component, inject, SecurityContext, signal} from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
+import {Router} from '@angular/router';
 import {RegistrationService} from '../../services/registration-service';
 import {TransitionButtons} from '../transition-buttons/transition-buttons';
 import {map, Observable, shareReplay} from 'rxjs';
-import {Specialization} from '../../models/specializationModel';
 import {StaticContentService} from '../../services/static-content-service';
 import {AsyncPipe} from '@angular/common';
-import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-agreement',

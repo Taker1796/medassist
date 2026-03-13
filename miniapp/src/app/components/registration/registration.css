@@ -1,0 +1,31 @@
+.registration-wrap {
+  margin: auto;
+  width: min(100%, 560px);
+  padding: clamp(20px, 4vw, 36px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: rgba(43, 54, 72, 0.7);
+  box-sizing: border-box;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 420px;
+  opacity: 0.85;
+}
+
+:host {
+  display: flex;
+  flex: 1;
+}

@@ -1,17 +1,13 @@
-import {Component, inject, Inject, OnInit} from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
+import {Component, inject} from '@angular/core';
+import {Router} from '@angular/router';
 import {RegistrationService} from '../../services/registration-service';
 import {MeService} from '../../services/me-service';
-import {pattern} from '@angular/forms/signals';
-import {MeResponse} from '../../models/meResponse.model';
-import {Observable} from 'rxjs';
 import {AsyncPipe} from '@angular/common';
 import {TransitionButtons} from '../transition-buttons/transition-buttons';
 
 @Component({
   selector: 'app-doctor',
   imports: [
-    RouterLink,
     AsyncPipe,
     TransitionButtons
   ],

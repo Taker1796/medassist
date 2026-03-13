@@ -2,7 +2,7 @@ import { Injectable ,inject} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Environment } from '../environments/environment';
 import { RegistrationStatus } from '../models/regirstrationStatus.model';
-import { catchError, EMPTY, map, Observable, of, tap } from 'rxjs';
+import { catchError, EMPTY } from 'rxjs';
 import {CreateRegistrationRequestModel} from '../models/createRegistrationRequest.model';
 import {CreateRegistrationResponseModel} from '../models/createRegistrationResponse.model';
 import {Router} from '@angular/router';
@@ -22,7 +22,7 @@ export class RegistrationService {
   private _baseUrl = Environment.apiUrl;
   private _router = inject(Router);
 
-  register(specializations:string[]){
+  register(specializations:string[]): void {
 
     if(!this._tgService.userName){
       alert("Регистрация невозможна. Не получен tgUserName");
@@ -40,16 +40,16 @@ export class RegistrationService {
         console.error('Ошибка запроса:', error);
         return EMPTY;
       })
-    ).subscribe(value => {
+    ).subscribe(() => {
       this.isRegistered = true;
       this._router.navigate([''])
     });
 
   }
 
-  delete(){
+  delete(): void {
     this._http.delete(`${this._baseUrl}${Environment.registrationUrlPath}`)
-      .subscribe(value => {
+      .subscribe(() => {
       this.isRegistered = false;
       this._router.navigate(['/registration'])
     });

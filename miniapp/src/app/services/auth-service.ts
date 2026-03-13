@@ -1,8 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Environment} from '../environments/environment';
-import {catchError, EMPTY, map, Observable, of, tap} from 'rxjs';
-import {AuthRequestModel} from '../models/authRequest.model';
+import {catchError, map, Observable, of} from 'rxjs';
 import {AuthResponseModel} from '../models/authResponse.model';
 import {TgService} from './tg-service';
 import {CookieService} from 'ngx-cookie-service';
@@ -20,11 +19,11 @@ export class AuthService {
   private _router = inject(Router);
   private _token = this._cookiesService.get('token') || null;
 
-  get IsAuth(){
+  get IsAuth(): boolean {
     return !!this._token;
   }
 
-  get GetToken(){
+  get GetToken(): string | null {
     return this._token;
   }
 
@@ -58,16 +57,16 @@ export class AuthService {
     }
   }
 
-  logout(){
+  logout(): void {
     this._token = null;
     this._cookiesService.delete('token');
     this._router.navigate(['/isnottelegram']);
   }
 
-  private Auth(body: object){
+  private Auth(body: object): Observable<boolean> {
     return this._http.post<AuthResponseModel>(`${this._baseUrl}${Environment.authUrlPath}/token`, body).pipe(
 
-      map(response => {
+      map((response: AuthResponseModel) => {
         if (!response?.accessToken) {
           this.logout();
           return false;

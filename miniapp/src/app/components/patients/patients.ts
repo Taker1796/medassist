@@ -1,10 +1,12 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
-import {Router, RouterLink} from "@angular/router";
+import {Router} from "@angular/router";
 import {AsyncPipe} from '@angular/common';
 import {IButtonConfig, TransitionButtons} from '../transition-buttons/transition-buttons';
-import {BehaviorSubject, map, switchMap} from 'rxjs';
+import {BehaviorSubject, catchError, map, of, switchMap, take} from 'rxjs';
 import {PatientsService} from '../../services/patients-service';
 import {MeService} from '../../services/me-service';
+import {PatientResponse} from '../../models/patientResponse.model';
+import {MeResponse} from '../../models/meResponse.model';
 
 @Component({
   selector: 'app-patients',
@@ -70,13 +72,14 @@ export class Patients implements OnInit{
 
     const patientId = [...this.selected][0];
 
-    this._meService.setSession(patientId).subscribe(value => {
+    this._meService.setSession(patientId).subscribe(() => {
       this.selected = new Set();
       this.patients$.pipe(
-        map(patients => patients.find(p => p.id === patientId))
-      ).subscribe(value => {
-          if (value) {
-            this.setLabelToEndSessionButton(value.nickname);
+        take(1),
+        map((patients: PatientResponse[]) => patients.find((p: PatientResponse) => p.id === patientId))
+      ).subscribe((patient: PatientResponse | undefined) => {
+          if (patient) {
+            this.setLabelToEndSessionButton(patient.nickname);
           }
 
           this._cdr.detectChanges();
@@ -88,7 +91,7 @@ export class Patients implements OnInit{
 
   unselect() {
 
-    this._meService.resetSession().subscribe(value => {
+    this._meService.resetSession().subscribe(() => {
       this.selected = new Set();
       this.setLabelToEndSessionButton(null);
       this._cdr.detectChanges(); // Принудительное обновление
@@ -122,6 +125,7 @@ export class Patients implements OnInit{
 
   ngOnInit(){
     this.initButtons();
+    this.syncEndSessionButtonLabel();
   }
 
   private initButtons(): void {
@@ -134,12 +138,28 @@ export class Patients implements OnInit{
       { label: 'Удалить пациента', onClick: () => this.delete() },
       { label: 'Назад', routerLink: '' }
     ];
+  }
 
-    this._meService.me().subscribe(me => {
-      if (me.lastSelectedPatientNickname !== null) {
+  private syncEndSessionButtonLabel(): void {
+    this._meService.me().pipe(
+      take(1),
+      switchMap((me: MeResponse) => {
+        if (me.lastSelectedPatientNickname) {
+          return of(me.lastSelectedPatientNickname);
+        }
 
-        this.setLabelToEndSessionButton(me.lastSelectedPatientNickname);
-      }
+        if (!me.lastSelectedPatientId) {
+          return of(null);
+        }
+
+        return this._patientService.getById(me.lastSelectedPatientId).pipe(
+          map((patient: PatientResponse) => patient.nickname ?? null),
+          catchError(() => of(null))
+        );
+      })
+    ).subscribe((patientName: string | null) => {
+      this.setLabelToEndSessionButton(patientName);
+      this._cdr.detectChanges();
     });
   }
 

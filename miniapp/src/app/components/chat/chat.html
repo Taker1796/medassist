@@ -2,6 +2,8 @@
   <div
     class="messages"
     #messagesContainer
+    aria-live="polite"
+    aria-label="История диалога"
     (scroll)="onScroll()"
   >
 
@@ -15,8 +17,8 @@
     </div>
     }
     @if (isTyping) {
-    <div class="typing-indicator">
-      Печатает...
+    <div class="typing-indicator" role="status" aria-live="polite">
+      печатает...
     </div>
     }
   </div>
@@ -25,6 +27,7 @@
   @if (showScrollButton) {
     <button
       class="scroll-bottom-btn"
+      type="button"
       [class.show]="showScrollButton"
       (click)="scrollToBottom(true)"
     >
@@ -33,20 +36,28 @@
   }
   <div class="chat-input-container">
     <div class="input-wrapper">
-      <textarea
-        #chatTextarea
-        class="chat-textarea"
-        [(ngModel)]="messageText"
-        placeholder="Введите сообщение..."
-        rows="1"
-        (input)="onInput($event)"
-        (keydown)="onKeyDown($event)"
-      ></textarea>
+      <div class="textarea-shell">
+        <textarea
+          #chatTextarea
+          class="chat-textarea"
+          [(ngModel)]="messageText"
+          aria-label="Введите сообщение для нейросети"
+          rows="1"
+          (focus)="onTextareaFocus()"
+          (input)="onInput($event)"
+          (blur)="onTextareaBlur()"
+          (keydown)="onKeyDown($event)"
+        ></textarea>
+        <span class="textarea-placeholder" [class.hidden]="messageText.trim().length > 0 || isTextareaFocused">
+          Введите сообщение...
+        </span>
+      </div>
 
       <button
         class="send-button"
+        type="button"
+        aria-label="Отправить сообщение"
         (click)="sendMessage()"
-        (touchstart)="sendMessage()"
         [disabled]="!messageText.trim()"
       >
         ➤

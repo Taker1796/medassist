@@ -1,11 +1,11 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Specialization} from '../../models/specializationModel';
 import {SpecializationsService} from '../../services/specializations-service';
 import {AsyncPipe} from '@angular/common';
 import {MatChipsModule} from '@angular/material/chips';
 import { CommonModule } from '@angular/common';
-import {Router, RouterLink} from '@angular/router';
+import {Router} from '@angular/router';
 import {RegistrationService} from '../../services/registration-service';
 import {IButtonConfig, TransitionButtons} from '../transition-buttons/transition-buttons';
 import {MeService} from '../../services/me-service';
@@ -21,7 +21,7 @@ import {MeService} from '../../services/me-service';
   templateUrl: './specializations.html',
   styleUrl: './specializations.css',
 })
-export class Specializations {
+export class Specializations implements OnInit {
 
   specializationService: SpecializationsService = inject(SpecializationsService);
   specializations$: Observable<Specialization[]> = this.specializationService.getList();
@@ -53,10 +53,10 @@ export class Specializations {
     this.registrationService.register([...this.selected]);
   }
 
-  private updateSpecialization(){
-    const val = this.selected.size > 0 ? this.selected.values().next().value! : null;
+  private updateSpecialization(): void {
+    const val = this.selected.size > 0 ? (this.selected.values().next().value as string) : null;
 
-    this.meService.changeSpecialization(val).subscribe(val => {alert("Специализация указана")});
+    this.meService.changeSpecialization(val).subscribe(() => {alert("Специализация указана")});
   }
 
   ngOnInit() {

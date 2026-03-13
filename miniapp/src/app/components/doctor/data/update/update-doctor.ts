@@ -1,10 +1,11 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {TransitionButtons} from '../../../transition-buttons/transition-buttons';
 import {Router} from '@angular/router';
 import {MeService} from '../../../../services/me-service';
 import {UpdateMeRequest} from '../../../../models/updateMeRequest.model';
 import {BlurOnOutsideTap} from '../../../../directives/blur-on-outside-tap';
+import {MeResponse} from '../../../../models/meResponse.model';
 
 @Component({
   selector: 'app-update',
@@ -50,12 +51,12 @@ export class UpdateDoctor implements OnInit {
       nickname: this.doctorForm.value.nickName || null,
     };
 
-    this._meService.update(body).subscribe(val => alert("Данные обновлены"));
+    this._meService.update(body).subscribe(() => alert("Данные обновлены"));
   }
 
   private initData(){
 
-    this._meService.me().subscribe(me => {
+    this._meService.me().subscribe((me: MeResponse) => {
       const myInfo = {
         nickName: me.nickname || ''
       };

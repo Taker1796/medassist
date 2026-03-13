@@ -1,9 +1,9 @@
-import {ChangeDetectorRef, Component, ElementRef, inject, output, signal, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, inject, output, ViewChild} from '@angular/core';
 import{ FormsModule} from '@angular/forms';
-import {HttpClient} from '@angular/common/http';
 import {LlmService} from '../../services/llm-service';
 import {LlmRequest} from '../../models/llmRequest.model';
-import {catchError, of, tap} from 'rxjs';
+import {catchError, of} from 'rxjs';
+import {LlmResponse} from '../../models/llmResponse.model';
 
 interface ChatMessage {
   text: string;
@@ -20,6 +20,7 @@ interface ChatMessage {
 
 export class Chat {
   messageText = '';
+  isTextareaFocused = false;
   // Output для отправки сообщения родительскому компоненту
   sendMessageEvent = output<string>();
   messages: ChatMessage[] = [];
@@ -30,7 +31,7 @@ export class Chat {
   private _llmService = inject(LlmService);
   private _conversationId: string|null = null;
 
-  @ViewChild('messagesContainer') messagesContainer!: ElementRef;
+  @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLElement>;
   @ViewChild('chatTextarea') chatTextarea!: ElementRef<HTMLTextAreaElement>;
 
   // Обработка ввода текста
@@ -39,10 +40,28 @@ export class Chat {
     this.autoResize(textarea);
   }
 
+  onTextareaFocus(): void {
+    this.isTextareaFocused = true;
+  }
+
+  onTextareaBlur(): void {
+    this.isTextareaFocused = false;
+    const textarea = this.chatTextarea?.nativeElement;
+    if (!textarea || textarea.value) {
+      return;
+    }
+
+    this.resetTextareaState(textarea);
+  }
+
   // Автоматическое изменение высоты textarea
   autoResize(textarea: HTMLTextAreaElement): void {
-    textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+    const fixedHeight = 90;
+    textarea.style.height = `${fixedHeight}px`;
+    textarea.style.overflowY = textarea.scrollHeight > fixedHeight ? 'auto' : 'hidden';
+    if (!textarea.value) {
+      this.resetTextareaState(textarea);
+    }
   }
 
   // Обработка нажатия клавиш
@@ -53,7 +72,7 @@ export class Chat {
     }
   }
 
-  sendMessage() {
+  sendMessage(): void {
     if (!this.messageText.trim()) return;
 
     this.messages.push({
@@ -63,12 +82,17 @@ export class Chat {
 
     const userText = this.messageText;
     this.messageText = '';
-    setTimeout(() => {
-      const textarea = this.chatTextarea?.nativeElement;
-      if (textarea) {
-        this.autoResize(textarea);
-      }
-    }, 0);
+    const textarea = this.chatTextarea?.nativeElement;
+    if (textarea) {
+      textarea.value = '';
+      this.autoResize(textarea);
+      this.resetTextareaState(textarea);
+      requestAnimationFrame(() => {
+        if (!textarea.value) {
+          this.resetTextareaState(textarea);
+        }
+      });
+    }
 
     // скроллим **после рендера**
     setTimeout(() => {
@@ -90,7 +114,7 @@ export class Chat {
         return of(null);
       })
     ).
-    subscribe(response => {
+    subscribe((response: LlmResponse | null) => {
 
       if(!response){
         return;
@@ -115,7 +139,11 @@ export class Chat {
     this.handleAutoScroll();
   }
 
-  onScroll() {
+  onScroll(): void {
+    if (!this.messagesContainer) {
+      return;
+    }
+
     const el = this.messagesContainer.nativeElement;
 
     const threshold = 100; // px
@@ -126,17 +154,31 @@ export class Chat {
   }
 
   // вызываем при добавлении нового сообщения или скролле
-  handleAutoScroll() {
+  handleAutoScroll(): void {
     this.showScrollButton = !this._isUserNearBottom;
   }
 
   // при клике прокручиваем вниз
-  scrollToBottom(smooth = false) {
+  scrollToBottom(smooth = false): void {
+    if (!this.messagesContainer) {
+      return;
+    }
+
     const el = this.messagesContainer.nativeElement;
     el.scrollTo({
       top: el.scrollHeight,
       behavior: smooth ? 'smooth' : 'auto'
     });
     this.showScrollButton = false; // скрываем кнопку после скролла
+  }
+
+  private resetTextareaState(textarea: HTMLTextAreaElement): void {
+    textarea.scrollTop = 0;
+    textarea.scrollLeft = 0;
+    try {
+      textarea.setSelectionRange(0, 0);
+    } catch {
+      // Selection API может бросать исключение в некоторых мобильных браузерах
+    }
   }
 }

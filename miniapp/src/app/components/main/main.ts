@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {Router, RouterOutlet} from '@angular/router';
+import {Router} from '@angular/router';
 import {Chat} from '../chat/chat';
 import {MeService} from '../../services/me-service';
 import {AsyncPipe, SlicePipe} from '@angular/common';
@@ -23,9 +23,7 @@ export class Main {
   private _meService = inject(MeService);
   userData$ = this._meService.me();
   menuOpen = false;
-
-  constructor(router: Router) {
-    this._router = router;
+  constructor() {
     console.log('Environment is prod: '+Environment.production);
   }
 

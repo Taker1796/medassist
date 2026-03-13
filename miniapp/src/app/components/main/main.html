@@ -1,28 +1,30 @@
 <div class="content-wrapper" appBlurOnOutsideTap>
-<div class="header">
-  <div class="burger" (click)="toggleMenu()">
-    ☰
+  <div class="header">
+    <button class="burger" type="button" aria-label="Открыть меню" (click)="toggleMenu()">
+      ☰
+    </button>
+    @if (userData$ | async; as data) {
+      <p class="session-info">
+        Пациент:
+        {{
+          data.lastSelectedPatientNickname
+            ? (data.lastSelectedPatientNickname.length > 15
+                ? (data.lastSelectedPatientNickname | slice:0:12) + '...'
+                : data.lastSelectedPatientNickname)
+            : ' - '
+        }}
+      </p>
+    }
   </div>
-  @if (userData$ | async; as data) {
-    <p>
-      Пациент:
-      {{
-        data.lastSelectedPatientNickname
-          ? (data.lastSelectedPatientNickname.length > 15
-              ? (data.lastSelectedPatientNickname | slice:0:12) + '...'
-              : data.lastSelectedPatientNickname)
-          : ' - '
-      }}
-    </p>
-  }
-</div>
 
-<nav class="side-menu" [class.open]="menuOpen">
-  <button (click)="goToDoctor()">Профиль врача</button>
-  <button (click)="goToPatients()">Пациенты</button>
-</nav>
+  <div class="menu-overlay" [class.open]="menuOpen" (click)="menuOpen = false"></div>
 
-<div class="content" (click)="menuOpen = false">
-  <app-chat></app-chat>
-</div>
+  <nav class="side-menu" [class.open]="menuOpen">
+    <button type="button" (click)="goToDoctor()">Профиль врача</button>
+    <button type="button" (click)="goToPatients()">Пациенты</button>
+  </nav>
+
+  <div class="content" (click)="menuOpen = false">
+    <app-chat></app-chat>
+  </div>
 </div>

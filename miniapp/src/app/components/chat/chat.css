@@ -1,80 +1,128 @@
-.chat-wrapper {
+:host {
   display: flex;
-  flex-direction: column;
-  height: 85dvh;
+  flex: 1;
+  min-height: 0;
 }
 
-.messages {
-  flex: 1; /* занимает всё пространство сверху */
-  overflow-y: auto;
-  padding: 16px;
+.chat-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
 }
 
 .chat-input-container {
+  position: sticky;
+  bottom: 0;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end; /* input-wrapper всегда внизу */
-  background: black;
-  padding: 12px;
+  justify-content: center;
+  background: transparent;
+  padding: 12px 0 0;
   border-radius: 15px;
   box-sizing: border-box;
+  z-index: 3;
 }
 
 .input-wrapper {
   display: flex;
-  gap: 12px;
+  width: min(100%, 920px);
+  gap: 10px;
   align-items: center;
-  background: black;
-  border-radius: 24px;
-  padding: 8px 8px 8px 20px;
-  border: 1px solid whitesmoke;
+  background: var(--surface-soft-color);
+  border-radius: 20px;
+  padding: 8px 8px 8px 12px;
+  border: 1px solid var(--border-color);
+}
+
+.textarea-shell {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
 }
 
 .chat-textarea {
-  flex: 1;
+  width: 100%;
+  min-width: 0;
   border: none;
   background: transparent;
   font-size: 16px;
-  line-height: 20px;
-  max-height: 150px;
+  line-height: 24px;
+  height: 90px;
+  min-height: 90px;
+  max-height: 90px;
   resize: none;
   outline: none;
   font-family: inherit;
-  color: ghostwhite;
+  color: var(--text-color);
   overflow-y: auto;
-  padding: 0;
+  overflow-x: hidden;
+  padding: 10px 0;
   margin: 0;
-  height: 20px;
-  min-height: 20px;
+  box-sizing: border-box;
 }
 
 .send-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
+  padding: 0;
+  line-height: 1;
   border: none;
   border-radius: 50%;
-  background: #7F70D8;
-  color: ghostwhite;
+  background: var(--accent-color);
+  color: #eff5ff;
   cursor: pointer;
   flex-shrink: 0;
   align-self: center;
-  margin: 0;
+  margin: 0 0 2px;
 }
-.chat-textarea::placeholder {
-  color: white;
+
+.send-button:focus-visible,
+.scroll-bottom-btn:focus-visible {
+  outline: 2px solid #7f70d8;
+  outline-offset: 2px;
+}
+
+.chat-textarea:focus,
+.chat-textarea:focus-visible {
+  outline: none;
+}
+
+.textarea-placeholder {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  color: var(--muted-text-color);
+  opacity: 0.75;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: opacity 0.15s ease;
 }
 
-.chat-textarea:focus::placeholder {
+.textarea-placeholder.hidden {
   opacity: 0;
 }
+
 .messages {
   flex: 1;
+  min-height: 0;
+  width: min(100%, 960px);
+  margin: 0 auto;
   overflow-y: auto;
-  padding: 16px;
+  padding: 8px 4px 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -82,26 +130,26 @@
 }
 
 .message {
-  max-width: 70%;
+  max-width: min(85%, 680px);
   padding: 10px 14px;
   border-radius: 18px;
   font-size: 14px;
-  word-wrap: break-word;
+  word-break: break-word;
   animation: fadeIn 0.2s ease;
 }
 
 .my-message {
   align-self: flex-end;
-  background: #7F70D8;
-  color: white;
+  background: #6e90d2;
+  color: #eff5ff;
   border-bottom-right-radius: 4px;
   text-align: left;
 }
 
 .bot-message {
   align-self: flex-start;
-  background: #2a2a2a;
-  color: white;
+  background: #36445d;
+  color: var(--text-color);
   border-bottom-left-radius: 4px;
   text-align: left;
 }
@@ -115,24 +163,49 @@
 
 .scroll-bottom-btn {
   position: absolute;
-  bottom: 90px;
-  background: #2a2a2a;
+  bottom: 74px;
+  background: #36445d;
   left: 50%;
-  transform: translateX(-50%); /* центрирование по горизонтали */
-  color: white;
+  transform: translateX(-50%);
+  color: var(--text-color);
   border: none;
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 20px;
   cursor: pointer;
   font-size: 13px;
-  /* плавное появление */
   opacity: 0;
-  pointer-events: none;   /* не кликабельна, пока невидима */
+  pointer-events: none;
   transition: opacity 0.25s ease;
+  width: auto;
+  z-index: 5;
 }
 
-/* класс для отображения */
 .scroll-bottom-btn.show {
   opacity: 1;
   pointer-events: auto;
+}
+
+@media (max-width: 640px) {
+  .message {
+    max-width: 92%;
+  }
+
+  .input-wrapper {
+    border-radius: 16px;
+    padding-left: 10px;
+    width: 100%;
+  }
+
+  .scroll-bottom-btn {
+    bottom: 78px;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message,
+  .scroll-bottom-btn {
+    animation: none;
+    transition: none;
+  }
 }

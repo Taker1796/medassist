@@ -63,7 +63,7 @@ public class PromptTemplateService
             throw new ArgumentNullException(nameof(messages));
         }
 
-        systemPrompt = systemPrompt.Replace("{patientHistory}", !string.IsNullOrWhiteSpace(patientHistory) ? patientHistory : string.Empty);
+        systemPrompt = systemPrompt.Replace(Placeholders.PatientHistory, !string.IsNullOrWhiteSpace(patientHistory) ? patientHistory : string.Empty);
 
         var systemMessage = new Message()
         {
