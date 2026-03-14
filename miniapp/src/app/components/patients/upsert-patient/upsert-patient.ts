@@ -28,11 +28,16 @@ export class UpsertPatient implements OnInit {
 
   mode: 'create' | 'update' | null = null;
   buttonsConfig: IButtonConfig[] = [];
+  backRoute = '/patients';
 
 
   constructor(private fb: FormBuilder) {
     this.mode = this._router.currentNavigation()?.extras.state?.['mode'];
     this._patientId = this._router.currentNavigation()?.extras.state?.['patientId'];
+
+    if (this.mode === 'update' && this._patientId) {
+      this.backRoute = `/patient-record?patientId=${encodeURIComponent(this._patientId)}`;
+    }
   }
 
   get fullName(){
@@ -74,7 +79,7 @@ export class UpsertPatient implements OnInit {
       this._patientService.update(body, this._patientId).subscribe((val: UpsertPatientRequest) => {
 
           alert(`Пациент ${val.nickname} обновлен!`);
-          this._router.navigate(['/patients']);
+          this._router.navigateByUrl(`/patient-record?patientId=${encodeURIComponent(this._patientId!)}`);
         }
       )
     }

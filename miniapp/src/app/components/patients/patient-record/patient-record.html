@@ -1,0 +1,56 @@
+<app-menu-shell [showHome]="true" title="Карта пациента" backRoute="/patients">
+  <div class="content-wrapper">
+    @if (patient; as p) {
+      <section class="patient-card">
+        <h2>{{ p.nickname }}</h2>
+        <p>Возраст: {{ p.ageYears || '—' }}</p>
+        <p>Пол: {{ p.sex || '—' }}</p>
+      </section>
+
+      <section class="visit-actions">
+        @if (isCurrentPatientActive) {
+          <button type="button" (click)="endVisit()">Завершить приём</button>
+          <button type="button" (click)="openConsultation()">Открыть приём</button>
+        } @else {
+          <button type="button" (click)="startVisit()">Начать приём</button>
+        }
+      </section>
+
+      <section class="visits-section">
+        <h3>История приёмов</h3>
+        @if (!hasVisitsApi) {
+          <p class="hint">История приёмов пока недоступна.</p>
+        } @else if (visits.length === 0) {
+          <p class="hint">Приёмов пока нет.</p>
+        } @else {
+          <div class="visit-list">
+            @for (visit of visits; track visit.id) {
+              <button
+                type="button"
+                class="visit-item"
+                [class.active]="selectedVisit?.id === visit.id"
+                (click)="selectVisit(visit)"
+              >
+                <span>{{ visit.startedAt ? (visit.startedAt | date:'dd.MM.yyyy HH:mm') : 'Без даты' }}</span>
+                <span class="visit-status">{{ visit.status || 'Завершен' }}</span>
+              </button>
+            }
+          </div>
+        }
+      </section>
+
+      @if (selectedVisit; as currentVisit) {
+        <section class="visit-summary">
+          <h3>Итоги приёма</h3>
+          <p><strong>Саммари:</strong> {{ currentVisit.summary || 'Нет данных' }}</p>
+          <p><strong>Анамнез:</strong> {{ currentVisit.anamnesis || 'Нет данных' }}</p>
+        </section>
+      }
+
+      <section class="patient-admin">
+        <button type="button" (click)="openEditPatient()">Редактировать пациента</button>
+        <button type="button" (click)="deletePatient()">Удалить пациента</button>
+      </section>
+    }
+  </div>
+</app-menu-shell>

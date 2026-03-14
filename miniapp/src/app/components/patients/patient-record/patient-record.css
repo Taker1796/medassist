@@ -1,0 +1,71 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.content-wrapper {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.patient-card,
+.visits-section,
+.visit-summary {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: rgba(43, 54, 72, 0.68);
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.patient-card h2,
+.visits-section h3,
+.visit-summary h3 {
+  margin: 0 0 8px;
+}
+
+.patient-card p,
+.visit-summary p {
+  margin: 0 0 6px;
+}
+
+.visit-actions,
+.patient-admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 8px;
+}
+
+.visit-list {
+  display: grid;
+  gap: 8px;
+}
+
+.visit-item {
+  width: 100%;
+  max-width: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+
+.visit-item.active {
+  border-color: rgba(231, 237, 247, 0.34);
+  background: #3a4964;
+}
+
+.visit-status {
+  color: var(--muted-text-color);
+  font-size: 12px;
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted-text-color);
+}

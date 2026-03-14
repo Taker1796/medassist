@@ -2,8 +2,9 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Environment} from '../environments/environment';
 import {UpsertPatientRequest} from '../models/upsertPatientRequest.model';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {PatientResponse} from '../models/patientResponse.model';
+import {PatientVisit} from '../models/patientVisit.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,5 +32,9 @@ export class PatientsService {
 
   update(body:UpsertPatientRequest, id:string):Observable<UpsertPatientRequest> {
     return this._http.patch<UpsertPatientRequest>(`${this._baseUrl}${this._patientsUrlPath}/${id}`,body);
+  }
+
+  getVisits(patientId: string): Observable<PatientVisit[]> {
+    return this._http.get<PatientVisit[]>(`${this._baseUrl}${this._patientsUrlPath}/${patientId}/visits`);
   }
 }

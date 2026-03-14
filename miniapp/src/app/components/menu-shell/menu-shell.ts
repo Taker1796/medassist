@@ -61,7 +61,7 @@ export class MenuShell {
 
   goBack(): void {
     if (this.backRoute) {
-      this._router.navigate([this.backRoute]);
+      this._router.navigateByUrl(this.backRoute);
       return;
     }
 

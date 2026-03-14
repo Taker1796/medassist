@@ -12,6 +12,7 @@ import {UpsertPatient} from './components/patients/upsert-patient/upsert-patient
 import {Isnottelegram} from './components/errors/isnottelegram/isnottelegram';
 import {Consultation} from './components/consultation/consultation';
 import {AskAi} from './components/ask-ai/ask-ai';
+import {PatientRecord} from './components/patients/patient-record/patient-record';
 //canActivate: [AuthAndRegistrationGuard],
 export const routes: Routes = [
   { path: '',
@@ -23,6 +24,7 @@ export const routes: Routes = [
       { path: 'patients', component: Patients },
       { path: 'consultation', component: Consultation },
       { path: 'ask-ai', component: AskAi },
+      { path: 'patient-record', component: PatientRecord },
       { path: 'upsert-patient', component: UpsertPatient },
     ]
   },
