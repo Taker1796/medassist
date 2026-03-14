@@ -1,38 +1,40 @@
-import {Component, inject} from '@angular/core';
-import {Router} from '@angular/router';
+import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {RegistrationService} from '../../services/registration-service';
 import {MeService} from '../../services/me-service';
-import {AsyncPipe} from '@angular/common';
 import {TransitionButtons} from '../transition-buttons/transition-buttons';
 import {MenuShell} from '../menu-shell/menu-shell';
+import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {MeResponse} from '../../models/meResponse.model';
+import {UpdateMeRequest} from '../../models/updateMeRequest.model';
 
 @Component({
   selector: 'app-doctor',
   imports: [
-    AsyncPipe,
     TransitionButtons,
-    MenuShell
+    MenuShell,
+    ReactiveFormsModule
   ],
   templateUrl: './doctor.html',
   styleUrl: './doctor.css',
 })
-export class Doctor {
+export class Doctor implements OnInit {
 
   private _regService = inject(RegistrationService);
   private _meService = inject(MeService);
-  private _router = inject(Router)
+  private _fb = inject(FormBuilder);
+  private _cdr = inject(ChangeDetectorRef);
 
   buttonsConfig = [
-    { label: 'Выбрать специализацию', onClick: () => this.goToSpecializations() },
-    { label: 'Обновить данные', onClick: () => this.goToEditDataForm() },
-    { label: 'Удалить регистрацию', onClick: () => this.deleteRegistration() },
-    { label: 'Назад', routerLink: '' }
+    { label: 'Удалить регистрацию', onClick: () => this.deleteRegistration() }
   ];
 
-  userData$ = this._meService.me();
+  userData: MeResponse | null = null;
+  doctorForm: FormGroup = this._fb.group({
+    nickName: ['']
+  });
 
-  goToSpecializations(){
-    this._router.navigate(['/specializations'], { state:{mode:"change"}});
+  ngOnInit(): void {
+    this.loadDoctorData();
   }
 
   deleteRegistration(){
@@ -41,7 +43,24 @@ export class Doctor {
     }
   }
 
-  goToEditDataForm(){
-    this._router.navigate(['/update-doctor']);
+  saveDoctorData(): void {
+    const body: UpdateMeRequest = {
+      nickname: this.doctorForm.value.nickName || null
+    };
+
+    this._meService.update(body).subscribe((updated: MeResponse) => {
+      this.userData = updated;
+      this.doctorForm.patchValue({ nickName: updated.nickname || '' });
+      this._cdr.detectChanges();
+      alert('Данные обновлены');
+    });
+  }
+
+  private loadDoctorData(): void {
+    this._meService.me().subscribe((me: MeResponse) => {
+      this.userData = me;
+      this.doctorForm.patchValue({ nickName: me.nickname || '' });
+      this._cdr.detectChanges();
+    });
   }
 }

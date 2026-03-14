@@ -32,10 +32,13 @@ export class Specializations implements OnInit {
   meService = inject(MeService);
   router = inject(Router);
   mode: string|null  = null;
+  returnUrl = '/doctor';
   buttonsConfig: IButtonConfig[] = [];
 
   constructor() {
-    this.mode = this.router.currentNavigation()?.extras.state?.['mode'];
+    const navState = this.router.currentNavigation()?.extras.state;
+    this.mode = navState?.['mode'] ?? history.state?.['mode'] ?? null;
+    this.returnUrl = navState?.['returnUrl'] ?? history.state?.['returnUrl'] ?? '/doctor';
   }
 
   toggle(code: string) {
@@ -58,7 +61,10 @@ export class Specializations implements OnInit {
   private updateSpecialization(): void {
     const val = this.selected.size > 0 ? (this.selected.values().next().value as string) : null;
 
-    this.meService.changeSpecialization(val).subscribe(() => {alert("Специализация указана")});
+    this.meService.changeSpecialization(val).subscribe(() => {
+      alert("Специализация указана");
+      this.router.navigateByUrl(this.returnUrl);
+    });
   }
 
   ngOnInit() {
@@ -73,8 +79,7 @@ export class Specializations implements OnInit {
       ];
     } else {
       this.buttonsConfig = [
-        { label: 'Сохранить', onClick: () => this.updateSpecialization() },
-        { label: 'Назад', routerLink: '/doctor' }
+        { label: 'Сохранить', onClick: () => this.updateSpecialization() }
       ];
     }
   }

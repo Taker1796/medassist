@@ -9,7 +9,6 @@ import {Specializations} from './components/specializations/specializations';
 import {UserAgreementGuard} from './guards/user-agreement.guard';
 import {SpecializationsGuard} from './guards/specializations.guard';
 import {UpsertPatient} from './components/patients/upsert-patient/upsert-patient';
-import {UpdateDoctor} from './components/doctor/data/update/update-doctor';
 import {Isnottelegram} from './components/errors/isnottelegram/isnottelegram';
 import {Consultation} from './components/consultation/consultation';
 import {AskAi} from './components/ask-ai/ask-ai';
@@ -25,7 +24,6 @@ export const routes: Routes = [
       { path: 'consultation', component: Consultation },
       { path: 'ask-ai', component: AskAi },
       { path: 'upsert-patient', component: UpsertPatient },
-      { path: 'update-doctor', component: UpdateDoctor },
     ]
   },
   { path: 'registration', component: Registration },

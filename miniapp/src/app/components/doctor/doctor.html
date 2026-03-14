@@ -1,10 +1,16 @@
-<app-menu-shell [showHome]="true" title="Профиль врача">
+<app-menu-shell [showHome]="true" title="Профиль врача" backRoute="/">
   <div class="content-wrapper">
-    @if (userData$ | async; as data) {
+    @if (userData; as data) {
       <div class="user-info">
-        <p>Имя пользователя: {{ data.nickname }}</p>
+        <form class="name-editor" [formGroup]="doctorForm">
+          <label class="name-label" for="doctor-nickname">Имя пользователя</label>
+          <div class="name-controls">
+            <input id="doctor-nickname" class="name-input" formControlName="nickName" />
+            <button class="save-name-btn" type="button" (click)="saveDoctorData()">Сохранить</button>
+          </div>
+        </form>
         <p>Специализация: {{ data.specializations?.length ? data.specializations[0].title : 'Не выбрана' }}</p>
-        <p>Сессия пациента: {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}</p>
+        <p>Активный прием пациента: {{ data.lastSelectedPatientNickname ? data.lastSelectedPatientNickname : ' - ' }}</p>
       </div>
     }
   </div>

@@ -84,6 +84,7 @@ export class Chat {
     this.messageText = '';
     const textarea = this.chatTextarea?.nativeElement;
     if (textarea) {
+      textarea.blur();
       textarea.value = '';
       this.autoResize(textarea);
       this.resetTextareaState(textarea);

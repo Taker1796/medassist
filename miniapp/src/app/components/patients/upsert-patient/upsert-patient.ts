@@ -40,10 +40,6 @@ export class UpsertPatient implements OnInit {
   }
 
 
-  goToPatientsMenu(){
-    this._router.navigate(['/patients']);
-  }
-
   private upsert() {
     if (!this.form.valid) {
       this.form.markAllAsTouched();
@@ -126,8 +122,7 @@ export class UpsertPatient implements OnInit {
 
   private initButtons(): void {
     this.buttonsConfig = [
-      { label: this.mode === 'create' ? 'Создать': 'Обновить', onClick: () => this.upsert()  },
-      { label: 'Назад', onClick: () => this.goToPatientsMenu() }
+      { label: this.mode === 'create' ? 'Создать': 'Обновить', onClick: () => this.upsert()  }
     ];
   }
 }

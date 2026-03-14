@@ -12,9 +12,18 @@ export class BlurOnOutsideTap {
   handleClick(event: Event) {
     const target = event.target as HTMLElement;
 
-    // Если клик/тап вне input/textarea, снимаем фокус
-    if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
-      (document.activeElement as HTMLElement)?.blur();
+    // Не перехватываем тапы по интерактивным элементам (особенно кнопкам),
+    // иначе в мобильном WebView первый тап может только закрывать клавиатуру.
+    const interactiveTarget = target.closest('button, a, [role="button"]');
+    if (interactiveTarget) {
+      return;
     }
+
+    const formTarget = target.closest('input, textarea, select');
+    if (formTarget) {
+      return;
+    }
+
+    (document.activeElement as HTMLElement)?.blur();
   }
 }

@@ -1,0 +1,80 @@
+<div class="shell-wrapper" appBlurOnOutsideTap>
+  <div class="header">
+    @if (showBack) {
+      <button class="back-button" type="button" aria-label="Назад" (click)="goBack()">
+        ←
+      </button>
+    }
+    <button class="burger" type="button" aria-label="Открыть меню" (click)="toggleMenu()">
+      ☰
+    </button>
+
+    @if (showPatient) {
+      @if (userData$ | async; as data) {
+        <div class="session-meta">
+          <p class="session-info">
+            Пациент:
+            {{
+              data.lastSelectedPatientNickname
+                ? (data.lastSelectedPatientNickname.length > 15
+                    ? (data.lastSelectedPatientNickname | slice:0:12) + '...'
+                    : data.lastSelectedPatientNickname)
+                : ' - '
+            }}
+          </p>
+          <div class="specialization-meta">
+            <p class="specialization-info">
+              Специализация:
+              {{ data.specializations?.length ? data.specializations[0].title : 'Не выбрана' }}
+            </p>
+            <button
+              class="edit-specialization"
+              type="button"
+              aria-label="Редактировать специализацию"
+              title="Редактировать специализацию"
+              (click)="goToSpecializations()"
+            >
+              ✎
+            </button>
+          </div>
+        </div>
+      }
+    } @else {
+      @if (userData$ | async; as data) {
+        <div class="session-meta">
+          <p class="session-info">{{ title }}</p>
+          <div class="specialization-meta">
+            <p class="specialization-info">
+              Специализация:
+              {{ data.specializations?.length ? data.specializations[0].title : 'Не выбрана' }}
+            </p>
+            <button
+              class="edit-specialization"
+              type="button"
+              aria-label="Редактировать специализацию"
+              title="Редактировать специализацию"
+              (click)="goToSpecializations()"
+            >
+              ✎
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="menu-overlay" [class.open]="menuOpen" (click)="menuOpen = false"></div>
+
+  <nav class="side-menu" [class.open]="menuOpen">
+    @if (showHome) {
+      <button type="button" (click)="goToMain()">Главная</button>
+    }
+    <button type="button" (click)="goToDoctor()">Профиль врача</button>
+    <button type="button" (click)="goToPatients()">Пациенты</button>
+    <button type="button" (click)="goToAskAi()">Спросить у ИИ</button>
+  </nav>
+
+  <div class="shell-content" (click)="menuOpen = false">
+    <ng-content></ng-content>
+  </div>
+</div>

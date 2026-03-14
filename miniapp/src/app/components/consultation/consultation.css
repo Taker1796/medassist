@@ -1,0 +1,21 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+}
+
+.content app-chat {
+  width: min(100%, 1180px);
+  max-width: 1180px;
+  margin: 0 auto;
+  flex: 1;
+  min-height: 0;
+}

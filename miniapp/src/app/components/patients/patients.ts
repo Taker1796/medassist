@@ -137,8 +137,7 @@ export class Patients implements OnInit{
       { label:  this._endSessionButtonLabel, onClick: () => this.unselect() },
       { label: 'Создать пациента', onClick: () => this.create() },
       { label: 'Обновить пациента', onClick: () => this.update() },
-      { label: 'Удалить пациента', onClick: () => this.delete() },
-      { label: 'Назад', routerLink: '' }
+      { label: 'Удалить пациента', onClick: () => this.delete() }
     ];
   }
 

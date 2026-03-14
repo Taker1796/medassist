@@ -24,7 +24,7 @@
   </div>
   <app-transition-buttons [buttons]="buttonsConfig"></app-transition-buttons>
 } @else {
-  <app-menu-shell [showHome]="true" title="Специализации">
+  <app-menu-shell [showHome]="true" title="Специализации" [backRoute]="returnUrl">
     <div class="content-wrapper">
       <section class="list-section">
         <p class="subtitle">Выберите специализацию:</p>
