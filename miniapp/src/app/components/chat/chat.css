@@ -20,7 +20,7 @@
   display: flex;
   justify-content: center;
   background: transparent;
-  padding: 12px 0 0;
+  padding: 12px 0 calc(8px + env(safe-area-inset-bottom));
   border-radius: 15px;
   box-sizing: border-box;
   z-index: 3;
@@ -163,7 +163,7 @@
 
 .scroll-bottom-btn {
   position: absolute;
-  bottom: 74px;
+  bottom: calc(74px + env(safe-area-inset-bottom));
   background: #36445d;
   left: 50%;
   transform: translateX(-50%);
@@ -197,7 +197,7 @@
   }
 
   .scroll-bottom-btn {
-    bottom: 78px;
+    bottom: calc(78px + env(safe-area-inset-bottom));
     font-size: 12px;
   }
 }
