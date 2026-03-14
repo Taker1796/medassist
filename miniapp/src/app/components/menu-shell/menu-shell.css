@@ -5,12 +5,12 @@
   align-items: center;
   justify-content: center;
   padding: 0 12px;
-  background: rgba(43, 54, 72, 0.88);
+  background: transparent;
   z-index: 20;
-  border-bottom: 1px solid var(--border-color);
-  border-radius: 14px;
+  border-bottom: none;
+  border-radius: 0;
   box-sizing: border-box;
-  margin-bottom: 6px;
+  margin-bottom: 0;
 }
 
 .burger {

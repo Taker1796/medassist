@@ -14,6 +14,7 @@
         } @else {
           <button type="button" (click)="startVisit()">Начать приём</button>
         }
+        <button type="button" (click)="openEditPatient()">Редактировать пациента</button>
       </section>
 
       <section class="visits-section">
@@ -46,11 +47,6 @@
           <p><strong>Анамнез:</strong> {{ currentVisit.anamnesis || 'Нет данных' }}</p>
         </section>
       }
-
-      <section class="patient-admin">
-        <button type="button" (click)="openEditPatient()">Редактировать пациента</button>
-        <button type="button" (click)="deletePatient()">Удалить пациента</button>
-      </section>
     }
   </div>
 </app-menu-shell>

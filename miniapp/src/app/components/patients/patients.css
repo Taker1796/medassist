@@ -21,6 +21,24 @@
   color: var(--muted-text-color);
 }
 
+.search-input {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(231, 237, 247, 0.24);
+  background-color: rgba(19, 25, 35, 0.55);
+  color: var(--text-color);
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(120, 166, 255, 0.2);
+  outline: none;
+}
+
 .list-section .chip-table {
   grid-template-columns: 1fr;
   margin-top: 12px;

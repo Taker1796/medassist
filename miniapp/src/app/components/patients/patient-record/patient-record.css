@@ -34,8 +34,7 @@
   margin: 0 0 6px;
 }
 
-.visit-actions,
-.patient-admin {
+.visit-actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 8px;

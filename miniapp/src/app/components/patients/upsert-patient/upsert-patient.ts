@@ -85,6 +85,21 @@ export class UpsertPatient implements OnInit {
     }
   }
 
+  private deletePatient(): void {
+    if (this.mode !== 'update' || !this._patientId) {
+      return;
+    }
+
+    if (!confirm('Уверены, что хотите удалить пациента?')) {
+      return;
+    }
+
+    this._patientService.delete(this._patientId).subscribe(() => {
+      alert('Пациент удалён');
+      this._router.navigate(['/patients']);
+    });
+  }
+
   ngOnInit(){
     this.initForm();
     this.initButtons();
@@ -126,8 +141,16 @@ export class UpsertPatient implements OnInit {
   }
 
   private initButtons(): void {
+    if (this.mode === 'update') {
+      this.buttonsConfig = [
+        { label: 'Обновить', onClick: () => this.upsert()  },
+        { label: 'Удалить пациента', onClick: () => this.deletePatient() }
+      ];
+      return;
+    }
+
     this.buttonsConfig = [
-      { label: this.mode === 'create' ? 'Создать': 'Обновить', onClick: () => this.upsert()  }
+      { label: 'Создать', onClick: () => this.upsert()  }
     ];
   }
 }

@@ -3,12 +3,19 @@
     <section class="list-section">
       <p class="subtitle">Список пациентов:</p>
       <p class="list-hint">Выберите одного пациента, чтобы продолжить.</p>
-      @if (patients$ | async; as patients) {
+      <input
+        class="search-input"
+        type="text"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Поиск пациента..."
+        aria-label="Поиск пациента"
+      />
+      @if (filteredPatients$ | async; as patients) {
         <div class="chip-table" [class.scrollable]="patients.length > 8">
           @for (patient of patients; track patient.id) {
             <div class="chip-cell"
-                 [class.selected]="selected.has(patient.id)"
-                 (click)="toggle(patient.id)">
+                 (click)="openPatientRecord(patient.id)">
               <span class="chip-text">
                 {{ patient.nickname }}
               </span>

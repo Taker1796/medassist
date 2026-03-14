@@ -79,16 +79,6 @@ export class PatientRecord implements OnInit {
     this._router.navigate(['/upsert-patient'], {state: {mode: 'update', patientId: this.patientId}});
   }
 
-  deletePatient(): void {
-    if (!this.patientId) return;
-    if (!confirm('Уверены, что хотите удалить пациента?')) return;
-
-    this._patientsService.delete(this.patientId).subscribe(() => {
-      alert('Пациент удалён');
-      this._router.navigate(['/patients']);
-    });
-  }
-
   selectVisit(visit: PatientVisit): void {
     this.selectedVisit = visit;
   }
