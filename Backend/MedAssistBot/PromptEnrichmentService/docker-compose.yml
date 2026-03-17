@@ -1,12 +1,18 @@
 services:
   postgres:
-    image: postgres:18-alpine
+    image: postgres:17-alpine
     container_name: prompt_enrichment_postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: prompts
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d prompts" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     ports:
       - "5432:5432"
     volumes:
@@ -18,7 +24,8 @@ services:
     container_name: prompt_enrichment_service
     restart: unless-stopped
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
