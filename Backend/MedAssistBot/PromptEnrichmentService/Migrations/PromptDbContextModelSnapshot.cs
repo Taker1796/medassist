@@ -56,10 +56,6 @@ namespace PromptEnrichmentService.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -70,8 +66,6 @@ namespace PromptEnrichmentService.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Code");
-
-                    b.HasIndex("IsDefault");
 
                     b.ToTable("PromptTemplates");
                 });

@@ -83,8 +83,7 @@ public class PromptTemplateController : ControllerBase
         {
             Code = template.Code,
             Name = template.Name,
-            Text = template.Text,
-            IsDefault = template.IsDefault
+            Text = template.Text
         };
     }
 }

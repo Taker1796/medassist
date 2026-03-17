@@ -20,8 +20,6 @@ public class PromptDbContext : DbContext
             entity.Property(e => e.Code).IsRequired().HasMaxLength(64);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Text).IsRequired().HasColumnName("Text").HasColumnType("text");
-            entity.Property(e => e.IsDefault).HasDefaultValue(false);
-            entity.HasIndex(e => e.IsDefault);
         });
 
         modelBuilder.Entity<PacientCard>(entity =>

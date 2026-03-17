@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PromptEnrichmentService.Data;
+using PromptEnrichmentService.Constants;
 
 #nullable disable
 
@@ -19,8 +20,7 @@ public partial class InitSchema : Migration
             {
                 Code = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                 Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                Text = table.Column<string>(type: "text", nullable: false),
-                IsDefault = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                Text = table.Column<string>(type: "text", nullable: false)
             },
             constraints: table =>
             {
@@ -42,17 +42,25 @@ public partial class InitSchema : Migration
                 table.PrimaryKey("PK_pacientCards", x => x.Id);
             });
 
-        migrationBuilder.Sql("""
-            INSERT INTO "PromptTemplates" ("Code", "Name", "Text", "IsDefault")
+        migrationBuilder.Sql($$"""
+            INSERT INTO "PromptTemplates" ("Code", "Name", "Text")
             VALUES
-                ('cardiology', 'Кардиология', '', FALSE),
-                ('neurology', 'Неврология', '', FALSE),
-                ('pediatrics', 'Педиатрия', '', FALSE),
-                ('dermatology', 'Дерматология', '', FALSE),
-                ('therapy', 'Therapy / Internal medicine', '', FALSE),
-                ('psychiatry', 'Психиатрия', '', FALSE),
-                ('gynecology', 'Гинекология', '', FALSE),
-                ('', '', '', TRUE);
+                ('{{TemplateCodes.Cardiology}}', 'Кардиология', ''),
+                ('{{TemplateCodes.Neurology}}', 'Неврология', ''),
+                ('{{TemplateCodes.Pediatrics}}', 'Педиатрия', ''),
+                ('{{TemplateCodes.Dermatology}}', 'Дерматология', ''),
+                ('{{TemplateCodes.Therapy}}', 'Therapy / Internal medicine', ''),
+                ('{{TemplateCodes.Psychiatry}}', 'Психиатрия', ''),
+                ('{{TemplateCodes.Gynecology}}', 'Гинекология', ''),
+                ('{{TemplateCodes.Default}}', 'Общая практика', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Cardiology)}}', 'Кардиология', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Neurology)}}', 'Неврология', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Pediatrics)}}', 'Педиатрия', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Dermatology)}}', 'Дерматология', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Therapy)}}', 'Therapy / Internal medicine', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Psychiatry)}}', 'Психиатрия', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Gynecology)}}', 'Гинекология', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Default)}}', 'Общая практика', '');
             """);
 
         migrationBuilder.CreateIndex(
@@ -61,10 +69,6 @@ public partial class InitSchema : Migration
             columns: new[] { "patientId", "specialtyCode" },
             unique: true);
 
-        migrationBuilder.CreateIndex(
-            name: "IX_PromptTemplates_IsDefault",
-            table: "PromptTemplates",
-            column: "IsDefault");
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)

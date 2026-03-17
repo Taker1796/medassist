@@ -1,18 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using PromptEnrichmentService.Models;
 using PromptEnrichmentService.Services;
+using System.Text.Json;
 
 namespace PromptEnrichmentService.Controllers;
 
 [ApiController]
 public class Enrichment : ControllerBase
 {
-    private readonly PromptTemplateService _templateService;
+    private readonly PromptTemplateService _promptService;
     private readonly LlmClient _llmClient;
 
     public Enrichment(PromptTemplateService templateService, LlmClient llmClient)
     {
-        _templateService = templateService;
+        _promptService = templateService;
         _llmClient = llmClient;
     }
 
@@ -30,7 +31,7 @@ public class Enrichment : ControllerBase
             patientId = parsedPatientId;
         }
 
-        var enrichedData = await _templateService.BuildEnrichedText(patientId, request.DoctorSpecializationCode, request.Messages, cancellationToken);
+        var enrichedData = await _promptService.BuildEnrichedText(patientId, request.DoctorSpecializationCode, request.Messages, cancellationToken);
         var llmResponse = await _llmClient.SendAsync(enrichedData, cancellationToken);
         var enrichedText = FormatMessages(enrichedData.Messages);
 
@@ -42,6 +43,104 @@ public class Enrichment : ControllerBase
         };
         
         return Ok(response);
+    }
+
+    [HttpPost]
+    [Route("v1/summary")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(GenerateSummaryResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Post([FromBody] GenerateSummaryRequest request, CancellationToken cancellationToken)
+    {
+        if (request.Patient.PatientId == Guid.Empty)
+        {
+            return BadRequest("Invalid patient id");
+        }
+
+        if (request.Messages == null || request.Messages.Length == 0)
+        {
+            return BadRequest("Messages are required");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.DoctorSpecialtyCode))
+        {
+            return BadRequest("DoctorSpecialtyCode is required");
+        }
+
+        var enrichedData = await _promptService.GenerateSummary(
+            request.DoctorSpecialtyCode,
+            request.Patient,
+            request.Messages,
+            cancellationToken);
+        var llmResponse = await _llmClient.SendAsync(enrichedData, cancellationToken);
+
+        if (!TryParseSummaryPayload(llmResponse, out var payload))
+        {
+            return StatusCode(StatusCodes.Status502BadGateway, "LLM returned invalid summary payload JSON");
+        }
+
+        var response = new GenerateSummaryResponse
+        {
+            ConversationId = request.ConversationId,
+            RequestId = request.RequestId,
+            DoctorId = request.DoctorId,
+            Summary = payload.Summary,
+            Patient = payload.Patient
+        };
+
+        return Ok(response);
+    }
+
+    private static bool TryParseSummaryPayload(string? llmResponse, out GenerateSummaryLlmPayload payload)
+    {
+        payload = new GenerateSummaryLlmPayload();
+
+        if (string.IsNullOrWhiteSpace(llmResponse))
+        {
+            return false;
+        }
+
+        var jsonPayload = ExtractJsonPayload(llmResponse);
+        if (string.IsNullOrWhiteSpace(jsonPayload))
+        {
+            return false;
+        }
+
+        try
+        {
+            var parsed = JsonSerializer.Deserialize<GenerateSummaryLlmPayload>(
+                jsonPayload,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            if (parsed == null ||
+                string.IsNullOrWhiteSpace(parsed.Summary) ||
+                parsed.Patient == null ||
+                parsed.Patient.PatientId == Guid.Empty)
+            {
+                return false;
+            }
+
+            payload = parsed;
+            return true;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+    }
+
+    private static string ExtractJsonPayload(string llmResponse)
+    {
+        var start = llmResponse.IndexOf('{');
+        var end = llmResponse.LastIndexOf('}');
+
+        if (start < 0 || end <= start)
+        {
+            return string.Empty;
+        }
+
+        return llmResponse[start..(end + 1)];
     }
 
     private static string FormatMessages(Message[] messages)

@@ -3,11 +3,19 @@ using PromptEnrichmentService.Exceptions;
 using PromptEnrichmentService.Models;
 using PromptEnrichmentService.Repositories;
 using Microsoft.Extensions.Caching.Memory;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PromptEnrichmentService.Services;
 
 public class PromptTemplateService
 {
+    private static readonly JsonSerializerOptions SummaryPatientJsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+
     private readonly IPromptTemplateRepository _promptTemplateRepository;
     private readonly IPatientCardRepository _patientCardRepository;
     private readonly IMemoryCache _memoryCache;
@@ -24,33 +32,74 @@ public class PromptTemplateService
 
     public async Task<EnrichedData> BuildEnrichedText(Guid? patientId, string specialtyCode, Message[] messages, CancellationToken cancellationToken)
     {
-        var template = string.IsNullOrWhiteSpace(specialtyCode)
-            ? await _promptTemplateRepository.GetDefaultAsync(cancellationToken)
-            : await _promptTemplateRepository.GetByCodeAsync(specialtyCode, cancellationToken);
-
-        if (template == null || string.IsNullOrWhiteSpace(template.Text))
-        {
-            throw new TemplateNotFoundException(specialtyCode);
-        }
+        var template = await GetPromptTemplate(specialtyCode, cancellationToken);
 
         if (!patientId.HasValue || patientId.Value == Guid.Empty)
         {
-            return await BuildEnrichedMessages(template.Text, messages, cancellationToken: cancellationToken);
+            return BuildEnrichedMessages(
+                template.Text,
+                messages,
+                Placeholders.PatientHistory,
+                string.Empty,
+                cancellationToken);
         }
 
         var patientCard = await _patientCardRepository.GetByPatientIdAndSpecialtyAsync(patientId.Value, specialtyCode, cancellationToken);
         if (patientCard == null)
         {
-            return await BuildEnrichedMessages(template.Text, messages, cancellationToken: cancellationToken);
+            return BuildEnrichedMessages(
+                template.Text,
+                messages,
+                Placeholders.PatientHistory,
+                string.Empty,
+                cancellationToken);
         }
 
-        return await BuildEnrichedMessages(template.Text, messages, patientCard.History, cancellationToken);
+        return BuildEnrichedMessages(
+            template.Text,
+            messages,
+            Placeholders.PatientHistory,
+            patientCard.History ?? string.Empty,
+            cancellationToken);
     }
 
-    private async Task<EnrichedData> BuildEnrichedMessages(
+    public async Task<EnrichedData> GenerateSummary(string specialtyCode, GenerateSummaryPatientRequest patient, Message[] messages, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(specialtyCode))
+        {
+            throw new ArgumentException("Specialty code is required for summary generation", nameof(specialtyCode));
+        }
+
+        var summaryTemplateCode = TemplateCodes.ToSummaryCode(specialtyCode);
+        var template = await _promptTemplateRepository.GetByCodeAsync(summaryTemplateCode, cancellationToken);
+        if (template == null || string.IsNullOrWhiteSpace(template.Text))
+        {
+            template = await GetDefaultPromptTemplate(TemplateCodes.ToSummaryCode(TemplateCodes.Default), cancellationToken);
+        }
+
+        var patientJson = JsonSerializer.Serialize(patient, SummaryPatientJsonOptions);
+        return BuildEnrichedMessages(
+            template.Text,
+            messages,
+            Placeholders.SummaryPatientJson,
+            patientJson,
+            cancellationToken);
+    }
+
+    private EnrichedData BuildEnrichedMessages(
         string systemPrompt,
         Message[] messages,
-        string? patientHistory = null,
+        string placeholder,
+        string? value,
+        CancellationToken cancellationToken = default)
+    {
+        systemPrompt = systemPrompt.Replace(placeholder, value ?? string.Empty);
+        return BuildEnrichedMessages(systemPrompt, messages, cancellationToken: cancellationToken);
+    }
+    
+    private EnrichedData BuildEnrichedMessages(
+        string systemPrompt,
+        Message[] messages,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(systemPrompt))
@@ -62,8 +111,6 @@ public class PromptTemplateService
         {
             throw new ArgumentNullException(nameof(messages));
         }
-
-        systemPrompt = systemPrompt.Replace(Placeholders.PatientHistory, !string.IsNullOrWhiteSpace(patientHistory) ? patientHistory : string.Empty);
 
         var systemMessage = new Message()
         {
@@ -77,5 +124,37 @@ public class PromptTemplateService
         };
         
         return enrichedMessages;
+    }
+
+    private async Task<PromptTemplate> GetPromptTemplate(string specialtyCode, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(specialtyCode))
+        {
+            return await GetDefaultPromptTemplate(cancellationToken);
+        }
+        
+        var template = await _promptTemplateRepository.GetByCodeAsync(specialtyCode, cancellationToken);
+        if (template == null || string.IsNullOrWhiteSpace(template.Text))
+        {
+            return await GetDefaultPromptTemplate(TemplateCodes.Default, cancellationToken);
+        }
+        
+        return template;
+    }
+
+    private async Task<PromptTemplate> GetDefaultPromptTemplate(CancellationToken cancellationToken)
+    {
+        return await GetDefaultPromptTemplate(TemplateCodes.Default, cancellationToken);
+    }
+
+    private async Task<PromptTemplate> GetDefaultPromptTemplate(string fallbackCode, CancellationToken cancellationToken)
+    {
+        var template = await _promptTemplateRepository.GetByCodeAsync(fallbackCode, cancellationToken);
+        if (template == null || string.IsNullOrWhiteSpace(template.Text))
+        {
+            throw new TemplateNotFoundException($"default prompt template not found for code '{fallbackCode}'");
+        }
+            
+        return template;
     }
 }
