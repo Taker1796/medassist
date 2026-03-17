@@ -53,14 +53,14 @@ public partial class InitSchema : Migration
                 ('{{TemplateCodes.Psychiatry}}', 'Психиатрия', ''),
                 ('{{TemplateCodes.Gynecology}}', 'Гинекология', ''),
                 ('{{TemplateCodes.Default}}', 'Общая практика', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Cardiology)}}', 'Кардиология', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Neurology)}}', 'Неврология', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Pediatrics)}}', 'Педиатрия', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Dermatology)}}', 'Дерматология', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Therapy)}}', 'Therapy / Internal medicine', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Psychiatry)}}', 'Психиатрия', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Gynecology)}}', 'Гинекология', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Default)}}', 'Общая практика', '');
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Cardiology)}}', 'S_Кардиология', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Neurology)}}', 'S_Неврология', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Pediatrics)}}', 'S_Педиатрия', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Dermatology)}}', 'S_Дерматология', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Therapy)}}', 'S_Therapy / Internal medicine', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Psychiatry)}}', 'S_Психиатрия', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Gynecology)}}', 'S_Гинекология', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Default)}}', 'S_Общая практика', '');
             """);
 
         migrationBuilder.CreateIndex(
