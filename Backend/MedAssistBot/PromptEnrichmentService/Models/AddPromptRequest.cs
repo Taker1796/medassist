@@ -2,8 +2,8 @@ namespace PromptEnrichmentService.Models;
 
 public class AddPromptRequest
 {
-    public string? PatientId { get; set; }
-    
+    public GenerateSummaryPatientRequest? Patient { get; set; }
+
     public string DoctorSpecializationCode { get; set; } = string.Empty;
 
     public Message[] Messages { get; set; } = [];

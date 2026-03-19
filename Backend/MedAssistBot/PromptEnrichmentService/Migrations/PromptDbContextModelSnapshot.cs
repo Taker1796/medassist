@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PromptEnrichmentService.Data;
 
 #nullable disable
@@ -18,37 +17,6 @@ namespace PromptEnrichmentService.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("PromptEnrichmentService.Models.PacientCard", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("patientId");
-
-                    b.Property<string>("SpecialtyCode")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
-                        .HasColumnName("specialtyCode");
-
-                    b.Property<string>("History")
-                        .HasColumnType("text")
-                        .HasColumnName("history");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId", "SpecialtyCode")
-                        .IsUnique();
-
-                    b.ToTable("pacientCards", (string)null);
-                });
 
             modelBuilder.Entity("PromptEnrichmentService.Models.PromptTemplate", b =>
                 {

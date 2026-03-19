@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PromptEnrichmentService.Data;
 using PromptEnrichmentService.Constants;
 
@@ -27,21 +26,6 @@ public partial class InitSchema : Migration
                 table.PrimaryKey("PK_PromptTemplates", x => x.Code);
             });
 
-        migrationBuilder.CreateTable(
-            name: "pacientCards",
-            columns: table => new
-            {
-                Id = table.Column<int>(type: "integer", nullable: false)
-                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                patientId = table.Column<Guid>(type: "uuid", nullable: false),
-                specialtyCode = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
-                history = table.Column<string>(type: "text", nullable: true)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_pacientCards", x => x.Id);
-            });
-
         migrationBuilder.Sql($$"""
             INSERT INTO "PromptTemplates" ("Code", "Name", "Text")
             VALUES
@@ -63,19 +47,10 @@ public partial class InitSchema : Migration
                 ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Default)}}', 'S_Общая практика', '');
             """);
 
-        migrationBuilder.CreateIndex(
-            name: "IX_pacientCards_patientId_specialtyCode",
-            table: "pacientCards",
-            columns: new[] { "patientId", "specialtyCode" },
-            unique: true);
-
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.DropTable(
-            name: "pacientCards");
-
         migrationBuilder.DropTable(
             name: "PromptTemplates");
     }

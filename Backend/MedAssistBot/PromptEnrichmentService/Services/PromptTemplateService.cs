@@ -2,7 +2,6 @@ using PromptEnrichmentService.Constants;
 using PromptEnrichmentService.Exceptions;
 using PromptEnrichmentService.Models;
 using PromptEnrichmentService.Repositories;
-using Microsoft.Extensions.Caching.Memory;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -10,56 +9,31 @@ namespace PromptEnrichmentService.Services;
 
 public class PromptTemplateService
 {
-    private static readonly JsonSerializerOptions SummaryPatientJsonOptions = new()
+    private static readonly JsonSerializerOptions PatientJsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
     private readonly IPromptTemplateRepository _promptTemplateRepository;
-    private readonly IPatientCardRepository _patientCardRepository;
-    private readonly IMemoryCache _memoryCache;
 
-    public PromptTemplateService(
-        IPromptTemplateRepository promptTemplateRepository,
-        IPatientCardRepository patientCardRepository,
-        IMemoryCache memoryCache)
+    public PromptTemplateService(IPromptTemplateRepository promptTemplateRepository)
     {
         _promptTemplateRepository = promptTemplateRepository;
-        _patientCardRepository = patientCardRepository;
-        _memoryCache = memoryCache;
     }
 
-    public async Task<EnrichedData> BuildEnrichedText(Guid? patientId, string specialtyCode, Message[] messages, CancellationToken cancellationToken)
+    public async Task<EnrichedData> BuildEnrichedText(GenerateSummaryPatientRequest? patient, string specialtyCode, Message[] messages, CancellationToken cancellationToken)
     {
         var template = await GetPromptTemplate(specialtyCode, cancellationToken);
-
-        if (!patientId.HasValue || patientId.Value == Guid.Empty)
-        {
-            return BuildEnrichedMessages(
-                template.Text,
-                messages,
-                Placeholders.PatientHistory,
-                string.Empty,
-                cancellationToken);
-        }
-
-        var patientCard = await _patientCardRepository.GetByPatientIdAndSpecialtyAsync(patientId.Value, specialtyCode, cancellationToken);
-        if (patientCard == null)
-        {
-            return BuildEnrichedMessages(
-                template.Text,
-                messages,
-                Placeholders.PatientHistory,
-                string.Empty,
-                cancellationToken);
-        }
+        var patientJson = patient == null
+            ? string.Empty
+            : JsonSerializer.Serialize(patient, PatientJsonOptions);
 
         return BuildEnrichedMessages(
             template.Text,
             messages,
             Placeholders.PatientHistory,
-            patientCard.History ?? string.Empty,
+            patientJson,
             cancellationToken);
     }
 
@@ -77,7 +51,7 @@ public class PromptTemplateService
             template = await GetDefaultPromptTemplate(TemplateCodes.ToSummaryCode(TemplateCodes.Default), cancellationToken);
         }
 
-        var patientJson = JsonSerializer.Serialize(patient, SummaryPatientJsonOptions);
+        var patientJson = JsonSerializer.Serialize(patient, PatientJsonOptions);
         return BuildEnrichedMessages(
             template.Text,
             messages,
