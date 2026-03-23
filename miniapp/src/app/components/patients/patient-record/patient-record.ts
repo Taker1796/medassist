@@ -2,13 +2,13 @@ import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Router} from '@angular/router';
 import {PatientsService} from '../../../services/patients-service';
-import {MeService} from '../../../services/me-service';
 import {PatientResponse} from '../../../models/patientResponse.model';
 import {PatientVisit} from '../../../models/patientVisit.model';
 import {MenuShell} from '../../menu-shell/menu-shell';
 import {DatePipe} from '@angular/common';
 import {catchError, forkJoin, of} from 'rxjs';
-import {MeResponse} from '../../../models/meResponse.model';
+import {PatientChatCurrentResponse} from '../../../models/patientChatCurrentResponse.model';
+import {PatientChatTurn} from '../../../models/patientChatTurn.model';
 
 @Component({
   selector: 'app-patient-record',
@@ -23,15 +23,17 @@ export class PatientRecord implements OnInit {
   private _router = inject(Router);
   private _route = inject(ActivatedRoute);
   private _patientsService = inject(PatientsService);
-  private _meService = inject(MeService);
   private _cdr = inject(ChangeDetectorRef);
 
   patient: PatientResponse | null = null;
   visits: PatientVisit[] = [];
   selectedVisit: PatientVisit | null = null;
   patientId: string | null = null;
-  isCurrentPatientActive = false;
+  hasActiveConversation = false;
   hasVisitsApi = true;
+  isLoadingConversationStatus = false;
+  isStartingVisit = false;
+  isCompletingVisit = false;
 
   ngOnInit(): void {
     const statePatientId = this._router.currentNavigation()?.extras.state?.['patientId'];
@@ -47,30 +49,41 @@ export class PatientRecord implements OnInit {
   }
 
   startVisit(): void {
-    if (!this.patientId) return;
+    if (!this.patientId || this.isStartingVisit) return;
 
-    this._meService.setSession(this.patientId).subscribe(() => {
-      this.isCurrentPatientActive = true;
-      this._router.navigate(['/consultation'], {
-        queryParams: {patientId: this.patientId},
-        state: {patientId: this.patientId}
+    this.isStartingVisit = true;
+    if (this.hasActiveConversation) {
+      this._patientsService.getCurrentConversationTurns(this.patientId, true).pipe(
+        catchError((err: unknown) => {
+          alert('Не удалось открыть приём. Попробуйте еще раз.');
+          console.log(err);
+          return of(null);
+        })
+      ).subscribe((turns: PatientChatTurn[] | null) => {
+        this.isStartingVisit = false;
+        if (!turns) {
+          return;
+        }
+        this.openConsultation();
       });
-    });
-  }
+      return;
+    }
 
-  endVisit(): void {
-    this._meService.resetSession().subscribe(() => {
-      this.isCurrentPatientActive = false;
-      alert('Приём завершен');
-      this._router.navigate(['/patients']);
-    });
-  }
+    this._patientsService.createChatConversation(this.patientId).pipe(
+      catchError((err: unknown) => {
+        alert('Не удалось открыть приём. Попробуйте еще раз.');
+        console.log(err);
+        return of(null);
+      })
+    ).subscribe((response) => {
+      this.isStartingVisit = false;
+      if (!response) {
+        return;
+      }
 
-  openConsultation(): void {
-    if (!this.patientId) return;
-    this._router.navigate(['/consultation'], {
-      queryParams: {patientId: this.patientId},
-      state: {patientId: this.patientId}
+      this.hasActiveConversation = true;
+      this._patientsService.setCurrentConversationTurns(this.patientId!, []);
+      this.openConsultation();
     });
   }
 
@@ -79,19 +92,50 @@ export class PatientRecord implements OnInit {
     this._router.navigate(['/upsert-patient'], {state: {mode: 'update', patientId: this.patientId}});
   }
 
+  completeVisit(): void {
+    if (!this.patientId || this.isCompletingVisit) return;
+
+    this.isCompletingVisit = true;
+    this._patientsService.completeCurrentConversation(this.patientId).pipe(
+      catchError((err: unknown) => {
+        alert('Не удалось завершить приём. Попробуйте еще раз.');
+        console.log(err);
+        return of(null);
+      })
+    ).subscribe((result: null | void) => {
+      this.isCompletingVisit = false;
+      if (result === null) {
+        return;
+      }
+
+      this.hasActiveConversation = false;
+    });
+  }
+
   selectVisit(visit: PatientVisit): void {
     this.selectedVisit = visit;
+  }
+
+  private openConsultation(): void {
+    this._router.navigate(['/consultation'], {
+      queryParams: {patientId: this.patientId},
+      state: {patientId: this.patientId}
+    });
   }
 
   private loadData(): void {
     if (!this.patientId) return;
 
+    this.isLoadingConversationStatus = true;
     forkJoin({
       patient: this._patientsService.getById(this.patientId),
-      me: this._meService.me()
-    }).subscribe(({patient, me}: {patient: PatientResponse; me: MeResponse}) => {
+      currentConversation: this._patientsService.getCurrentConversationStatus(this.patientId).pipe(
+        catchError(() => of<PatientChatCurrentResponse>({hasActiveConversation: false}))
+      )
+    }).subscribe(({patient, currentConversation}: {patient: PatientResponse; currentConversation: PatientChatCurrentResponse}) => {
       this.patient = patient;
-      this.isCurrentPatientActive = me.lastSelectedPatientId === this.patientId;
+      this.hasActiveConversation = currentConversation.hasActiveConversation;
+      this.isLoadingConversationStatus = false;
       this._cdr.detectChanges();
     });
 

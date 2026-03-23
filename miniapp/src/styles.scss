@@ -31,13 +31,15 @@ body {
 }
 
 app-root {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   min-height: 100%;
 }
 
 .container {
-  min-height: 100svh;
-  min-height: 100dvh;
+  height: 100svh;
+  height: 100dvh;
   width: 100%;
   max-width: none;
   margin: 0 auto;
@@ -46,6 +48,7 @@ app-root {
   flex-direction: column;
   box-sizing: border-box;
   background: radial-gradient(circle at top left, #273247, #1a2130 55%, #141a25 100%);
+  overflow: hidden;
 }
 
 .content-wrapper {

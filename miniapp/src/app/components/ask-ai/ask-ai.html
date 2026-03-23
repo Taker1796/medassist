@@ -1,5 +1,20 @@
 <app-menu-shell [showHome]="true" title="Спросить у ИИ" backRoute="/">
   <div class="content">
-    <app-chat></app-chat>
+    <div class="ask-ai-layout">
+      <div class="chat-toolbar">
+        <button
+          class="clear-chat-button"
+          type="button"
+          aria-label="Очистить чат"
+          title="Очистить чат"
+          (click)="clearChat()"
+          [disabled]="isClearing"
+        >
+          <span class="clear-chat-icon" aria-hidden="true">🗑</span>
+          <span>{{ isClearing ? 'Очистка...' : 'Очистить чат' }}</span>
+        </button>
+      </div>
+      <app-chat [mode]="'general'"></app-chat>
+    </div>
   </div>
 </app-menu-shell>

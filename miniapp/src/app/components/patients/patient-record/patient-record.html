@@ -8,13 +8,21 @@
       </section>
 
       <section class="visit-actions">
-        @if (isCurrentPatientActive) {
-          <button type="button" (click)="endVisit()">Завершить приём</button>
-          <button type="button" (click)="openConsultation()">Открыть приём</button>
-        } @else {
-          <button type="button" (click)="startVisit()">Начать приём</button>
-        }
-        <button type="button" (click)="openEditPatient()">Редактировать пациента</button>
+        <div class="visit-actions-left">
+          <button type="button" (click)="startVisit()" [disabled]="isStartingVisit || isLoadingConversationStatus || isCompletingVisit">
+            {{
+              isStartingVisit
+                ? 'Открытие приёма...'
+                : (hasActiveConversation ? 'Продолжить приём' : 'Начать приём')
+            }}
+          </button>
+          @if (hasActiveConversation) {
+            <button type="button" (click)="completeVisit()" [disabled]="isCompletingVisit || isStartingVisit">
+              {{ isCompletingVisit ? 'Завершение...' : 'Завершить приём' }}
+            </button>
+          }
+        </div>
+        <button type="button" class="edit-patient-btn" (click)="openEditPatient()">Редактировать пациента</button>
       </section>
 
       <section class="visits-section">

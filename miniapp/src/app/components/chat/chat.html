@@ -7,7 +7,7 @@
     (scroll)="onScroll()"
   >
 
-    @for (msg of messages; track msg) {
+    @for (msg of messages; track msg.id) {
     <div
       class="message"
       [class.my-message]="msg.isMine"
@@ -28,10 +28,11 @@
     <button
       class="scroll-bottom-btn"
       type="button"
+      aria-label="Прокрутить к последнему сообщению"
       [class.show]="showScrollButton"
       (click)="scrollToBottom(true)"
     >
-      ⬇ К последним сообщениям
+      ↓
     </button>
   }
   <div class="chat-input-container">

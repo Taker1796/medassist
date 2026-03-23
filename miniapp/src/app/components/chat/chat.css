@@ -5,18 +5,19 @@
 }
 
 .chat-wrapper {
+  --chat-content-width: min(100%, 920px);
   position: relative;
   display: flex;
   flex-direction: column;
+  flex: 1;
   width: 100%;
-  height: 100%;
   min-height: 0;
   margin: 0 auto;
+  overflow: hidden;
 }
 
 .chat-input-container {
-  position: sticky;
-  bottom: 0;
+  position: relative;
   display: flex;
   justify-content: center;
   background: transparent;
@@ -24,11 +25,12 @@
   border-radius: 15px;
   box-sizing: border-box;
   z-index: 3;
+  flex-shrink: 0;
 }
 
 .input-wrapper {
   display: flex;
-  width: min(100%, 920px);
+  width: var(--chat-content-width);
   gap: 10px;
   align-items: center;
   background: var(--surface-soft-color);
@@ -119,10 +121,10 @@
 .messages {
   flex: 1;
   min-height: 0;
-  width: min(100%, 960px);
+  width: var(--chat-content-width);
   margin: 0 auto;
   overflow-y: auto;
-  padding: 8px 4px 12px;
+  padding: 8px 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -163,20 +165,24 @@
 
 .scroll-bottom-btn {
   position: absolute;
-  bottom: calc(74px + env(safe-area-inset-bottom));
+  bottom: calc(118px + env(safe-area-inset-bottom));
   background: #36445d;
   left: 50%;
   transform: translateX(-50%);
   color: var(--text-color);
-  border: none;
-  padding: 8px 14px;
-  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 20px;
+  line-height: 1;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
-  width: auto;
   z-index: 5;
 }
 
@@ -197,8 +203,7 @@
   }
 
   .scroll-bottom-btn {
-    bottom: calc(78px + env(safe-area-inset-bottom));
-    font-size: 12px;
+    bottom: calc(122px + env(safe-area-inset-bottom));
   }
 }
 

@@ -1,5 +1,5 @@
 <app-menu-shell [showHome]="true" [showPatient]="true" [backRoute]="backRoute">
   <div class="content">
-    <app-chat></app-chat>
+    <app-chat [mode]="'patient'" [patientId]="patientId"></app-chat>
   </div>
 </app-menu-shell>
