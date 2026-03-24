@@ -20,7 +20,7 @@ export const routes: Routes = [
       // Гвард на родительском уровне
     canActivate: [AuthAndRegistrationGuard],
     children: [
-      { path: 'cvc', component: Main },
+      { path: '', component: Main },
       { path: 'doctor', component: Doctor },
       { path: 'patients', component: Patients },
       { path: 'consultation', component: Consultation },
