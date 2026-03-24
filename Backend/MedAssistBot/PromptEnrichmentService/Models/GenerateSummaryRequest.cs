@@ -21,7 +21,7 @@ public class GenerateSummaryPatientRequest
 
     public PatientSex? Sex { get; set; }
 
-    public int AgeYears { get; set; }
+    public int? AgeYears { get; set; }
 
     public string? Nickname { get; set; }
 
@@ -31,7 +31,7 @@ public class GenerateSummaryPatientRequest
 
     public string? Tags { get; set; }
 
-    public int Status { get; set; }
+    public int? Status { get; set; }
 
     public string? Notes { get; set; }
 }

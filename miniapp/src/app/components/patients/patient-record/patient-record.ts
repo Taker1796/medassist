@@ -6,7 +6,8 @@ import {PatientResponse} from '../../../models/patientResponse.model';
 import {PatientVisit} from '../../../models/patientVisit.model';
 import {MenuShell} from '../../menu-shell/menu-shell';
 import {DatePipe} from '@angular/common';
-import {catchError, forkJoin, of} from 'rxjs';
+import {catchError, finalize, forkJoin, of} from 'rxjs';
+import {firstValueFrom} from 'rxjs';
 import {PatientChatCurrentResponse} from '../../../models/patientChatCurrentResponse.model';
 import {PatientChatTurn} from '../../../models/patientChatTurn.model';
 
@@ -92,24 +93,23 @@ export class PatientRecord implements OnInit {
     this._router.navigate(['/upsert-patient'], {state: {mode: 'update', patientId: this.patientId}});
   }
 
-  completeVisit(): void {
+  async completeVisit(): Promise<void> {
     if (!this.patientId || this.isCompletingVisit) return;
 
     this.isCompletingVisit = true;
-    this._patientsService.completeCurrentConversation(this.patientId).pipe(
-      catchError((err: unknown) => {
-        alert('Не удалось завершить приём. Попробуйте еще раз.');
-        console.log(err);
-        return of(null);
-      })
-    ).subscribe((result: null | void) => {
+    this._cdr.detectChanges();
+    try {
+      await firstValueFrom(this._patientsService.completeCurrentConversation(this.patientId));
+      const status = await firstValueFrom(this.refreshConversationStatus());
+      this.hasActiveConversation = status.hasActiveConversation;
+      this._cdr.detectChanges();
+    } catch (err: unknown) {
+      alert('Не удалось завершить приём. Попробуйте еще раз.');
+      console.log(err);
+    } finally {
       this.isCompletingVisit = false;
-      if (result === null) {
-        return;
-      }
-
-      this.hasActiveConversation = false;
-    });
+      this._cdr.detectChanges();
+    }
   }
 
   selectVisit(visit: PatientVisit): void {
@@ -126,16 +126,12 @@ export class PatientRecord implements OnInit {
   private loadData(): void {
     if (!this.patientId) return;
 
-    this.isLoadingConversationStatus = true;
     forkJoin({
       patient: this._patientsService.getById(this.patientId),
-      currentConversation: this._patientsService.getCurrentConversationStatus(this.patientId).pipe(
-        catchError(() => of<PatientChatCurrentResponse>({hasActiveConversation: false}))
-      )
+      currentConversation: this.refreshConversationStatus(true)
     }).subscribe(({patient, currentConversation}: {patient: PatientResponse; currentConversation: PatientChatCurrentResponse}) => {
       this.patient = patient;
       this.hasActiveConversation = currentConversation.hasActiveConversation;
-      this.isLoadingConversationStatus = false;
       this._cdr.detectChanges();
     });
 
@@ -158,4 +154,25 @@ export class PatientRecord implements OnInit {
       this._cdr.detectChanges();
     });
   }
+
+  private refreshConversationStatus(showLoader = false) {
+    if (!this.patientId) {
+      return of<PatientChatCurrentResponse>({hasActiveConversation: false});
+    }
+
+    if (showLoader) {
+      this.isLoadingConversationStatus = true;
+    }
+
+    return this._patientsService.getCurrentConversationStatus(this.patientId).pipe(
+      catchError(() => of<PatientChatCurrentResponse>({hasActiveConversation: false})),
+      finalize(() => {
+        if (showLoader) {
+          this.isLoadingConversationStatus = false;
+          this._cdr.detectChanges();
+        }
+      })
+    );
+  }
+
 }

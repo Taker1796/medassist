@@ -50,7 +50,7 @@ public class Enrichment : ControllerBase
     {
         if (request.Patient.PatientId == Guid.Empty)
         {
-            return BadRequest("Invalid patient id");
+            return BadRequest("Invalid patient");
         }
 
         if (request.Messages == null || request.Messages.Length == 0)

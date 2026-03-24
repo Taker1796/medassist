@@ -16,7 +16,7 @@ public class AddPromptPatientRequest
 
     public PatientSex? Sex { get; set; }
 
-    public int AgeYears { get; set; }
+    public int? AgeYears { get; set; }
 
     public string? Nickname { get; set; }
 
@@ -26,7 +26,7 @@ public class AddPromptPatientRequest
 
     public string? Tags { get; set; }
 
-    public int Status { get; set; }
+    public int? Status { get; set; }
 
     public string? Notes { get; set; }
 }

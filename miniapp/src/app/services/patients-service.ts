@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Environment} from '../environments/environment';
 import {UpsertPatientRequest} from '../models/upsertPatientRequest.model';
 import {Observable, of, tap} from 'rxjs';
@@ -55,7 +55,8 @@ export class PatientsService {
 
   getCurrentConversationStatus(patientId: string): Observable<PatientChatCurrentResponse> {
     const urlPath = Environment.patientsChatCurrentUrlPath.replace('{patientId}', encodeURIComponent(patientId));
-    return this._http.get<PatientChatCurrentResponse>(`${this._baseUrl}${urlPath}`);
+    const params = new HttpParams().set('_ts', Date.now().toString());
+    return this._http.get<PatientChatCurrentResponse>(`${this._baseUrl}${urlPath}`, {params});
   }
 
   getCurrentConversationTurns(patientId: string, forceRefresh = false): Observable<PatientChatTurn[]> {
