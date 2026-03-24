@@ -20,7 +20,7 @@ export class AskAi {
 
   isClearing = false;
 
-  @ViewChild(Chat) private _chatComponent?: Chat;
+  @ViewChild(Chat) private _chatComponent?: { clearChat: () => void };
 
   clearChat(): void {
     const confirmed = window.confirm('Очистить историю чата? Это действие нельзя отменить.');

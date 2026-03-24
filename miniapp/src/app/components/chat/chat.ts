@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, inject, input, OnInit, output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, inject, Input, OnInit, output, ViewChild} from '@angular/core';
 import{ FormsModule} from '@angular/forms';
 import {LlmService} from '../../services/llm-service';
 import {LlmRequest} from '../../models/llmRequest.model';
@@ -19,6 +19,8 @@ interface ChatMessage {
 
 @Component({
   selector: 'app-chat',
+  standalone: true,
+  inputs: ['mode', 'patientId'],
   imports: [FormsModule],
   templateUrl: './chat.html',
   styleUrl: './chat.css',
@@ -26,8 +28,8 @@ interface ChatMessage {
 
 
 export class Chat implements OnInit {
-  mode = input<'bot' | 'general' | 'patient'>('bot');
-  patientId = input<string | null>(null);
+  @Input() mode: 'bot' | 'general' | 'patient' = 'bot';
+  @Input() patientId: string | null = null;
   messageText = '';
   isTextareaFocused = false;
   // Output для отправки сообщения родительскому компоненту
@@ -45,12 +47,12 @@ export class Chat implements OnInit {
   @ViewChild('chatTextarea') chatTextarea!: ElementRef<HTMLTextAreaElement>;
 
   ngOnInit(): void {
-    if (this.mode() === 'general') {
+    if (this.mode === 'general') {
       this.loadGeneralTurns();
       return;
     }
 
-    if (this.mode() === 'patient') {
+    if (this.mode === 'patient') {
       this.loadPatientTurns();
     }
   }
@@ -139,8 +141,8 @@ export class Chat implements OnInit {
       requestId,
       text:userText
     }
-    if (this.mode() === 'patient') {
-      const patientId = this.patientId();
+    if (this.mode === 'patient') {
+      const patientId = this.patientId;
       if (!patientId) {
         this.isTyping = false;
         alert('Не удалось определить пациента для чата');
@@ -191,7 +193,7 @@ export class Chat implements OnInit {
 
       this.handleBotResponse(response.answer);
 
-      if (this.mode() === 'general') {
+      if (this.mode === 'general') {
         this._llmService.appendGeneralTurn({
           turnId: crypto.randomUUID(),
           requestId,
@@ -278,7 +280,7 @@ export class Chat implements OnInit {
   }
 
   private loadPatientTurns(): void {
-    const patientId = this.patientId();
+    const patientId = this.patientId;
     if (!patientId) {
       return;
     }
