@@ -116,6 +116,18 @@ export class PatientRecord implements OnInit {
     this.selectedVisit = visit;
   }
 
+  getSexLabel(sex: number | null | undefined): string {
+    if (sex === 0) {
+      return 'Женский';
+    }
+
+    if (sex === 1) {
+      return 'Мужской';
+    }
+
+    return '—';
+  }
+
   private openConsultation(): void {
     this._router.navigate(['/consultation'], {
       queryParams: {patientId: this.patientId},

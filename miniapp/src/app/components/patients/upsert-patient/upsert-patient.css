@@ -31,3 +31,32 @@
   box-shadow: 0 0 0 3px rgba(127, 112, 216, 0.2);
   outline: none;
 }
+
+.form-control textarea {
+  width: 100%;
+  min-height: 84px;
+  max-height: 220px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(231, 237, 247, 0.24);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: rgba(19, 25, 35, 0.55);
+  color: var(--text-color);
+  box-sizing: border-box;
+  font-family: inherit;
+  overflow-y: auto;
+  resize: vertical;
+}
+
+.form-control textarea:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(127, 112, 216, 0.2);
+  outline: none;
+}
+
+@media (max-width: 640px) {
+  .form-control textarea {
+    min-height: 76px;
+    max-height: 180px;
+  }
+}

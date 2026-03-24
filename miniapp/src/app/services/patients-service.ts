@@ -38,7 +38,7 @@ export class PatientsService {
   }
 
   update(body:UpsertPatientRequest, id:string):Observable<UpsertPatientRequest> {
-    return this._http.patch<UpsertPatientRequest>(`${this._baseUrl}${this._patientsUrlPath}/${id}`,body);
+    return this._http.put<UpsertPatientRequest>(`${this._baseUrl}${this._patientsUrlPath}/${id}`,body);
   }
 
   getVisits(patientId: string): Observable<PatientVisit[]> {

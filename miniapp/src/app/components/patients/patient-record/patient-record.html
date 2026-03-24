@@ -2,9 +2,29 @@
   <div class="content-wrapper">
     @if (patient; as p) {
       <section class="patient-card">
-        <h2>{{ p.nickname }}</h2>
-        <p>Возраст: {{ p.ageYears || '—' }}</p>
-        <p>Пол: {{ p.sex || '—' }}</p>
+        <div class="patient-main">
+          <div class="patient-main-left">
+            <h2>{{ p.nickname }}</h2>
+            <p>Возраст: {{ p.ageYears || '—' }}</p>
+            <p>Пол: {{ getSexLabel(p.sex) }}</p>
+          </div>
+
+          <div class="patient-main-right">
+            <div class="patient-field">
+              <p class="field-label">Аллергии</p>
+              <p class="field-value">{{ p.allergies || '—' }}</p>
+            </div>
+            <div class="patient-field">
+              <p class="field-label">Хронические заболевания</p>
+              <p class="field-value">{{ p.chronicConditions || '—' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="patient-notes">
+          <p class="field-label">Другие заметки</p>
+          <p class="field-value">{{ p.notes || '—' }}</p>
+        </div>
       </section>
 
       <section class="visit-actions">
