@@ -19,7 +19,7 @@ public class GenerateSummaryPatientRequest
 {
     public Guid PatientId { get; set; }
 
-    public int Sex { get; set; }
+    public PatientSex? Sex { get; set; }
 
     public int AgeYears { get; set; }
 

@@ -52,10 +52,13 @@ export class UpsertPatient implements OnInit {
       return;
     }
 
+    const ageValue = this.form.value.age;
+    const sexValue = this.form.value.sex;
+
     let body: UpsertPatientRequest = {
       nickname: this.form.value.fullName,
-      ageYears: this.form.value.age || null,
-      sex: this.form.value.sex || null,
+      ageYears: ageValue === null || ageValue === '' ? null : Number(ageValue),
+      sex: sexValue === null || sexValue === '' ? null : Number(sexValue),
       allergies: this.form.value.allergies || null,
       chronicConditions: this.form.value.chronicConditions || null,
       notes: this.form.value.notes || null
@@ -110,7 +113,7 @@ export class UpsertPatient implements OnInit {
     this.form = this.fb.group({
       fullName: ['', Validators.required],
       age: [''],
-      sex: [''],
+      sex: [null],
       allergies: [''],
       chronicConditions: [''],
       notes: [''],
@@ -127,7 +130,7 @@ export class UpsertPatient implements OnInit {
         const safePatient = {
           fullName: patient.nickname || '',
           age: patient.ageYears ?? '',
-          sex: patient.sex || '',
+          sex: patient.sex ?? null,
           allergies: patient.allergies || '',
           chronicConditions: patient.chronicConditions || '',
           notes: patient.notes || ''

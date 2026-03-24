@@ -19,7 +19,11 @@
 
       <div class="form-control">
         <label>Пол</label>
-        <input type="number" formControlName="sex" />
+        <select formControlName="sex">
+          <option [ngValue]="null">Не выбрано</option>
+          <option [ngValue]="0">Женский</option>
+          <option [ngValue]="1">Мужской</option>
+        </select>
       </div>
 
       <div class="form-control">

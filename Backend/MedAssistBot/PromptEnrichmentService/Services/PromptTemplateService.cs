@@ -12,7 +12,8 @@ public class PromptTemplateService
     private static readonly JsonSerializerOptions PatientJsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
     };
 
     private readonly IPromptTemplateRepository _promptTemplateRepository;
@@ -22,7 +23,7 @@ public class PromptTemplateService
         _promptTemplateRepository = promptTemplateRepository;
     }
 
-    public async Task<EnrichedData> BuildEnrichedText(GenerateSummaryPatientRequest? patient, string specialtyCode, Message[] messages, CancellationToken cancellationToken)
+    public async Task<EnrichedData> BuildEnrichedText(AddPromptPatientRequest? patient, string specialtyCode, Message[] messages, CancellationToken cancellationToken)
     {
         var template = await GetPromptTemplate(specialtyCode, cancellationToken);
         var patientJson = patient == null

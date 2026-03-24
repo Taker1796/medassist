@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PromptEnrichmentService.Models;
 using PromptEnrichmentService.Services;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PromptEnrichmentService.Controllers;
 
@@ -105,7 +106,11 @@ public class Enrichment : ControllerBase
         {
             var parsed = JsonSerializer.Deserialize<GenerateSummaryLlmPayload>(
                 jsonPayload,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                });
 
             if (parsed == null ||
                 string.IsNullOrWhiteSpace(parsed.Summary) ||

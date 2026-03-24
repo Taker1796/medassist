@@ -4,6 +4,8 @@ using PromptEnrichmentService.Data;
 using PromptEnrichmentService.Middleware;
 using PromptEnrichmentService.Repositories;
 using PromptEnrichmentService.Services;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 if (builder.Environment.IsDevelopment())
@@ -23,6 +25,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null; // PascalCase
     options.JsonSerializerOptions.WriteIndented = true;       // Красивый JSON
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 });
 
 builder.Services.Configure<LlmOptions>(builder.Configuration.GetSection("Llm"));

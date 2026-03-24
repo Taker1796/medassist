@@ -14,7 +14,7 @@
   "summary": "краткое саммари по диалогу",
   "patient": {
     "patientId": "guid",
-    "sex": 0,
+    "sex": "female|male|null",
     "ageYears": 0,
     "nickname": "string|null",
     "allergies": "string|null",

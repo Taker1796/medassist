@@ -1,8 +1,8 @@
 export interface UpsertPatientRequest {
   nickname: string,
-  ageYears: number,
-  sex: string,
-  allergies: string,
-  chronicConditions: string,
-  notes: string
+  ageYears: number | null,
+  sex: number | null,
+  allergies: string | null,
+  chronicConditions: string | null,
+  notes: string | null
 }
