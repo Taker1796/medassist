@@ -1,0 +1,19 @@
+<app-menu-shell [showHome]="true" title="Итоги приёма" [backRoute]="backRoute">
+  <div class="content-wrapper">
+    <section class="summary-card">
+      @if (isLoading) {
+        <p class="hint">Загрузка итогов приёма...</p>
+      } @else if (hasError) {
+        <p class="hint">Не удалось загрузить итоги приёма. Попробуйте ещё раз позже.</p>
+      } @else if (summaryData; as summary) {
+        <p class="meta">
+          Сформировано:
+          <strong>{{ summary.generatedAt | date:'dd.MM.yyyy HH:mm' }}</strong>
+        </p>
+        <div class="summary-text">
+          {{ summary.summary || 'Итоги приёма отсутствуют.' }}
+        </div>
+      }
+    </section>
+  </div>
+</app-menu-shell>

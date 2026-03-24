@@ -11,6 +11,8 @@ import {PatientChatCurrentResponse} from '../models/patientChatCurrentResponse.m
 import {PatientChatTurn} from '../models/patientChatTurn.model';
 import {PatientChatAskRequest} from '../models/patientChatAskRequest.model';
 import {PatientChatAskResponse} from '../models/patientChatAskResponse.model';
+import {PatientChatConversationHistory} from '../models/patientChatConversationHistory.model';
+import {PatientChatConversationSummary} from '../models/patientChatConversationSummary.model';
 
 @Injectable({
   providedIn: 'root',
@@ -53,10 +55,24 @@ export class PatientsService {
     return this._http.post<CreatePatientChatConversationResponse>(`${this._baseUrl}${urlPath}`, body);
   }
 
+  getChatConversations(patientId: string): Observable<PatientChatConversationHistory[]> {
+    const urlPath = Environment.patientsChatUrlPath.replace('{patientId}', encodeURIComponent(patientId));
+    const params = new HttpParams().set('_ts', Date.now().toString());
+    return this._http.get<PatientChatConversationHistory[]>(`${this._baseUrl}${urlPath}`, {params});
+  }
+
   getCurrentConversationStatus(patientId: string): Observable<PatientChatCurrentResponse> {
     const urlPath = Environment.patientsChatCurrentUrlPath.replace('{patientId}', encodeURIComponent(patientId));
     const params = new HttpParams().set('_ts', Date.now().toString());
     return this._http.get<PatientChatCurrentResponse>(`${this._baseUrl}${urlPath}`, {params});
+  }
+
+  getConversationSummary(patientId: string, conversationId: string): Observable<PatientChatConversationSummary> {
+    const urlPath = Environment.patientsChatSummaryUrlPath
+      .replace('{patientId}', encodeURIComponent(patientId))
+      .replace('{conversationId}', encodeURIComponent(conversationId));
+
+    return this._http.get<PatientChatConversationSummary>(`${this._baseUrl}${urlPath}`);
   }
 
   getCurrentConversationTurns(patientId: string, forceRefresh = false): Observable<PatientChatTurn[]> {

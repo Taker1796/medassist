@@ -13,6 +13,7 @@ import {Isnottelegram} from './components/errors/isnottelegram/isnottelegram';
 import {Consultation} from './components/consultation/consultation';
 import {AskAi} from './components/ask-ai/ask-ai';
 import {PatientRecord} from './components/patients/patient-record/patient-record';
+import {PatientVisitSummary} from './components/patients/patient-visit-summary/patient-visit-summary';
 //canActivate: [AuthAndRegistrationGuard],
 export const routes: Routes = [
   { path: '',
@@ -25,6 +26,7 @@ export const routes: Routes = [
       { path: 'consultation', component: Consultation },
       { path: 'ask-ai', component: AskAi },
       { path: 'patient-record', component: PatientRecord },
+      { path: 'patient-visit-summary', component: PatientVisitSummary },
       { path: 'upsert-patient', component: UpsertPatient },
     ]
   },

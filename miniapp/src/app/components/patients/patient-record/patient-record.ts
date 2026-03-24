@@ -3,19 +3,21 @@ import {ActivatedRoute} from '@angular/router';
 import {Router} from '@angular/router';
 import {PatientsService} from '../../../services/patients-service';
 import {PatientResponse} from '../../../models/patientResponse.model';
-import {PatientVisit} from '../../../models/patientVisit.model';
 import {MenuShell} from '../../menu-shell/menu-shell';
 import {DatePipe} from '@angular/common';
 import {catchError, finalize, forkJoin, of} from 'rxjs';
 import {firstValueFrom} from 'rxjs';
 import {PatientChatCurrentResponse} from '../../../models/patientChatCurrentResponse.model';
 import {PatientChatTurn} from '../../../models/patientChatTurn.model';
+import {PatientChatConversationHistory} from '../../../models/patientChatConversationHistory.model';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-patient-record',
   imports: [
     MenuShell,
-    DatePipe
+    DatePipe,
+    FormsModule
   ],
   templateUrl: './patient-record.html',
   styleUrl: './patient-record.css'
@@ -27,11 +29,11 @@ export class PatientRecord implements OnInit {
   private _cdr = inject(ChangeDetectorRef);
 
   patient: PatientResponse | null = null;
-  visits: PatientVisit[] = [];
-  selectedVisit: PatientVisit | null = null;
+  conversations: PatientChatConversationHistory[] = [];
+  searchQuery = '';
   patientId: string | null = null;
   hasActiveConversation = false;
-  hasVisitsApi = true;
+  hasConversationsApi = true;
   isLoadingConversationStatus = false;
   isStartingVisit = false;
   isCompletingVisit = false;
@@ -102,6 +104,7 @@ export class PatientRecord implements OnInit {
       await firstValueFrom(this._patientsService.completeCurrentConversation(this.patientId));
       const status = await firstValueFrom(this.refreshConversationStatus());
       this.hasActiveConversation = status.hasActiveConversation;
+      this.loadConversations();
       this._cdr.detectChanges();
     } catch (err: unknown) {
       alert('Не удалось завершить приём. Попробуйте еще раз.');
@@ -110,10 +113,6 @@ export class PatientRecord implements OnInit {
       this.isCompletingVisit = false;
       this._cdr.detectChanges();
     }
-  }
-
-  selectVisit(visit: PatientVisit): void {
-    this.selectedVisit = visit;
   }
 
   getSexLabel(sex: number | null | undefined): string {
@@ -126,6 +125,47 @@ export class PatientRecord implements OnInit {
     }
 
     return '—';
+  }
+
+  get filteredConversations(): PatientChatConversationHistory[] {
+    const normalizedQuery = this.searchQuery.trim().toLocaleLowerCase('ru-RU');
+    if (!normalizedQuery) {
+      return this.conversations;
+    }
+
+    return this.conversations.filter((conversation: PatientChatConversationHistory) =>
+      this.formatConversationDate(conversation.createdAt).toLocaleLowerCase('ru-RU').includes(normalizedQuery)
+    );
+  }
+
+  formatConversationDate(value: string): string {
+    const date = new Date(value);
+    if (isNaN(date.getTime())) {
+      return 'Без даты';
+    }
+
+    return date.toLocaleString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  openConversationSummary(conversationId: string): void {
+    if (!this.patientId || !conversationId) return;
+
+    this._router.navigate(['/patient-visit-summary'], {
+      queryParams: {
+        patientId: this.patientId,
+        conversationId
+      },
+      state: {
+        patientId: this.patientId,
+        conversationId
+      }
+    });
   }
 
   private openConsultation(): void {
@@ -147,22 +187,21 @@ export class PatientRecord implements OnInit {
       this._cdr.detectChanges();
     });
 
-    this.loadVisits();
+    this.loadConversations();
   }
 
-  private loadVisits(): void {
+  private loadConversations(): void {
     if (!this.patientId) return;
 
-    this._patientsService.getVisits(this.patientId).pipe(
+    this._patientsService.getChatConversations(this.patientId).pipe(
       catchError(() => {
-        this.hasVisitsApi = false;
+        this.hasConversationsApi = false;
         return of([]);
       })
-    ).subscribe((visits: PatientVisit[]) => {
-      this.visits = visits;
-      if (!this.selectedVisit && visits.length > 0) {
-        this.selectedVisit = visits[0];
-      }
+    ).subscribe((conversations: PatientChatConversationHistory[]) => {
+      this.conversations = [...conversations].sort((a: PatientChatConversationHistory, b: PatientChatConversationHistory) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
       this._cdr.detectChanges();
     });
   }

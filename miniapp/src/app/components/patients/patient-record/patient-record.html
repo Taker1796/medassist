@@ -47,34 +47,42 @@
 
       <section class="visits-section">
         <h3>История приёмов</h3>
-        @if (!hasVisitsApi) {
+        @if (!hasConversationsApi) {
           <p class="hint">История приёмов пока недоступна.</p>
-        } @else if (visits.length === 0) {
+        } @else if (conversations.length === 0) {
           <p class="hint">Приёмов пока нет.</p>
         } @else {
-          <div class="visit-list">
-            @for (visit of visits; track visit.id) {
-              <button
-                type="button"
-                class="visit-item"
-                [class.active]="selectedVisit?.id === visit.id"
-                (click)="selectVisit(visit)"
-              >
-                <span>{{ visit.startedAt ? (visit.startedAt | date:'dd.MM.yyyy HH:mm') : 'Без даты' }}</span>
-                <span class="visit-status">{{ visit.status || 'Завершен' }}</span>
-              </button>
+          <input
+            class="search-input"
+            type="text"
+            [(ngModel)]="searchQuery"
+            placeholder="Поиск приёма по дате..."
+            aria-label="Поиск приёма по дате"
+          />
+
+          <div class="history-results">
+            @if (filteredConversations.length === 0) {
+              <p class="hint history-empty">Совпадений не найдено.</p>
+            } @else {
+              <div class="chip-table">
+                @for (conversation of filteredConversations; track conversation.conversationId) {
+                  <div
+                    class="chip-cell history-item"
+                    role="button"
+                    tabindex="0"
+                    (click)="openConversationSummary(conversation.conversationId)"
+                    (keydown.enter)="openConversationSummary(conversation.conversationId)"
+                    (keydown.space)="openConversationSummary(conversation.conversationId)"
+                  >
+                    <span class="chip-text">Приём от {{ formatConversationDate(conversation.createdAt) }}</span>
+                    <span class="visit-status">{{ conversation.isCompleted ? 'Завершен' : 'Активный' }}</span>
+                  </div>
+                }
+              </div>
             }
           </div>
         }
       </section>
-
-      @if (selectedVisit; as currentVisit) {
-        <section class="visit-summary">
-          <h3>Итоги приёма</h3>
-          <p><strong>Саммари:</strong> {{ currentVisit.summary || 'Нет данных' }}</p>
-          <p><strong>Анамнез:</strong> {{ currentVisit.anamnesis || 'Нет данных' }}</p>
-        </section>
-      }
     }
   </div>
 </app-menu-shell>

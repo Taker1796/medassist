@@ -7,6 +7,7 @@ export const Environment = {
   patientsChatUrlPath: '/v1/patients/{patientId}/chat/conversations',
   patientsChatCurrentUrlPath: '/v1/patients/{patientId}/chat/current',
   patientsChatCurrentTurnsUrlPath: '/v1/patients/{patientId}/chat/current/turns',
+  patientsChatSummaryUrlPath: '/v1/patients/{patientId}/chat/conversations/{conversationId}/summary',
   staticContentUrlPath: '/v1/static-content',
   meUrlPath: '/v1/me',
   meChatGeneralUrlPath: '/v1/me/chat/general',

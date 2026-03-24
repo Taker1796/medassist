@@ -82,6 +82,7 @@ select {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 10px;
+  overflow: hidden;
 }
 
 .grid-toolbar {
@@ -102,6 +103,8 @@ select {
 
 .grid-scroll {
   min-height: 0;
+  height: 100%;
+  max-height: 100%;
   border: 1px solid #d8e2ef;
   border-radius: 8px;
   overflow: auto;
@@ -166,8 +169,15 @@ select {
 }
 
 .templates-grid td:nth-child(4) {
+  min-width: 220px;
+}
+
+.history-cell {
+  max-height: 92px;
+  overflow: auto;
   white-space: pre-wrap;
   min-width: 220px;
+  line-height: 1.35;
 }
 
 button {

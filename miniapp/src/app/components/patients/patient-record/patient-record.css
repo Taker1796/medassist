@@ -10,17 +10,26 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   gap: 12px;
 }
 
 .patient-card,
-.visits-section,
-.visit-summary {
+.visits-section {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: rgba(43, 54, 72, 0.68);
   padding: 14px;
   box-sizing: border-box;
+}
+
+.visits-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 220px;
 }
 
 .patient-card {
@@ -84,13 +93,12 @@
 }
 
 .patient-card h2,
-.visits-section h3,
-.visit-summary h3 {
+.visits-section h3 {
   margin: 0 0 8px;
 }
 
 .patient-card p,
-.visit-summary p {
+.visits-section p {
   margin: 0 0 6px;
 }
 
@@ -137,28 +145,65 @@
   }
 }
 
-.visit-list {
-  display: grid;
-  gap: 8px;
+.visits-section .chip-table {
+  grid-template-columns: 1fr;
+  margin-top: 0;
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
-.visit-item {
+.search-input {
   width: 100%;
-  max-width: none;
+  min-height: 42px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(231, 237, 247, 0.24);
+  background-color: rgba(19, 25, 35, 0.55);
+  color: var(--text-color);
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(120, 166, 255, 0.2);
+  outline: none;
+}
+
+.history-results {
   display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding-top: 16px;
+}
+
+.history-empty {
+  margin: 0;
+}
+
+.history-item {
   justify-content: space-between;
   align-items: center;
-  text-align: left;
+  gap: 12px;
+  padding: 0 14px;
 }
 
-.visit-item.active {
-  border-color: rgba(231, 237, 247, 0.34);
-  background: #3a4964;
+.history-item:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 .visit-status {
   color: var(--muted-text-color);
   font-size: 12px;
+  white-space: nowrap;
 }
 
 .hint {
@@ -181,5 +226,15 @@
     height: 84px;
     min-height: 84px;
     max-height: 84px;
+  }
+
+  .history-item {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .history-results {
+    padding-top: 14px;
   }
 }
