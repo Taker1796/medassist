@@ -240,5 +240,17 @@
 
   .history-results {
     padding-top: 14px;
+    flex: none;
+  }
+
+  .visits-section {
+    flex: none;
+    min-height: 0;
+  }
+
+  .visits-section .chip-table {
+    flex: none;
+    min-height: 0;
+    max-height: clamp(320px, 56vh, 620px);
   }
 }
