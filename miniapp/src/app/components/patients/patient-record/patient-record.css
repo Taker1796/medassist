@@ -241,6 +241,12 @@
   .history-results {
     padding-top: 14px;
     flex: none;
+    min-height: 0;
+    max-height: clamp(230px, 42svh, 360px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 
   .visits-section {
@@ -251,6 +257,7 @@
   .visits-section .chip-table {
     flex: none;
     min-height: 0;
-    max-height: clamp(320px, 56vh, 620px);
+    max-height: none;
+    overflow: visible;
   }
 }
