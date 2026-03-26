@@ -3,10 +3,15 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .content-wrapper {
-  justify-content: center;
+  justify-content: flex-start;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
 
 .form-control select {
@@ -55,6 +60,10 @@
 }
 
 @media (max-width: 640px) {
+  .content-wrapper {
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+
   .form-control textarea {
     min-height: 76px;
     max-height: 180px;

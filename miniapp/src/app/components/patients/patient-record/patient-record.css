@@ -232,9 +232,10 @@
   }
 
   .history-item {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
+    min-height: 42px;
   }
 
   .history-results {
