@@ -16,7 +16,6 @@ import {FormsModule} from '@angular/forms';
   selector: 'app-patient-record',
   imports: [
     MenuShell,
-    DatePipe,
     FormsModule
   ],
   templateUrl: './patient-record.html',
@@ -171,7 +170,10 @@ export class PatientRecord implements OnInit {
   private openConsultation(): void {
     this._router.navigate(['/consultation'], {
       queryParams: {patientId: this.patientId},
-      state: {patientId: this.patientId}
+      state: {
+        patientId: this.patientId,
+        patientNickname: this.patient?.nickname ?? null
+      }
     });
   }
 

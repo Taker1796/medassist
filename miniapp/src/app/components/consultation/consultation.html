@@ -1,5 +1,20 @@
-<app-menu-shell [showHome]="true" [showPatient]="true" [backRoute]="backRoute">
+<app-menu-shell [showHome]="true" [title]="title" [backRoute]="backRoute">
   <div class="content">
-    <app-chat [mode]="'patient'" [patientId]="patientId"></app-chat>
+    <div class="consultation-layout">
+      <div class="chat-toolbar">
+        <button
+          class="complete-visit-button"
+          type="button"
+          aria-label="Завершить приём"
+          title="Завершить приём"
+          (click)="completeVisit()"
+          [disabled]="isCompletingVisit"
+        >
+          <span class="complete-visit-icon" aria-hidden="true">✔️</span>
+          <span>{{ isCompletingVisit ? 'Завершение...' : 'Завершить приём' }}</span>
+        </button>
+      </div>
+      <app-chat [mode]="'patient'" [patientId]="patientId"></app-chat>
+    </div>
   </div>
 </app-menu-shell>

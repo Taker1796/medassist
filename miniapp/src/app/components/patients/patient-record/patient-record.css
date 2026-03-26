@@ -147,10 +147,13 @@
 
 .visits-section .chip-table {
   grid-template-columns: 1fr;
+  grid-auto-rows: min-content;
   margin-top: 0;
   flex: 1;
   min-height: 0;
   max-height: none;
+  align-content: start;
+  align-items: start;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
