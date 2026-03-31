@@ -70,8 +70,19 @@ public class Enrichment : ControllerBase
         await Response.StartAsync(cancellationToken);
 
         await using var responseStream = await llmResponse.Content.ReadAsStreamAsync(cancellationToken);
-        await responseStream.CopyToAsync(Response.Body, cancellationToken);
-        await Response.Body.FlushAsync(cancellationToken);
+        var buffer = new byte[4096];
+
+        while (true)
+        {
+            var read = await responseStream.ReadAsync(buffer, cancellationToken);
+            if (read == 0)
+            {
+                break;
+            }
+
+            await Response.Body.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
+            await Response.Body.FlushAsync(cancellationToken);
+        }
     }
 
     [HttpPost]
