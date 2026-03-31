@@ -49,7 +49,7 @@ public class LlmClient
             return null;
         }
 
-        var request = new HttpRequestMessage(HttpMethod.Post, _options.Endpoint)
+        var request = new HttpRequestMessage(HttpMethod.Post, GetStreamEndpoint(_options.Endpoint))
         {
             Content = JsonContent.Create(new LlmRequest
             {
@@ -70,5 +70,14 @@ public class LlmClient
 
         response.EnsureSuccessStatusCode();
         return response;
+    }
+
+    private static string GetStreamEndpoint(string endpoint)
+    {
+        const string streamSuffix = "/stream";
+
+        return endpoint.EndsWith(streamSuffix, StringComparison.OrdinalIgnoreCase)
+            ? endpoint
+            : endpoint.TrimEnd('/') + streamSuffix;
     }
 }
