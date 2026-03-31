@@ -288,6 +288,13 @@ class BackendService {
     }
 
     const record = payload as Record<string, unknown>;
+
+    // PromptEnrichmentService stream format: event: chunk + data.contentDelta
+    // event: done may contain full data.content; we intentionally ignore it to avoid duplication.
+    if (Object.prototype.hasOwnProperty.call(record, 'contentDelta')) {
+      return this.extractTextFromPayload(record['contentDelta']);
+    }
+
     const choiceDelta = this.extractTextFromPayload(record['choices']);
     if (choiceDelta) {
       return choiceDelta;
