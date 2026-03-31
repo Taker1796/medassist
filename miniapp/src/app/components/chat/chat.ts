@@ -382,6 +382,14 @@ export class Chat implements OnInit {
       return currentText;
     }
 
+    if (chunk.includes(currentText)) {
+      return chunk;
+    }
+
+    if (currentText.includes(chunk)) {
+      return currentText;
+    }
+
     if (chunk.startsWith(currentText)) {
       return chunk;
     }
@@ -390,7 +398,23 @@ export class Chat implements OnInit {
       return currentText;
     }
 
+    const overlap = this.getSuffixPrefixOverlap(currentText, chunk);
+    if (overlap > 0) {
+      return currentText + chunk.slice(overlap);
+    }
+
     return currentText + chunk;
+  }
+
+  private getSuffixPrefixOverlap(left: string, right: string): number {
+    const max = Math.min(left.length, right.length);
+    for (let len = max; len > 0; len--) {
+      if (left.slice(-len) === right.slice(0, len)) {
+        return len;
+      }
+    }
+
+    return 0;
   }
 
   private handleStreamingAssistantResponse(
@@ -436,6 +460,120 @@ export class Chat implements OnInit {
         this.updateScrollState();
       }
     });
+  }
+
+  formatMessage(text: string): string {
+    return this.renderMarkdown(text ?? '');
+  }
+
+  private renderMarkdown(sourceText: string): string {
+    const text = this.escapeHtml(sourceText).replace(/\r\n?/g, '\n');
+    const codeBlocks: string[] = [];
+    let codeIndex = 0;
+
+    const withPlaceholders = text.replace(/```([\s\S]*?)```/g, (_match: string, code: string) => {
+      const codeHtml = `<pre><code>${code.replace(/^\n+|\n+$/g, '')}</code></pre>`;
+      const placeholder = `@@CODEBLOCK_${codeIndex}@@`;
+      codeBlocks.push(codeHtml);
+      codeIndex++;
+      return placeholder;
+    });
+
+    const lines = withPlaceholders.split('\n');
+    const parts: string[] = [];
+    let inUnorderedList = false;
+    let inOrderedList = false;
+
+    const closeLists = () => {
+      if (inUnorderedList) {
+        parts.push('</ul>');
+        inUnorderedList = false;
+      }
+      if (inOrderedList) {
+        parts.push('</ol>');
+        inOrderedList = false;
+      }
+    };
+
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+
+      if (!line) {
+        closeLists();
+        continue;
+      }
+
+      if (/^@@CODEBLOCK_\d+@@$/.test(line)) {
+        closeLists();
+        parts.push(line);
+        continue;
+      }
+
+      const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+      if (headingMatch) {
+        closeLists();
+        const level = headingMatch[1].length;
+        parts.push(`<h${level}>${this.renderInlineMarkdown(headingMatch[2])}</h${level}>`);
+        continue;
+      }
+
+      const orderedItem = line.match(/^\d+\.\s+(.+)$/);
+      if (orderedItem) {
+        if (inUnorderedList) {
+          parts.push('</ul>');
+          inUnorderedList = false;
+        }
+        if (!inOrderedList) {
+          parts.push('<ol>');
+          inOrderedList = true;
+        }
+        parts.push(`<li>${this.renderInlineMarkdown(orderedItem[1])}</li>`);
+        continue;
+      }
+
+      const unorderedItem = line.match(/^[-*]\s+(.+)$/);
+      if (unorderedItem) {
+        if (inOrderedList) {
+          parts.push('</ol>');
+          inOrderedList = false;
+        }
+        if (!inUnorderedList) {
+          parts.push('<ul>');
+          inUnorderedList = true;
+        }
+        parts.push(`<li>${this.renderInlineMarkdown(unorderedItem[1])}</li>`);
+        continue;
+      }
+
+      closeLists();
+      parts.push(`<p>${this.renderInlineMarkdown(line)}</p>`);
+    }
+
+    closeLists();
+
+    let html = parts.join('');
+    codeBlocks.forEach((codeBlockHtml: string, index: number) => {
+      html = html.replace(`@@CODEBLOCK_${index}@@`, codeBlockHtml);
+    });
+
+    return html;
+  }
+
+  private renderInlineMarkdown(line: string): string {
+    return line
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  }
+
+  private escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   clearChat(): void {

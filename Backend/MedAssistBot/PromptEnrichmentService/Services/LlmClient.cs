@@ -102,17 +102,17 @@ public class LlmClient
 
         if (totalWords <= 5)
         {
-            return 500;
+            return 300;
         }
 
         if (totalWords <= 10)
         {
-            return 1000;
+            return 500;
         }
 
         if (totalWords <= 20)
         {
-            return 2000;
+            return 1000;
         }
 
         return 8192;
