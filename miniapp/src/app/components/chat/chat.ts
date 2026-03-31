@@ -462,7 +462,10 @@ export class Chat implements OnInit {
   }
 
   private renderMarkdown(sourceText: string): string {
-    const text = this.escapeHtml(sourceText).replace(/\r\n?/g, '\n');
+    const normalizedSource = sourceText
+      .replace(/\\n/g, '\n')
+      .replace(/\\t/g, '\t');
+    const text = this.escapeHtml(normalizedSource).replace(/\r\n?/g, '\n');
     const codeBlocks: string[] = [];
     let codeIndex = 0;
 
@@ -512,7 +515,7 @@ export class Chat implements OnInit {
         continue;
       }
 
-      const orderedItem = line.match(/^\d+\.\s+(.+)$/);
+      const orderedItem = line.match(/^(\d+)\.\s+(.+)$/);
       if (orderedItem) {
         if (inUnorderedList) {
           parts.push('</ul>');
@@ -522,7 +525,8 @@ export class Chat implements OnInit {
           parts.push('<ol>');
           inOrderedList = true;
         }
-        parts.push(`<li>${this.renderInlineMarkdown(orderedItem[1])}</li>`);
+        const itemValue = Number(orderedItem[1]);
+        parts.push(`<li value="${itemValue}">${this.renderInlineMarkdown(orderedItem[2])}</li>`);
         continue;
       }
 
