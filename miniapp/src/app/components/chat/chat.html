@@ -12,8 +12,8 @@
       class="message"
       [class.my-message]="msg.isMine"
       [class.bot-message]="!msg.isMine"
+      [innerHTML]="formatMessage(msg.text)"
     >
-      {{ msg.text }}
     </div>
     }
     @if (isTyping) {

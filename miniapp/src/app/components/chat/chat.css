@@ -140,6 +140,60 @@
   animation: fadeIn 0.2s ease;
 }
 
+.message :is(p, ul, ol, pre, h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.message p + p,
+.message p + ul,
+.message p + ol,
+.message ul + p,
+.message ol + p,
+.message pre + p,
+.message p + pre,
+.message ul + ul,
+.message ol + ol {
+  margin-top: 8px;
+}
+
+.message ul,
+.message ol {
+  padding-left: 18px;
+}
+
+.message li + li {
+  margin-top: 4px;
+}
+
+.message code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 1px 5px;
+}
+
+.message pre {
+  overflow-x: auto;
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.message pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  display: block;
+  line-height: 1.5;
+}
+
+.message a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .my-message {
   align-self: flex-end;
   background: #6e90d2;
