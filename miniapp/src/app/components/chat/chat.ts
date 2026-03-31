@@ -382,24 +382,19 @@ export class Chat implements OnInit {
       return currentText;
     }
 
-    if (chunk.includes(currentText)) {
-      return chunk;
-    }
-
-    if (currentText.includes(chunk)) {
-      return currentText;
-    }
-
+    // Некоторые провайдеры отдают накопленный текст, а не дельту.
     if (chunk.startsWith(currentText)) {
       return chunk;
     }
 
-    if (currentText.endsWith(chunk)) {
+    // Полный дубль хвоста игнорируем только для достаточно длинных кусков.
+    if (chunk.length >= 10 && currentText.endsWith(chunk)) {
       return currentText;
     }
 
     const overlap = this.getSuffixPrefixOverlap(currentText, chunk);
-    if (overlap > 0) {
+    const minReliableOverlap = Math.max(4, Math.floor(chunk.length * 0.7));
+    if (overlap >= minReliableOverlap) {
       return currentText + chunk.slice(overlap);
     }
 
