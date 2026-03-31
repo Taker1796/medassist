@@ -117,7 +117,7 @@ public class Enrichment : ControllerBase
 
         if (!TryParseSummaryPayload(llmResponse, out var payload))
         {
-            return StatusCode(StatusCodes.Status502BadGateway, "LLM returned invalid summary payload JSON");
+            return StatusCode(StatusCodes.Status502BadGateway, "LLM returned invalid summary payload JSON: " + llmResponse);
         }
 
         var response = new GenerateSummaryResponse
