@@ -41,5 +41,34 @@ public class LlmClient
         var payload = await response.Content.ReadFromJsonAsync<LlmResponse>(cancellationToken: cancellationToken);
         return payload?.Content;
     }
-    
+
+    public async Task<HttpResponseMessage?> SendStreamAsync(EnrichedData enrichedData, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(_options.Endpoint))
+        {
+            return null;
+        }
+
+        var request = new HttpRequestMessage(HttpMethod.Post, _options.Endpoint)
+        {
+            Content = JsonContent.Create(new LlmRequest
+            {
+                Messages = enrichedData.Messages,
+                Stream = true
+            })
+        };
+
+        if (!string.IsNullOrWhiteSpace(_options.ApiKey) && !string.IsNullOrWhiteSpace(_options.ApiKeyHeader))
+        {
+            request.Headers.TryAddWithoutValidation(_options.ApiKeyHeader, _options.ApiKey);
+        }
+
+        var response = await _httpClient.SendAsync(
+            request,
+            HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        return response;
+    }
 }

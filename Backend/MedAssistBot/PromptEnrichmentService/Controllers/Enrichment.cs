@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PromptEnrichmentService.Models;
 using PromptEnrichmentService.Services;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -38,6 +39,39 @@ public class Enrichment : ControllerBase
         };
         
         return Ok(response);
+    }
+
+    [HttpPost]
+    [Route("v1/enrich/stream")]
+    [Produces("text/event-stream")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task Stream([FromBody] AddPromptRequest request, CancellationToken cancellationToken)
+    {
+        var enrichedData = await _promptService.BuildEnrichedText(
+            request.Patient,
+            request.DoctorSpecializationCode,
+            request.Messages,
+            cancellationToken);
+
+        using var llmResponse = await _llmClient.SendStreamAsync(enrichedData, cancellationToken);
+        if (llmResponse == null)
+        {
+            Response.StatusCode = StatusCodes.Status204NoContent;
+            return;
+        }
+
+        Response.StatusCode = StatusCodes.Status200OK;
+        Response.ContentType = GetContentTypeOrDefault(llmResponse.Content.Headers.ContentType);
+        Response.Headers.CacheControl = "no-cache";
+        Response.Headers["X-Accel-Buffering"] = "no";
+
+        await Response.StartAsync(cancellationToken);
+
+        await using var responseStream = await llmResponse.Content.ReadAsStreamAsync(cancellationToken);
+        await responseStream.CopyToAsync(Response.Body, cancellationToken);
+        await Response.Body.FlushAsync(cancellationToken);
     }
 
     [HttpPost]
@@ -153,5 +187,10 @@ public class Enrichment : ControllerBase
             Environment.NewLine + Environment.NewLine,
             messages.Select((m, i) => $"{i + 1}. [{m.Role}]{Environment.NewLine}{m.Content}")
         );
+    }
+
+    private static string GetContentTypeOrDefault(MediaTypeHeaderValue? contentType)
+    {
+        return contentType?.ToString() ?? "text/event-stream";
     }
 }

@@ -6,4 +6,5 @@ public class LlmRequest
     public string Model { get; set; } = "deepseek-chat";
     public int Temperature { get; set; } = 2;
     public int MaxTokens { get; set; } = 8192;
+    public bool Stream { get; set; } = false;
 }
