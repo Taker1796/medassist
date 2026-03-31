@@ -5,6 +5,7 @@ import {Observable, of, tap} from 'rxjs';
 import {LlmResponse} from '../models/llmResponse.model';
 import {LlmRequest} from '../models/llmRequest.model';
 import {GeneralChatTurn} from '../models/generalChatTurn.model';
+import {SseStreamService} from './sse-stream-service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,9 +16,15 @@ export class LlmService {
   private _http: HttpClient = inject(HttpClient)
   private _baseUrl = Environment.apiUrl;
   private _generalTurnsCache: GeneralChatTurn[] = [];
+  private _sseStreamService = inject(SseStreamService);
 
   ask(body: LlmRequest):Observable<LlmResponse> {
     return this._http.post<LlmResponse>(`${this._baseUrl}${Environment.botChatUrlPath}/ask`, body);
+  }
+
+  askStream(body: LlmRequest): Observable<string> {
+    const url = `${this._baseUrl}${Environment.botChatUrlPath}/ask/stream`;
+    return this._sseStreamService.postStream(url, body);
   }
 
   getGeneralTurns(forceRefresh = false): Observable<GeneralChatTurn[]> {

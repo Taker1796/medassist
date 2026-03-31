@@ -2,13 +2,11 @@ import {ChangeDetectorRef, Component, ElementRef, inject, Input, OnInit, output,
 import{ FormsModule} from '@angular/forms';
 import {LlmService} from '../../services/llm-service';
 import {LlmRequest} from '../../models/llmRequest.model';
-import {catchError, of} from 'rxjs';
-import {LlmResponse} from '../../models/llmResponse.model';
+import {catchError, Observable, of} from 'rxjs';
 import {GeneralChatTurn} from '../../models/generalChatTurn.model';
 import {PatientsService} from '../../services/patients-service';
 import {PatientChatTurn} from '../../models/patientChatTurn.model';
 import {PatientChatAskRequest} from '../../models/patientChatAskRequest.model';
-import {PatientChatAskResponse} from '../../models/patientChatAskResponse.model';
 
 interface ChatMessage {
   id: string;
@@ -154,28 +152,37 @@ export class Chat implements OnInit {
         text: userText
       };
 
-      this._patientsService.askCurrentConversation(patientId, patientBody).pipe(
-        catchError(err => {
-          this.isTyping = false;
-          alert('Произошла ошибка. Попробуйте перезагрузить страницу')
-          console.log(err);
-          return of(null);
-        })
-      ).subscribe((response: PatientChatAskResponse | null) => {
-        if(!response){
-          return;
+      this.handleStreamingAssistantResponse(
+        this._patientsService.askCurrentConversationStream(patientId, patientBody),
+        shouldStickToBottom,
+        (answer: string) => {
+          this._patientsService.appendCurrentConversationTurn(patientId, {
+            turnId: crypto.randomUUID(),
+            conversationId: '',
+            requestId,
+            userText,
+            assistantText: answer,
+            createdAt,
+          });
         }
+      );
+      return;
+    }
 
-        this.handleBotResponse(response.answer);
-        this._patientsService.appendCurrentConversationTurn(patientId, {
+    if (this.mode === 'general') {
+      this.handleStreamingAssistantResponse(
+        this._llmService.askStream(body),
+        shouldStickToBottom,
+        (answer: string) => {
+          this._llmService.appendGeneralTurn({
           turnId: crypto.randomUUID(),
-          conversationId: '',
           requestId,
           userText,
-          assistantText: response.answer,
+          assistantText: answer,
           createdAt,
         });
-      });
+        }
+      );
       return;
     }
 
@@ -186,22 +193,12 @@ export class Chat implements OnInit {
         console.log(err);
         return of(null);
       })
-    ).subscribe((response: LlmResponse | null) => {
+    ).subscribe((response) => {
       if(!response){
         return;
       }
 
       this.handleBotResponse(response.answer);
-
-      if (this.mode === 'general') {
-        this._llmService.appendGeneralTurn({
-          turnId: crypto.randomUUID(),
-          requestId,
-          userText,
-          assistantText: response.answer,
-          createdAt,
-        });
-      }
     })
   }
 
@@ -343,6 +340,102 @@ export class Chat implements OnInit {
       .sort((a: ChatMessage, b: ChatMessage) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       );
+  }
+
+  private startStreamMessage(): string {
+    const streamMessageId = crypto.randomUUID();
+    this.messages.push({
+      id: streamMessageId,
+      text: '',
+      isMine: false,
+      createdAt: new Date().toISOString(),
+    });
+    this._cdr.detectChanges();
+    return streamMessageId;
+  }
+
+  private updateStreamMessage(messageId: string, text: string): void {
+    const message = this.messages.find((msg: ChatMessage) => msg.id === messageId);
+    if (!message) {
+      return;
+    }
+
+    message.text = text;
+    this._cdr.detectChanges();
+  }
+
+  private removeStreamMessageIfEmpty(messageId: string): void {
+    const index = this.messages.findIndex((msg: ChatMessage) => msg.id === messageId && !msg.text.trim());
+    if (index === -1) {
+      return;
+    }
+
+    this.messages.splice(index, 1);
+  }
+
+  private mergeStreamChunk(currentText: string, chunk: string): string {
+    if (!currentText) {
+      return chunk;
+    }
+
+    if (chunk === currentText) {
+      return currentText;
+    }
+
+    if (chunk.startsWith(currentText)) {
+      return chunk;
+    }
+
+    if (currentText.endsWith(chunk)) {
+      return currentText;
+    }
+
+    return currentText + chunk;
+  }
+
+  private handleStreamingAssistantResponse(
+    stream$: Observable<string>,
+    shouldStickToBottom: boolean,
+    onCompletePersist: (answer: string) => void
+  ): void {
+    this.isTyping = false;
+    const streamMessageId = this.startStreamMessage();
+    let streamedAnswer = '';
+
+    stream$.subscribe({
+      next: (chunk: string) => {
+        if (!chunk) {
+          return;
+        }
+
+        streamedAnswer = this.mergeStreamChunk(streamedAnswer, chunk);
+        this.updateStreamMessage(streamMessageId, streamedAnswer);
+
+        if (shouldStickToBottom) {
+          setTimeout(() => this.scrollToBottom(false), 0);
+        } else {
+          setTimeout(() => this.updateScrollState(), 0);
+        }
+      },
+      error: (err: unknown) => {
+        this.isTyping = false;
+        this.removeStreamMessageIfEmpty(streamMessageId);
+        alert('Произошла ошибка. Попробуйте перезагрузить страницу');
+        console.log(err);
+        this._cdr.detectChanges();
+      },
+      complete: () => {
+        this.isTyping = false;
+        if (streamedAnswer.trim().length > 0) {
+          onCompletePersist(streamedAnswer);
+        } else {
+          this.removeStreamMessageIfEmpty(streamMessageId);
+        }
+
+        this._cdr.detectChanges();
+        this.updateScrollState();
+      }
+    });
   }
 
   clearChat(): void {

@@ -13,6 +13,7 @@ import {PatientChatAskRequest} from '../models/patientChatAskRequest.model';
 import {PatientChatAskResponse} from '../models/patientChatAskResponse.model';
 import {PatientChatConversationHistory} from '../models/patientChatConversationHistory.model';
 import {PatientChatConversationSummary} from '../models/patientChatConversationSummary.model';
+import {SseStreamService} from './sse-stream-service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +23,7 @@ export class PatientsService {
   private _baseUrl = Environment.apiUrl;
   private _patientsUrlPath = Environment.patientsUrlPath;
   private _currentTurnsCacheByPatient: Record<string, PatientChatTurn[]> = {};
+  private _sseStreamService = inject(SseStreamService);
 
   create(body:UpsertPatientRequest):Observable<UpsertPatientRequest> {
     return this._http.post<UpsertPatientRequest>(`${this._baseUrl}${this._patientsUrlPath}`,body);
@@ -101,6 +103,12 @@ export class PatientsService {
   askCurrentConversation(patientId: string, body: PatientChatAskRequest): Observable<PatientChatAskResponse> {
     const basePath = Environment.patientsChatCurrentUrlPath.replace('{patientId}', encodeURIComponent(patientId));
     return this._http.post<PatientChatAskResponse>(`${this._baseUrl}${basePath}/ask`, body);
+  }
+
+  askCurrentConversationStream(patientId: string, body: PatientChatAskRequest): Observable<string> {
+    const basePath = Environment.patientsChatCurrentUrlPath.replace('{patientId}', encodeURIComponent(patientId));
+    const streamUrl = `${this._baseUrl}${basePath}/ask/stream`;
+    return this._sseStreamService.postStream(streamUrl, body);
   }
 
   completeCurrentConversation(patientId: string): Observable<void> {
