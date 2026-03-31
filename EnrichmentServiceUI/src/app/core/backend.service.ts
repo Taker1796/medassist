@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, NgZone} from '@angular/core';
 import {Observable, of, map, tap} from 'rxjs';
 import {Environment} from '../environments/environment';
 import {HttpClient} from '@angular/common/http';
@@ -14,6 +14,7 @@ class BackendService {
 
   private _baseUrl = Environment.apiUrl
   private _http: HttpClient = inject(HttpClient);
+  private _ngZone: NgZone = inject(NgZone);
   private _currentTemplateId: number | null = null;
 
   validateApiKey(apiKey: string): Observable<boolean> {
@@ -153,13 +154,13 @@ class BackendService {
 
             for (const event of parsed.events) {
               if (event === '[DONE]') {
-                subscriber.complete();
+                this._ngZone.run(() => subscriber.complete());
                 return;
               }
 
               const text = this.extractTextFromSseData(event);
               if (text) {
-                subscriber.next(text);
+                this._ngZone.run(() => subscriber.next(text));
               }
             }
           }
@@ -171,18 +172,18 @@ class BackendService {
 
           const lastEventText = this.extractTextFromSseData(buffer.trim());
           if (lastEventText) {
-            subscriber.next(lastEventText);
+            this._ngZone.run(() => subscriber.next(lastEventText));
           }
 
-          subscriber.complete();
+          this._ngZone.run(() => subscriber.complete());
         })
         .catch((error: unknown) => {
           if (abortController.signal.aborted) {
-            subscriber.complete();
+            this._ngZone.run(() => subscriber.complete());
             return;
           }
 
-          subscriber.error(error);
+          this._ngZone.run(() => subscriber.error(error));
         });
 
       return () => {
