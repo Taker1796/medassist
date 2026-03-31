@@ -104,7 +104,7 @@ class BackendService {
   }
 
   askDialogQuestionStream(payload: AskDialogQuestionModel): Observable<string> {
-    const url = `${this._baseUrl}/${Environment.enrichUrlPath}/stream`;
+    const url = `${this._baseUrl}/${Environment.enrichStreamUrlPath}`;
     const apiKey = localStorage.getItem('enrichment-api-key');
 
     return new Observable<string>((subscriber) => {
