@@ -218,20 +218,72 @@ export class TemplatesPageComponent implements OnDestroy {
       Messages: this.buildDialogMessages(question)
     };
 
-    this.chatMessages.update((messages) => [...messages, { role: 'user', text: question }]);
+    this.status.set('');
+    this.statusIsError.set(false);
+    this.chatMessages.update((messages) => [
+      ...messages,
+      { role: 'user', text: question },
+      { role: 'assistant', text: '' }
+    ]);
     this.questionText.set('');
     this.isSendingQuestion.set(true);
     this.scrollChatToBottom();
 
     this.backend
-      .askDialogQuestion(payload)
+      .askDialogQuestionStream(payload)
       .subscribe({
-        next: (answer) => {
-          this.chatMessages.update((messages) => [...messages, { role: 'assistant', text: answer }]);
+        next: (chunk) => {
+          this.chatMessages.update((messages) => {
+            if (!messages.length) {
+              return messages;
+            }
+
+            const nextMessages = [...messages];
+            const assistantIndex = nextMessages.length - 1;
+            const assistantMessage = nextMessages[assistantIndex];
+
+            if (assistantMessage.role !== 'assistant') {
+              return nextMessages;
+            }
+
+            nextMessages[assistantIndex] = {
+              ...assistantMessage,
+              text: assistantMessage.text + chunk
+            };
+
+            return nextMessages;
+          });
+          this.scrollChatToBottom();
+        },
+        complete: () => {
+          this.chatMessages.update((messages) => {
+            if (!messages.length) {
+              return messages;
+            }
+
+            const lastMessage = messages[messages.length - 1];
+            if (lastMessage.role === 'assistant' && !lastMessage.text.trim()) {
+              return messages.slice(0, -1);
+            }
+
+            return messages;
+          });
           this.isSendingQuestion.set(false);
           this.scrollChatToBottom();
         },
         error: () => {
+          this.chatMessages.update((messages) => {
+            if (!messages.length) {
+              return messages;
+            }
+
+            const lastMessage = messages[messages.length - 1];
+            if (lastMessage.role === 'assistant' && !lastMessage.text.trim()) {
+              return messages.slice(0, -1);
+            }
+
+            return messages;
+          });
           this.isSendingQuestion.set(false);
           this.statusIsError.set(true);
           this.status.set('Не удалось получить ответ');
@@ -279,10 +331,12 @@ export class TemplatesPageComponent implements OnDestroy {
   }
 
   private buildDialogMessages(currentQuestion: string): AskDialogQuestionMessage[] {
-    const historyMessages: AskDialogQuestionMessage[] = this.chatMessages().map((message) => ({
-      Role: message.role,
-      Content: message.text
-    }));
+    const historyMessages: AskDialogQuestionMessage[] = this.chatMessages()
+      .filter((message) => message.text.trim().length > 0)
+      .map((message) => ({
+        Role: message.role,
+        Content: message.text
+      }));
 
     return [
       ...historyMessages,
