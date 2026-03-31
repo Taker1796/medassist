@@ -24,9 +24,9 @@ export class UserAgreement {
   private _sanitizer: DomSanitizer = inject(DomSanitizer)
   agreementText$: Observable<string> = this._staticContentService.getUserAgreementText()
     .pipe(
-
       map(html => this._sanitizer.sanitize(SecurityContext.HTML, html)),
       map(html => html ?? ''),
+      map((html: string) => this.normalizeAgreementHtml(html)),
       shareReplay(1)
      );
 
@@ -40,4 +40,32 @@ export class UserAgreement {
     this._router.navigate(['/specializations'], { state:{mode:"registration"}});
   }
 
+  private normalizeAgreementHtml(html: string): string {
+    if (!html.trim()) {
+      return '';
+    }
+
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const body = doc.body;
+    const rootElement = body.firstElementChild;
+
+    body.querySelectorAll<HTMLElement>('*').forEach((element: HTMLElement) => {
+      element.removeAttribute('style');
+    });
+
+    if (rootElement) {
+      rootElement.classList.add('agreement-rich');
+    }
+
+    // Для секций с выделенным блоком добавляем класс callout последнему блоку.
+    body.querySelectorAll<HTMLElement>('.agreement-rich > div').forEach((section: HTMLElement) => {
+      const directDivChildren = Array.from(section.children)
+        .filter((child: Element) => child.tagName === 'DIV') as HTMLElement[];
+      if (directDivChildren.length >= 3) {
+        directDivChildren[directDivChildren.length - 1].classList.add('agreement-callout');
+      }
+    });
+
+    return body.innerHTML;
+  }
 }
