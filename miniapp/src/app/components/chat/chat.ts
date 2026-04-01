@@ -75,11 +75,29 @@ export class Chat implements OnInit {
     this.resetTextareaState(textarea);
   }
 
+  onDialogAreaInteraction(event: Event): void {
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    // Не трогаем клавиатуру, если пользователь взаимодействует с зоной ввода.
+    if (target.closest('.chat-input-container')) {
+      return;
+    }
+
+    this.dismissMobileKeyboard();
+  }
+
   // Автоматическое изменение высоты textarea
   autoResize(textarea: HTMLTextAreaElement): void {
-    const fixedHeight = 90;
-    textarea.style.height = `${fixedHeight}px`;
-    textarea.style.overflowY = textarea.scrollHeight > fixedHeight ? 'auto' : 'hidden';
+    const minHeight = 45;
+    const maxHeight = 90;
+
+    textarea.style.height = `${minHeight}px`;
+    const nextHeight = Math.min(Math.max(textarea.scrollHeight, minHeight), maxHeight);
+    textarea.style.height = `${nextHeight}px`;
+    textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'auto' : 'hidden';
     if (!textarea.value) {
       this.resetTextareaState(textarea);
     }
@@ -111,7 +129,6 @@ export class Chat implements OnInit {
     this.messageText = '';
     const textarea = this.chatTextarea?.nativeElement;
     if (textarea) {
-      textarea.blur();
       textarea.value = '';
       this.autoResize(textarea);
       this.resetTextareaState(textarea);
@@ -121,6 +138,7 @@ export class Chat implements OnInit {
         }
       });
     }
+    this.dismissMobileKeyboard();
 
     if (shouldStickToBottom) {
       // скроллим после рендера, только если пользователь уже внизу
@@ -257,6 +275,56 @@ export class Chat implements OnInit {
     } catch {
       // Selection API может бросать исключение в некоторых мобильных браузерах
     }
+  }
+
+  private dismissMobileKeyboard(): void {
+    const textarea = this.chatTextarea?.nativeElement;
+    const activeElement = document.activeElement as HTMLElement | null;
+
+    const blurElement = (element: HTMLElement | null | undefined) => {
+      if (!element || typeof element.blur !== 'function') {
+        return;
+      }
+      try {
+        element.blur();
+      } catch {
+        // ignore
+      }
+    };
+
+    // Хак для старых iOS Safari: transient readonly + blur.
+    if (textarea) {
+      const hadReadonly = textarea.hasAttribute('readonly');
+      if (!hadReadonly) {
+        textarea.setAttribute('readonly', 'readonly');
+      }
+      blurElement(textarea);
+      if (!hadReadonly) {
+        textarea.removeAttribute('readonly');
+      }
+    }
+
+    blurElement(activeElement);
+
+    const nav = navigator as Navigator & {
+      virtualKeyboard?: { hide?: () => void };
+    };
+    try {
+      nav.virtualKeyboard?.hide?.();
+    } catch {
+      // ignore
+    }
+
+    // Повторяем blur в следующих тиках: помогает на iOS 16/17 и части Android WebView.
+    requestAnimationFrame(() => {
+      blurElement(this.chatTextarea?.nativeElement);
+      blurElement(document.activeElement as HTMLElement | null);
+    });
+
+    setTimeout(() => {
+      blurElement(this.chatTextarea?.nativeElement);
+      blurElement(document.activeElement as HTMLElement | null);
+    }, 60);
   }
 
   private loadGeneralTurns(): void {

@@ -1,10 +1,10 @@
 .header {
   position: relative;
-  min-height: 84px;
+  min-height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 12px;
+  padding: 0 10px;
   background: transparent;
   z-index: 20;
   border-bottom: none;
@@ -104,11 +104,11 @@
 
 .side-menu {
   position: fixed;
-  top: 64px;
+  top: 56px;
   right: 12px;
   left: auto;
   width: min(260px, calc(100vw - 24px));
-  max-height: calc(100dvh - 76px);
+  max-height: calc(100dvh - 64px);
   box-shadow: none;
   padding: 12px;
   display: flex;
@@ -190,7 +190,7 @@
 
 @media (max-width: 640px) {
   .header {
-    min-height: 92px;
+    min-height: 78px;
   }
 
   .session-meta {
