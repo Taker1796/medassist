@@ -1,10 +1,10 @@
 .header {
   position: relative;
-  min-height: 64px;
+  min-height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 8px;
+  padding: 0 6px;
   background: transparent;
   z-index: 20;
   border-bottom: none;
@@ -68,6 +68,7 @@
   gap: 4px;
   margin: 0 52px;
   min-width: 0;
+  transform: translateY(-3px);
 }
 
 .specialization-meta {
@@ -104,11 +105,11 @@
 
 .side-menu {
   position: fixed;
-  top: 50px;
+  top: 44px;
   right: 12px;
   left: auto;
   width: min(260px, calc(100vw - 24px));
-  max-height: calc(100dvh - 56px);
+  max-height: calc(100dvh - 50px);
   box-shadow: none;
   padding: 12px;
   display: flex;
@@ -171,7 +172,7 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  padding-top: 6px;
+  padding-top: 0;
 }
 
 .shell-wrapper {
@@ -190,7 +191,7 @@
 
 @media (max-width: 640px) {
   .header {
-    min-height: 70px;
+    min-height: 62px;
   }
 
   .session-meta {

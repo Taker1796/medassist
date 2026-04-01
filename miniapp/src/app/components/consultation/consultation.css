@@ -20,16 +20,23 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
+  position: relative;
 }
 
 .chat-toolbar {
   display: flex;
   width: min(100%, 920px);
-  margin: 0 auto;
+  margin: 0;
   justify-content: flex-end;
   align-items: center;
   padding: 0;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  pointer-events: none;
 }
 
 .complete-visit-button {
@@ -42,13 +49,14 @@
   padding: 5px 10px;
   border-radius: 10px;
   border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.04);
+  background: #2f3a4d;
   color: var(--muted-text-color);
   font-size: 12px;
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
+  pointer-events: auto;
 }
 
 .complete-visit-icon {
@@ -57,7 +65,7 @@
 }
 
 .complete-visit-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
+  background: #3b4860;
   color: var(--text-color);
 }
 
@@ -76,11 +84,12 @@
   max-width: 1180px;
   flex: 1;
   min-height: 0;
+  margin-top: 24px;
 }
 
 @media (max-width: 640px) {
   .consultation-layout {
-    gap: 6px;
+    gap: 0;
   }
 
   .chat-toolbar {
@@ -91,5 +100,9 @@
     min-height: 28px;
     padding: 5px 9px;
     font-size: 12px;
+  }
+
+  .consultation-layout app-chat {
+    margin-top: 20px;
   }
 }
