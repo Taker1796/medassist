@@ -3,7 +3,7 @@
     <form class="form" [formGroup]="form" appBlurOnOutsideTap >
 
       <div class="form-control" [class.has-error]="fullName?.invalid && fullName?.touched">
-        <label>Имя</label>
+        <label>Описательное имя / Номер</label>
         <input formControlName="fullName" />
         @if (fullName?.invalid && fullName?.touched) {
           <div class="fieldRequiredError">

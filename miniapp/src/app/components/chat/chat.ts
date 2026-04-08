@@ -103,14 +103,6 @@ export class Chat implements OnInit {
     }
   }
 
-  // Обработка нажатия клавиш
-  onKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      this.sendMessage();
-    }
-  }
-
   sendMessage(): void {
     if (!this.messageText.trim()) return;
 

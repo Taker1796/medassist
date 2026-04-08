@@ -47,7 +47,6 @@
           (focus)="onTextareaFocus()"
           (input)="onInput($event)"
           (blur)="onTextareaBlur()"
-          (keydown)="onKeyDown($event)"
         ></textarea>
         <span class="textarea-placeholder" [class.hidden]="messageText.trim().length > 0 || isTextareaFocused">
           Введите сообщение...
