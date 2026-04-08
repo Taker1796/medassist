@@ -11,6 +11,7 @@ public static class TemplateCodes
     public const string Therapy = "therapy";
     public const string Psychiatry = "psychiatry";
     public const string Gynecology = "gynecology";
+    public const string Gastroenterology = "gastroenterology";
 
     public static string ToSummaryCode(string? specialtyCode)
     {

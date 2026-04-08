@@ -37,6 +37,7 @@ public partial class InitSchema : Migration
                 ('{{TemplateCodes.Psychiatry}}', 'Психиатрия', ''),
                 ('{{TemplateCodes.Gynecology}}', 'Гинекология', ''),
                 ('{{TemplateCodes.Default}}', 'Общая практика', ''),
+                ('{{TemplateCodes.Gastroenterology}}', 'Гастроэнтерология', ''),
                 ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Cardiology)}}', 'S_Кардиология', ''),
                 ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Neurology)}}', 'S_Неврология', ''),
                 ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Pediatrics)}}', 'S_Педиатрия', ''),
@@ -44,6 +45,7 @@ public partial class InitSchema : Migration
                 ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Therapy)}}', 'S_Therapy / Internal medicine', ''),
                 ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Psychiatry)}}', 'S_Психиатрия', ''),
                 ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Gynecology)}}', 'S_Гинекология', ''),
+                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Gastroenterology)}}', 'S_Гастроэнтерология', ''),
                 ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Default)}}', 'S_Общая практика', '');
             """);
 
