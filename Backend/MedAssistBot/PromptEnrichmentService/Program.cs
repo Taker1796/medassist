@@ -64,17 +64,15 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DbMigration");
+    var db = scope.ServiceProvider.GetRequiredService<PromptDbContext>();
+    await PromptTemplateDbInitializer.InitializeAsync(db, app.Environment, logger);
+}
+
 if (app.Environment.IsDevelopment())
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DbMigration");
-        var db = scope.ServiceProvider.GetRequiredService<PromptDbContext>();
-        var pending = (await db.Database.GetPendingMigrationsAsync()).ToArray();
-        logger.LogInformation("EF pending migrations: {Migrations}", pending.Length == 0 ? "(none)" : string.Join(", ", pending));
-        await db.Database.MigrateAsync();
-    }
-
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseCors("AllowFrontend");
