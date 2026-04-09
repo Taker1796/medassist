@@ -11,6 +11,7 @@ import {PatientChatCurrentResponse} from '../../../models/patientChatCurrentResp
 import {PatientChatTurn} from '../../../models/patientChatTurn.model';
 import {PatientChatConversationHistory} from '../../../models/patientChatConversationHistory.model';
 import {FormsModule} from '@angular/forms';
+import {PatientChatStatus} from '../../../models/patientChatStatus.model';
 
 @Component({
   selector: 'app-patient-record',
@@ -71,6 +72,22 @@ export class PatientRecord implements OnInit {
       return;
     }
 
+    const finalizingVisitsCount = this.getFinalizingVisitsCount();
+    if (finalizingVisitsCount > 0) {
+      const noun = finalizingVisitsCount === 1 ? 'приём' : 'приёмы';
+      const confirmMessage =
+        `У пациента есть ${finalizingVisitsCount} ${noun}, по которым итоги ещё рассчитываются.\n` +
+        'Если начать новый приём сейчас, эти результаты не будут учтены в новом диалоге.\n\n' +
+        'Продолжить?';
+
+      const isConfirmed = window.confirm(confirmMessage);
+      if (!isConfirmed) {
+        this.isStartingVisit = false;
+        this._cdr.detectChanges();
+        return;
+      }
+    }
+
     this._patientsService.createChatConversation(this.patientId).pipe(
       catchError((err: unknown) => {
         alert('Не удалось открыть приём. Попробуйте еще раз.');
@@ -102,7 +119,7 @@ export class PatientRecord implements OnInit {
     try {
       await firstValueFrom(this._patientsService.completeCurrentConversation(this.patientId));
       const status = await firstValueFrom(this.refreshConversationStatus());
-      this.hasActiveConversation = status.hasActiveConversation;
+      this.hasActiveConversation = !!status.hasActiveConversation;
       this.loadConversations();
       this._cdr.detectChanges();
     } catch (err: unknown) {
@@ -154,17 +171,39 @@ export class PatientRecord implements OnInit {
 
   openConversationSummary(conversationId: string): void {
     if (!this.patientId || !conversationId) return;
+    const conversation = this.conversations.find((item: PatientChatConversationHistory) => item.conversationId === conversationId);
+    const status = this.resolveConversationStatus(conversation);
 
     this._router.navigate(['/patient-visit-summary'], {
       queryParams: {
         patientId: this.patientId,
-        conversationId
+        conversationId,
+        status
       },
       state: {
         patientId: this.patientId,
-        conversationId
+        conversationId,
+        status
       }
     });
+  }
+
+  getConversationStatusLabel(conversation: PatientChatConversationHistory): string {
+    const status = this.resolveConversationStatus(conversation);
+
+    if (status === PatientChatStatus.Completed) {
+      return 'Завершен';
+    }
+
+    if (status === PatientChatStatus.Finalizing) {
+      return 'Рассчитывается';
+    }
+
+    if (status === PatientChatStatus.Failed) {
+      return 'Ошибка';
+    }
+
+    return 'Активный';
   }
 
   private openConsultation(): void {
@@ -185,7 +224,7 @@ export class PatientRecord implements OnInit {
       currentConversation: this.refreshConversationStatus(true)
     }).subscribe(({patient, currentConversation}: {patient: PatientResponse; currentConversation: PatientChatCurrentResponse}) => {
       this.patient = patient;
-      this.hasActiveConversation = currentConversation.hasActiveConversation;
+      this.hasActiveConversation = !!currentConversation.hasActiveConversation;
       this._cdr.detectChanges();
     });
 
@@ -226,6 +265,24 @@ export class PatientRecord implements OnInit {
         }
       })
     );
+  }
+
+  private resolveConversationStatus(conversation: PatientChatConversationHistory | undefined): number {
+    if (!conversation) {
+      return PatientChatStatus.Active;
+    }
+
+    if (typeof conversation.status === 'number') {
+      return conversation.status;
+    }
+
+    return conversation.isCompleted ? PatientChatStatus.Completed : PatientChatStatus.Active;
+  }
+
+  private getFinalizingVisitsCount(): number {
+    return this.conversations.filter((conversation: PatientChatConversationHistory) =>
+      this.resolveConversationStatus(conversation) === PatientChatStatus.Finalizing
+    ).length;
   }
 
 }

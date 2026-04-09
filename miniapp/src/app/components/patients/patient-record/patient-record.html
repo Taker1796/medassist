@@ -75,7 +75,7 @@
                     (keydown.space)="openConversationSummary(conversation.conversationId)"
                   >
                     <span class="chip-text">Приём от {{ formatConversationDate(conversation.createdAt) }}</span>
-                    <span class="visit-status">{{ conversation.isCompleted ? 'Завершен' : 'Активный' }}</span>
+                    <span class="visit-status">{{ getConversationStatusLabel(conversation) }}</span>
                   </div>
                 }
               </div>

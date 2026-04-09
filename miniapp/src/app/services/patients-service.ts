@@ -14,6 +14,7 @@ import {PatientChatAskResponse} from '../models/patientChatAskResponse.model';
 import {PatientChatConversationHistory} from '../models/patientChatConversationHistory.model';
 import {PatientChatConversationSummary} from '../models/patientChatConversationSummary.model';
 import {SseStreamService} from './sse-stream-service';
+import {PatientChatStatusResponse} from '../models/patientChatStatus.model';
 
 @Injectable({
   providedIn: 'root',
@@ -111,9 +112,9 @@ export class PatientsService {
     return this._sseStreamService.postStream(streamUrl, body);
   }
 
-  completeCurrentConversation(patientId: string): Observable<void> {
+  completeCurrentConversation(patientId: string): Observable<PatientChatStatusResponse> {
     const basePath = Environment.patientsChatCurrentUrlPath.replace('{patientId}', encodeURIComponent(patientId));
-    return this._http.post<void>(`${this._baseUrl}${basePath}/complete`, {}).pipe(
+    return this._http.post<PatientChatStatusResponse>(`${this._baseUrl}${basePath}/complete`, {}).pipe(
       tap(() => {
         this._currentTurnsCacheByPatient[patientId] = [];
       })
