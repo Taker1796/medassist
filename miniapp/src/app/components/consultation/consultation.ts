@@ -3,8 +3,13 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Chat} from '../chat/chat';
 import {MenuShell} from '../menu-shell/menu-shell';
 import {PatientsService} from '../../services/patients-service';
-import {catchError, finalize, map, of} from 'rxjs';
+import {catchError, finalize, map, Observable, of, switchMap} from 'rxjs';
 import {PatientResponse} from '../../models/patientResponse.model';
+import {SpecializationsService} from '../../services/specializations-service';
+import {PatientChatTurn} from '../../models/patientChatTurn.model';
+import {MeService} from '../../services/me-service';
+import {MeResponse} from '../../models/meResponse.model';
+import {Specialization} from '../../models/specializationModel';
 
 @Component({
   selector: 'app-consultation',
@@ -20,10 +25,13 @@ export class Consultation implements OnInit {
   private _router = inject(Router);
   private _route = inject(ActivatedRoute);
   private _patientsService = inject(PatientsService);
+  private _specializationsService = inject(SpecializationsService);
+  private _meService = inject(MeService);
 
   backRoute = '/patients';
   patientId: string | null = null;
   title = 'Пациент';
+  conversationSpecializationTitle: string | null = null;
   isCompletingVisit = false;
   private _statePatientNickname: string | null = null;
 
@@ -43,6 +51,10 @@ export class Consultation implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.patientId) {
+      this.loadConversationSpecialization();
+    }
+
     if (this._statePatientNickname) {
       this.title = `Пациент: ${this._statePatientNickname}`;
       return;
@@ -89,5 +101,49 @@ export class Consultation implements OnInit {
         state: {patientId: this.patientId}
       });
     });
+  }
+
+  private loadConversationSpecialization(): void {
+    if (!this.patientId) {
+      return;
+    }
+
+    this._patientsService.getCurrentConversationTurns(this.patientId).pipe(
+      map((turns: PatientChatTurn[]) => this.resolveEarliestSpecialtyCode(turns)),
+      switchMap((specialtyCode: string | null) => this.resolveSpecializationTitle(specialtyCode)),
+      catchError(() => of<string | null>(null))
+    ).subscribe((specializationTitle: string | null) => {
+      this.conversationSpecializationTitle = specializationTitle;
+    });
+  }
+
+  private resolveEarliestSpecialtyCode(turns: PatientChatTurn[]): string | null {
+    if (turns.length === 0) {
+      return null;
+    }
+
+    const earliestTurn = [...turns].sort((a: PatientChatTurn, b: PatientChatTurn) =>
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    )[0];
+
+    const normalizedCode = earliestTurn.specialtyCode?.trim();
+    return normalizedCode ? normalizedCode : null;
+  }
+
+  private resolveSpecializationTitle(specialtyCode: string | null): Observable<string | null> {
+    if (!specialtyCode) {
+      return this._meService.me().pipe(
+        map((me: MeResponse) => me.specializations?.[0]?.title ?? null),
+        catchError(() => of<string | null>(null))
+      );
+    }
+
+    return this._specializationsService.getList().pipe(
+      map((specializations: Specialization[]) => {
+        const specialization = specializations.find((item: Specialization) => item.code === specialtyCode);
+        return specialization?.title ?? specialtyCode;
+      }),
+      catchError(() => of<string | null>(specialtyCode))
+    );
   }
 }

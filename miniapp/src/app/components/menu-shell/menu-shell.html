@@ -25,17 +25,19 @@
           <div class="specialization-meta">
             <p class="specialization-info">
               Специализация:
-              {{ data.specializations?.length ? data.specializations[0].title : 'Не выбрана' }}
+              {{ getSpecializationTitle(data) }}
             </p>
-            <button
-              class="edit-specialization"
-              type="button"
-              aria-label="Редактировать специализацию"
-              title="Редактировать специализацию"
-              (click)="goToSpecializations()"
-            >
-              ✎
-            </button>
+            @if (allowSpecializationEdit) {
+              <button
+                class="edit-specialization"
+                type="button"
+                aria-label="Редактировать специализацию"
+                title="Редактировать специализацию"
+                (click)="goToSpecializations()"
+              >
+                ✎
+              </button>
+            }
           </div>
         </div>
       }
@@ -46,17 +48,19 @@
           <div class="specialization-meta">
             <p class="specialization-info">
               Специализация:
-              {{ data.specializations?.length ? data.specializations[0].title : 'Не выбрана' }}
+              {{ getSpecializationTitle(data) }}
             </p>
-            <button
-              class="edit-specialization"
-              type="button"
-              aria-label="Редактировать специализацию"
-              title="Редактировать специализацию"
-              (click)="goToSpecializations()"
-            >
-              ✎
-            </button>
+            @if (allowSpecializationEdit) {
+              <button
+                class="edit-specialization"
+                type="button"
+                aria-label="Редактировать специализацию"
+                title="Редактировать специализацию"
+                (click)="goToSpecializations()"
+              >
+                ✎
+              </button>
+            }
           </div>
         </div>
       }

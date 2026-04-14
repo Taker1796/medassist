@@ -1,4 +1,10 @@
-<app-menu-shell [showHome]="true" [title]="title" [backRoute]="backRoute">
+<app-menu-shell
+  [showHome]="true"
+  [title]="title"
+  [backRoute]="backRoute"
+  [allowSpecializationEdit]="false"
+  [specializationTitleOverride]="conversationSpecializationTitle"
+>
   <div class="content">
     <div class="consultation-layout">
       <div class="chat-toolbar">

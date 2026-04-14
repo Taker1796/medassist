@@ -211,6 +211,18 @@
   text-align: left;
 }
 
+.my-message.message-specialty-mismatch {
+  background: #5f7eb8;
+  color: #eff5ff;
+  box-shadow: inset 0 0 0 1px rgba(220, 233, 255, 0.25);
+}
+
+.bot-message.message-specialty-mismatch {
+  background: #2f526b;
+  color: #e7f0ff;
+  box-shadow: inset 0 0 0 1px rgba(156, 205, 255, 0.28);
+}
+
 .typing-indicator {
   align-self: flex-start;
   font-size: 13px;

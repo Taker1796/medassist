@@ -4,6 +4,7 @@ import {BlurOnOutsideTap} from '../../directives/blur-on-outside-tap';
 import {AsyncPipe, SlicePipe} from '@angular/common';
 import {MeService} from '../../services/me-service';
 import {Location} from '@angular/common';
+import {MeResponse} from '../../models/meResponse.model';
 
 @Component({
   selector: 'app-menu-shell',
@@ -22,6 +23,8 @@ export class MenuShell {
   @Input() showPatient = false;
   @Input() showBack = true;
   @Input() backRoute: string | null = null;
+  @Input() allowSpecializationEdit = true;
+  @Input() specializationTitleOverride: string | null = null;
 
   private _router = inject(Router);
   private _meService = inject(MeService);
@@ -66,5 +69,13 @@ export class MenuShell {
     }
 
     this._location.back();
+  }
+
+  getSpecializationTitle(data: MeResponse): string {
+    if (this.specializationTitleOverride?.trim()) {
+      return this.specializationTitleOverride;
+    }
+
+    return data.specializations?.length ? data.specializations[0].title : 'Не выбрана';
   }
 }

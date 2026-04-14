@@ -12,6 +12,7 @@
       class="message"
       [class.my-message]="msg.isMine"
       [class.bot-message]="!msg.isMine"
+      [class.message-specialty-mismatch]="msg.isSpecialtyMismatch"
       [innerHTML]="formatMessage(msg.text)"
     >
     </div>

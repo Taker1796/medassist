@@ -7,12 +7,16 @@ import {GeneralChatTurn} from '../../models/generalChatTurn.model';
 import {PatientsService} from '../../services/patients-service';
 import {PatientChatTurn} from '../../models/patientChatTurn.model';
 import {PatientChatAskRequest} from '../../models/patientChatAskRequest.model';
+import {MeService} from '../../services/me-service';
+import {MeResponse} from '../../models/meResponse.model';
 
 interface ChatMessage {
   id: string;
   text: string;
   isMine: boolean;
   createdAt: string;
+  specialtyCode: string | null;
+  isSpecialtyMismatch: boolean;
 }
 
 @Component({
@@ -41,6 +45,9 @@ export class Chat implements OnInit {
   private _cdr = inject(ChangeDetectorRef);
   private _llmService = inject(LlmService);
   private _patientsService = inject(PatientsService);
+  private _meService = inject(MeService);
+  private _currentDoctorSpecialtyCode: string | null = null;
+  private _conversationBaseSpecialtyCode: string | null = null;
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLElement>;
   @ViewChild('chatTextarea') chatTextarea!: ElementRef<HTMLTextAreaElement>;
@@ -52,6 +59,7 @@ export class Chat implements OnInit {
     }
 
     if (this.mode === 'patient') {
+      this.loadCurrentDoctorSpecialtyCode();
       this.loadPatientTurns();
     }
   }
@@ -112,12 +120,15 @@ export class Chat implements OnInit {
     const userText = this.messageText.trim();
     const requestId = crypto.randomUUID();
     const createdAt = new Date().toISOString();
+    const currentMessageSpecialtyCode = this.mode === 'patient' ? this._currentDoctorSpecialtyCode : null;
 
     this.messages.push({
       id: requestId,
       text: userText,
       isMine: true,
       createdAt,
+      specialtyCode: currentMessageSpecialtyCode,
+      isSpecialtyMismatch: this.isSpecialtyMismatch(currentMessageSpecialtyCode),
     });
 
     this.messageText = '';
@@ -174,9 +185,11 @@ export class Chat implements OnInit {
             requestId,
             userText,
             assistantText: answer,
+            specialtyCode: currentMessageSpecialtyCode,
             createdAt,
           });
-        }
+        },
+        currentMessageSpecialtyCode
       );
       return;
     }
@@ -224,6 +237,8 @@ export class Chat implements OnInit {
       text:  parsed.cleanText,
       isMine: false,
       createdAt: new Date().toISOString(),
+      specialtyCode: null,
+      isSpecialtyMismatch: false,
     });
     this.subspecSuggestions = parsed.suggestions;
     if (shouldStickToBottom) {
@@ -341,6 +356,14 @@ export class Chat implements OnInit {
     });
   }
 
+  private loadCurrentDoctorSpecialtyCode(): void {
+    this._meService.me().pipe(
+      catchError(() => of<MeResponse | null>(null))
+    ).subscribe((me: MeResponse | null) => {
+      this._currentDoctorSpecialtyCode = this.normalizeSpecialtyCode(me?.specializations?.[0]?.code ?? null);
+    });
+  }
+
   private loadPatientTurns(): void {
     const patientId = this.patientId;
     if (!patientId) {
@@ -372,12 +395,16 @@ export class Chat implements OnInit {
           text: turn.userText,
           isMine: true,
           createdAt: turn.createdAt,
+          specialtyCode: null,
+          isSpecialtyMismatch: false,
         },
         {
           id: `${turn.turnId}-assistant`,
           text: this.extractSubspecSuggestions(turn.assistantText).cleanText,
           isMine: false,
           createdAt: turn.createdAt,
+          specialtyCode: null,
+          isSpecialtyMismatch: false,
         }
       ])
       .filter((message: ChatMessage) => !!message.text?.trim())
@@ -387,34 +414,42 @@ export class Chat implements OnInit {
   }
 
   private mapPatientTurnsToMessages(turns: PatientChatTurn[]): ChatMessage[] {
-    return turns
+    const sortedTurns = [...turns].sort((a: PatientChatTurn, b: PatientChatTurn) =>
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    this._conversationBaseSpecialtyCode = this.resolveBaseSpecialtyCode(sortedTurns);
+
+    return sortedTurns
       .flatMap((turn: PatientChatTurn) => [
         {
           id: `${turn.turnId}-user`,
           text: turn.userText,
           isMine: true,
           createdAt: turn.createdAt,
+          specialtyCode: this.normalizeSpecialtyCode(turn.specialtyCode),
+          isSpecialtyMismatch: this.isSpecialtyMismatch(turn.specialtyCode),
         },
         {
           id: `${turn.turnId}-assistant`,
           text: this.extractSubspecSuggestions(turn.assistantText).cleanText,
           isMine: false,
           createdAt: turn.createdAt,
+          specialtyCode: this.normalizeSpecialtyCode(turn.specialtyCode),
+          isSpecialtyMismatch: this.isSpecialtyMismatch(turn.specialtyCode),
         }
       ])
-      .filter((message: ChatMessage) => !!message.text?.trim())
-      .sort((a: ChatMessage, b: ChatMessage) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
+      .filter((message: ChatMessage) => !!message.text?.trim());
   }
 
-  private startStreamMessage(): string {
+  private startStreamMessage(specialtyCode: string | null = null): string {
     const streamMessageId = crypto.randomUUID();
     this.messages.push({
       id: streamMessageId,
       text: '',
       isMine: false,
       createdAt: new Date().toISOString(),
+      specialtyCode,
+      isSpecialtyMismatch: this.isSpecialtyMismatch(specialtyCode),
     });
     this._cdr.detectChanges();
     return streamMessageId;
@@ -480,13 +515,36 @@ export class Chat implements OnInit {
     return 0;
   }
 
+  private resolveBaseSpecialtyCode(turns: PatientChatTurn[]): string | null {
+    if (turns.length === 0) {
+      return null;
+    }
+
+    return this.normalizeSpecialtyCode(turns[0].specialtyCode);
+  }
+
+  private normalizeSpecialtyCode(code: string | null | undefined): string | null {
+    const normalizedCode = code?.trim();
+    return normalizedCode ? normalizedCode : null;
+  }
+
+  private isSpecialtyMismatch(specialtyCode: string | null | undefined): boolean {
+    const normalizedCode = this.normalizeSpecialtyCode(specialtyCode);
+    if (!normalizedCode || !this._conversationBaseSpecialtyCode) {
+      return false;
+    }
+
+    return normalizedCode !== this._conversationBaseSpecialtyCode;
+  }
+
   private handleStreamingAssistantResponse(
     stream$: Observable<string>,
     shouldStickToBottom: boolean,
-    onCompletePersist: (answer: string) => void
+    onCompletePersist: (answer: string) => void,
+    specialtyCode: string | null = null
   ): void {
     this.isTyping = false;
-    const streamMessageId = this.startStreamMessage();
+    const streamMessageId = this.startStreamMessage(specialtyCode);
     let streamedAnswer = '';
 
     stream$.subscribe({
