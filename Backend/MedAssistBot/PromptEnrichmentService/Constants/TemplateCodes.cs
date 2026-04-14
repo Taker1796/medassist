@@ -13,6 +13,19 @@ public static class TemplateCodes
     public const string Gynecology = "gynecology";
     public const string Gastroenterology = "gastroenterology";
 
+    public static readonly string[] All =
+    [
+        Default,
+        Cardiology,
+        Neurology,
+        Pediatrics,
+        Dermatology,
+        Therapy,
+        Psychiatry,
+        Gynecology,
+        Gastroenterology
+    ];
+    
     public static string ToSummaryCode(string? specialtyCode)
     {
         var normalized = string.IsNullOrWhiteSpace(specialtyCode) ? Default : specialtyCode.Trim();

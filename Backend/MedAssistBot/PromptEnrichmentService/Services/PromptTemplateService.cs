@@ -2,6 +2,7 @@ using PromptEnrichmentService.Constants;
 using PromptEnrichmentService.Exceptions;
 using PromptEnrichmentService.Models;
 using PromptEnrichmentService.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -17,21 +18,31 @@ public class PromptTemplateService
     };
 
     private readonly IPromptTemplateRepository _promptTemplateRepository;
+    private readonly IMemoryCache _memoryCache;
+    public const string TemplateCacheKey = "prompt_templates_all";
 
-    public PromptTemplateService(IPromptTemplateRepository promptTemplateRepository)
+    public PromptTemplateService(IPromptTemplateRepository promptTemplateRepository, IMemoryCache memoryCache)
     {
         _promptTemplateRepository = promptTemplateRepository;
+        _memoryCache = memoryCache;
     }
 
-    public async Task<EnrichedData> BuildEnrichedText(AddPromptPatientRequest? patient, string specialtyCode, Message[] messages, CancellationToken cancellationToken)
+    public async Task<EnrichedData> BuildEnrichedText(
+        AddPromptPatientRequest? patient,
+        string specialtyCode,
+        string? specialtyCodeOverride,
+        Message[] messages,
+        CancellationToken cancellationToken)
     {
-        var template = await GetPromptTemplate(specialtyCode, cancellationToken);
+        var templates = await GetTemplatesAsync(cancellationToken);
+        var template = GetPromptTemplate(templates, specialtyCode);
         var patientJson = patient == null
             ? string.Empty
             : JsonSerializer.Serialize(patient, PatientJsonOptions);
+        var systemPrompt = ApplySpecializationOverrides(template.Text, templates, specialtyCodeOverride);
 
         return BuildEnrichedMessages(
-            template.Text,
+            systemPrompt,
             messages,
             Placeholders.PatientHistory,
             patientJson,
@@ -45,11 +56,11 @@ public class PromptTemplateService
             throw new ArgumentException("Specialty code is required for summary generation", nameof(specialtyCode));
         }
 
+        var templates = await GetTemplatesAsync(cancellationToken);
         var summaryTemplateCode = TemplateCodes.ToSummaryCode(specialtyCode);
-        var template = await _promptTemplateRepository.GetByCodeAsync(summaryTemplateCode, cancellationToken);
-        if (template == null || string.IsNullOrWhiteSpace(template.Text))
+        if (!templates.TryGetValue(summaryTemplateCode, out var template) || string.IsNullOrWhiteSpace(template.Text))
         {
-            template = await GetDefaultPromptTemplate(TemplateCodes.ToSummaryCode(TemplateCodes.Default), cancellationToken);
+            template = GetRequiredTemplate(templates, TemplateCodes.ToSummaryCode(TemplateCodes.Default));
         }
 
         var patientJson = JsonSerializer.Serialize(patient, PatientJsonOptions);
@@ -101,35 +112,65 @@ public class PromptTemplateService
         return enrichedMessages;
     }
 
-    private async Task<PromptTemplate> GetPromptTemplate(string specialtyCode, CancellationToken cancellationToken)
+    private string ApplySpecializationOverrides(
+        string systemPrompt,
+        IReadOnlyDictionary<string, PromptTemplate> templates,
+        string? specialtyCodeOverride)
+    {
+        if (!systemPrompt.Contains(Placeholders.Specialisations, StringComparison.Ordinal))
+        {
+            return systemPrompt;
+        }
+
+        string replacement;
+        if (!string.IsNullOrWhiteSpace(specialtyCodeOverride))
+        {
+            var subSpecTemplate = GetRequiredTemplate(templates, TechnicalTemplateCodes.SubSpec);
+            replacement = subSpecTemplate.Text.Replace(Placeholders.SubSpec, specialtyCodeOverride.Trim(), StringComparison.Ordinal);
+        }
+        else
+        {
+            var specListTemplate = GetRequiredTemplate(templates, TechnicalTemplateCodes.SpecList);
+            var specCodes = string.Join(", ", TemplateCodes.All);
+            replacement = specListTemplate.Text.Replace(Placeholders.SpecCodes, specCodes, StringComparison.Ordinal);
+        }
+
+        return systemPrompt.Replace(Placeholders.Specialisations, replacement, StringComparison.Ordinal);
+    }
+
+    private PromptTemplate GetPromptTemplate(IReadOnlyDictionary<string, PromptTemplate> templates, string specialtyCode)
     {
         if (string.IsNullOrWhiteSpace(specialtyCode))
         {
-            return await GetDefaultPromptTemplate(cancellationToken);
+            return GetRequiredTemplate(templates, TemplateCodes.Default);
         }
-        
-        var template = await _promptTemplateRepository.GetByCodeAsync(specialtyCode, cancellationToken);
-        if (template == null || string.IsNullOrWhiteSpace(template.Text))
+
+        if (!templates.TryGetValue(specialtyCode, out var template) || string.IsNullOrWhiteSpace(template.Text))
         {
-            return await GetDefaultPromptTemplate(TemplateCodes.Default, cancellationToken);
+            return GetRequiredTemplate(templates, TemplateCodes.Default);
         }
-        
+
         return template;
     }
 
-    private async Task<PromptTemplate> GetDefaultPromptTemplate(CancellationToken cancellationToken)
+    private static PromptTemplate GetRequiredTemplate(IReadOnlyDictionary<string, PromptTemplate> templates, string code)
     {
-        return await GetDefaultPromptTemplate(TemplateCodes.Default, cancellationToken);
+        if (!templates.TryGetValue(code, out var template) || template == null || string.IsNullOrWhiteSpace(template.Text))
+        {
+            throw new TemplateNotFoundException($"default prompt template not found for code '{code}'");
+        }
+
+        return template;
     }
 
-    private async Task<PromptTemplate> GetDefaultPromptTemplate(string fallbackCode, CancellationToken cancellationToken)
+    private Task<IReadOnlyDictionary<string, PromptTemplate>> GetTemplatesAsync(CancellationToken cancellationToken)
     {
-        var template = await _promptTemplateRepository.GetByCodeAsync(fallbackCode, cancellationToken);
-        if (template == null || string.IsNullOrWhiteSpace(template.Text))
+        return _memoryCache.GetOrCreateAsync<IReadOnlyDictionary<string, PromptTemplate>>(TemplateCacheKey, async entry =>
         {
-            throw new TemplateNotFoundException($"default prompt template not found for code '{fallbackCode}'");
-        }
-            
-        return template;
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+
+            var templates = await _promptTemplateRepository.GetAllAsync(cancellationToken);
+            return templates.ToDictionary(t => t.Code, StringComparer.OrdinalIgnoreCase) as IReadOnlyDictionary<string, PromptTemplate>;
+        })!;
     }
 }

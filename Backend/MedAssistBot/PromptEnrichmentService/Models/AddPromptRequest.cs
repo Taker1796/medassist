@@ -6,6 +6,8 @@ public class AddPromptRequest
 
     public string DoctorSpecializationCode { get; set; } = string.Empty;
 
+    public string? SpecialtyCodeOverride { get; set; }
+
     public Message[] Messages { get; set; } = [];
 
 }

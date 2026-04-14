@@ -37,15 +37,24 @@
     </button>
   }
 
-  @if (subspecSuggestions.length > 0) {
+  @if (subspecSuggestions.length > 0 || showReturnToBaseSpecialtyButton) {
     <div class="subspec-toolbar">
-      @for (subspec of subspecSuggestions; track subspec) {
+      @for (subspec of subspecSuggestions; track subspec.code) {
         <button
           type="button"
           class="subspec-button"
           (click)="applySubspecSuggestion(subspec)"
         >
-          {{ subspec }}
+          {{ subspec.title }}
+        </button>
+      }
+      @if (showReturnToBaseSpecialtyButton) {
+        <button
+          type="button"
+          class="subspec-button subspec-return-button"
+          (click)="returnToConversationSpecialty()"
+        >
+          Вернуться в специальность {{ returnToBaseSpecialtyTitle }}
         </button>
       }
     </div>

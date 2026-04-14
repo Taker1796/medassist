@@ -27,6 +27,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.Configure<LlmOptions>(builder.Configuration.GetSection("Llm"));
 builder.Services.AddHttpClient<LlmClient>();
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<PromptTemplateService>();
 builder.Services.AddScoped<IPromptTemplateRepository, PromptTemplateRepository>();
 builder.Services.AddDbContext<PromptDbContext>(options =>

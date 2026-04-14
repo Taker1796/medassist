@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using PromptEnrichmentService.Models;
 using PromptEnrichmentService.Repositories;
+using PromptEnrichmentService.Services;
 
 namespace PromptEnrichmentService.Controllers;
 
@@ -10,10 +12,12 @@ namespace PromptEnrichmentService.Controllers;
 public class PromptTemplateController : ControllerBase
 {
     private readonly IPromptTemplateRepository _promptTemplateRepository;
+    private readonly IMemoryCache _memoryCache;
 
-    public PromptTemplateController(IPromptTemplateRepository promptTemplateRepository)
+    public PromptTemplateController(IPromptTemplateRepository promptTemplateRepository, IMemoryCache memoryCache)
     {
         _promptTemplateRepository = promptTemplateRepository;
+        _memoryCache = memoryCache;
     }
 
     [HttpGet("resolve")]
@@ -30,6 +34,7 @@ public class PromptTemplateController : ControllerBase
             return NotFound("Шаблон не найден");
         }
 
+        _memoryCache.Remove(PromptTemplateService.TemplateCacheKey);
         return Ok(ToResponse(template));
     }
 
@@ -74,6 +79,7 @@ public class PromptTemplateController : ControllerBase
             return NotFound($"Шаблон с Code={code} не найден");
         }
 
+        _memoryCache.Remove(PromptTemplateService.TemplateCacheKey);
         return NoContent();
     }
 

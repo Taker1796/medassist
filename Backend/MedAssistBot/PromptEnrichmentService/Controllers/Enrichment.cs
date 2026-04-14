@@ -27,7 +27,12 @@ public class Enrichment : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)] 
     public async Task<IActionResult> Post([FromBody] AddPromptRequest request, CancellationToken cancellationToken)
     {
-        var enrichedData = await _promptService.BuildEnrichedText(request.Patient, request.DoctorSpecializationCode, request.Messages, cancellationToken);
+        var enrichedData = await _promptService.BuildEnrichedText(
+            request.Patient,
+            request.DoctorSpecializationCode,
+            request.SpecialtyCodeOverride,
+            request.Messages,
+            cancellationToken);
         var llmResponse = await _llmClient.SendAsync(enrichedData, cancellationToken);
         var enrichedText = FormatMessages(enrichedData.Messages);
 
@@ -52,6 +57,7 @@ public class Enrichment : ControllerBase
         var enrichedData = await _promptService.BuildEnrichedText(
             request.Patient,
             request.DoctorSpecializationCode,
+            request.SpecialtyCodeOverride,
             request.Messages,
             cancellationToken);
 

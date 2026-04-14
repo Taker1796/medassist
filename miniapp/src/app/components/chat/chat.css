@@ -282,9 +282,20 @@
   white-space: nowrap;
 }
 
+.subspec-return-button {
+  border-color: rgba(169, 205, 255, 0.62);
+  background: rgba(84, 139, 224, 0.24);
+  color: #e6f1ff;
+  white-space: normal;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .subspec-button:hover {
     background: rgba(120, 166, 255, 0.28);
+  }
+
+  .subspec-return-button:hover {
+    background: rgba(84, 139, 224, 0.34);
   }
 }
 

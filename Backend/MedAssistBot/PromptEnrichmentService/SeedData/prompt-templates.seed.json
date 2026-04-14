@@ -88,5 +88,15 @@
     "Code": "sum_gastroenterology",
     "Name": "S_Гастроэнтерология",
     "Text": ""
+  },
+  {
+    "Code": "subspec",
+    "Name": "Technical: subspec",
+    "Text": "вопрос в контексте специализации {subspec}"
+  },
+  {
+    "Code": "spec_list",
+    "Name": "Technical: spec_list",
+    "Text": "Список доступных специализаций {spec_codes}"
   }
 ]

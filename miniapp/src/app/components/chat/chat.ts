@@ -9,6 +9,8 @@ import {PatientChatTurn} from '../../models/patientChatTurn.model';
 import {PatientChatAskRequest} from '../../models/patientChatAskRequest.model';
 import {MeService} from '../../services/me-service';
 import {MeResponse} from '../../models/meResponse.model';
+import {SpecializationsService} from '../../services/specializations-service';
+import {Specialization} from '../../models/specializationModel';
 
 interface ChatMessage {
   id: string;
@@ -17,6 +19,11 @@ interface ChatMessage {
   createdAt: string;
   specialtyCode: string | null;
   isSpecialtyMismatch: boolean;
+}
+
+interface SubspecSuggestion {
+  code: string;
+  title: string;
 }
 
 @Component({
@@ -37,7 +44,7 @@ export class Chat implements OnInit {
   // Output для отправки сообщения родительскому компоненту
   sendMessageEvent = output<string>();
   messages: ChatMessage[] = [];
-  subspecSuggestions: string[] = [];
+  subspecSuggestions: SubspecSuggestion[] = [];
   isTyping = false;
   showScrollButton = false;
   private _isUserNearBottom = true;
@@ -46,13 +53,22 @@ export class Chat implements OnInit {
   private _llmService = inject(LlmService);
   private _patientsService = inject(PatientsService);
   private _meService = inject(MeService);
+  private _specializationsService = inject(SpecializationsService);
   private _currentDoctorSpecialtyCode: string | null = null;
+  private _currentDoctorSpecialtyTitle: string | null = null;
   private _conversationBaseSpecialtyCode: string | null = null;
+  private _conversationBaseSpecialtyTitle: string | null = null;
+  private _activeSpecialtyOverrideCode: string | null = null;
+  private _showReturnToBaseSpecialtyButton = false;
+  private _specializationTitleByCode = new Map<string, string>();
+  private _isRefreshingSpecializations = false;
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLElement>;
   @ViewChild('chatTextarea') chatTextarea!: ElementRef<HTMLTextAreaElement>;
 
   ngOnInit(): void {
+    this.loadSpecializationsCatalog();
+
     if (this.mode === 'general') {
       this.loadGeneralTurns();
       return;
@@ -114,13 +130,20 @@ export class Chat implements OnInit {
   }
 
   sendMessage(): void {
-    if (!this.messageText.trim()) return;
+    this.sendMessageWithText(this.messageText, true);
+  }
+
+  private sendMessageWithText(rawText: string, clearInputAfterSend: boolean): void {
+    const normalizedText = rawText.trim();
+    if (!normalizedText) {
+      return;
+    }
 
     const shouldStickToBottom = this._isUserNearBottom;
-    const userText = this.messageText.trim();
+    const userText = normalizedText;
     const requestId = crypto.randomUUID();
     const createdAt = new Date().toISOString();
-    const currentMessageSpecialtyCode = this.mode === 'patient' ? this._currentDoctorSpecialtyCode : null;
+    const currentMessageSpecialtyCode = this.mode === 'patient' ? this.getEffectiveMessageSpecialtyCode() : null;
 
     this.messages.push({
       id: requestId,
@@ -131,17 +154,19 @@ export class Chat implements OnInit {
       isSpecialtyMismatch: this.isSpecialtyMismatch(currentMessageSpecialtyCode),
     });
 
-    this.messageText = '';
-    const textarea = this.chatTextarea?.nativeElement;
-    if (textarea) {
-      textarea.value = '';
-      this.autoResize(textarea);
-      this.resetTextareaState(textarea);
-      requestAnimationFrame(() => {
-        if (!textarea.value) {
-          this.resetTextareaState(textarea);
-        }
-      });
+    if (clearInputAfterSend) {
+      this.messageText = '';
+      const textarea = this.chatTextarea?.nativeElement;
+      if (textarea) {
+        textarea.value = '';
+        this.autoResize(textarea);
+        this.resetTextareaState(textarea);
+        requestAnimationFrame(() => {
+          if (!textarea.value) {
+            this.resetTextareaState(textarea);
+          }
+        });
+      }
     }
     this.dismissMobileKeyboard();
 
@@ -172,7 +197,8 @@ export class Chat implements OnInit {
 
       const patientBody: PatientChatAskRequest = {
         requestId,
-        text: userText
+        text: userText,
+        ...(this._activeSpecialtyOverrideCode ? {specialtyCodeOverride: this._activeSpecialtyOverrideCode} : {})
       };
 
       this.handleStreamingAssistantResponse(
@@ -189,14 +215,15 @@ export class Chat implements OnInit {
             createdAt,
           });
         },
-        currentMessageSpecialtyCode
+        currentMessageSpecialtyCode,
+        this.mode === 'patient' && !!this._activeSpecialtyOverrideCode
       );
       return;
     }
 
     if (this.mode === 'general') {
       this.handleStreamingAssistantResponse(
-        this._llmService.askStream(body),
+      this._llmService.askStream(body),
         shouldStickToBottom,
         (answer: string) => {
           this._llmService.appendGeneralTurn({
@@ -224,7 +251,7 @@ export class Chat implements OnInit {
       }
 
       this.handleBotResponse(response.answer);
-    })
+    });
   }
 
   handleBotResponse(text: string) {
@@ -347,7 +374,7 @@ export class Chat implements OnInit {
       })
     ).subscribe((turns: GeneralChatTurn[]) => {
       this.messages = this.mapTurnsToMessages(turns);
-      this.subspecSuggestions = this.extractLatestSubspecSuggestions(this.messages);
+      this.subspecSuggestions = this.extractLatestSubspecSuggestionsFromGeneralTurns(turns);
       this._cdr.detectChanges();
       setTimeout(() => {
         this.scrollToBottom(false);
@@ -361,6 +388,37 @@ export class Chat implements OnInit {
       catchError(() => of<MeResponse | null>(null))
     ).subscribe((me: MeResponse | null) => {
       this._currentDoctorSpecialtyCode = this.normalizeSpecialtyCode(me?.specializations?.[0]?.code ?? null);
+      this._currentDoctorSpecialtyTitle = me?.specializations?.[0]?.title ?? null;
+      if (!this._conversationBaseSpecialtyCode) {
+        this._conversationBaseSpecialtyCode = this._currentDoctorSpecialtyCode;
+      }
+      this.updateConversationBaseSpecialtyTitle();
+    });
+  }
+
+  private loadSpecializationsCatalog(forceRefresh = false): void {
+    if (this._isRefreshingSpecializations) {
+      return;
+    }
+
+    this._isRefreshingSpecializations = true;
+    this._specializationsService.getList(forceRefresh).pipe(
+      catchError(() => of<Specialization[]>([]))
+    ).subscribe((specializations: Specialization[]) => {
+      this._specializationTitleByCode = new Map<string, string>(
+        specializations
+          .filter((specialization: Specialization) => !!specialization.code?.trim() && !!specialization.title?.trim())
+          .map((specialization: Specialization) => [specialization.code.trim().toLowerCase(), specialization.title.trim()])
+      );
+
+      this.subspecSuggestions = this.subspecSuggestions.map((suggestion: SubspecSuggestion) => {
+        const title = this.resolveSpecialtyTitle(suggestion.code, suggestion.title);
+        return {code: suggestion.code, title};
+      });
+
+      this.updateConversationBaseSpecialtyTitle();
+      this._isRefreshingSpecializations = false;
+      this._cdr.detectChanges();
     });
   }
 
@@ -378,7 +436,7 @@ export class Chat implements OnInit {
       })
     ).subscribe((turns: PatientChatTurn[]) => {
       this.messages = this.mapPatientTurnsToMessages(turns);
-      this.subspecSuggestions = this.extractLatestSubspecSuggestions(this.messages);
+      this.subspecSuggestions = this.extractLatestSubspecSuggestionsFromPatientTurns(turns);
       this._cdr.detectChanges();
       setTimeout(() => {
         this.scrollToBottom(false);
@@ -418,6 +476,7 @@ export class Chat implements OnInit {
       new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
     this._conversationBaseSpecialtyCode = this.resolveBaseSpecialtyCode(sortedTurns);
+    this.updateConversationBaseSpecialtyTitle();
 
     return sortedTurns
       .flatMap((turn: PatientChatTurn) => [
@@ -537,11 +596,37 @@ export class Chat implements OnInit {
     return normalizedCode !== this._conversationBaseSpecialtyCode;
   }
 
+  private getEffectiveMessageSpecialtyCode(): string | null {
+    return this._activeSpecialtyOverrideCode ?? this._conversationBaseSpecialtyCode ?? this._currentDoctorSpecialtyCode;
+  }
+
+  private resolveSpecialtyTitle(code: string, fallbackTitle: string | null = null): string {
+    const title = this._specializationTitleByCode.get(code.trim().toLowerCase());
+    if (title) {
+      return title;
+    }
+
+    return fallbackTitle ?? code;
+  }
+
+  private updateConversationBaseSpecialtyTitle(): void {
+    if (this._conversationBaseSpecialtyCode) {
+      this._conversationBaseSpecialtyTitle = this.resolveSpecialtyTitle(
+        this._conversationBaseSpecialtyCode,
+        this._currentDoctorSpecialtyTitle
+      );
+      return;
+    }
+
+    this._conversationBaseSpecialtyTitle = this._currentDoctorSpecialtyTitle;
+  }
+
   private handleStreamingAssistantResponse(
     stream$: Observable<string>,
     shouldStickToBottom: boolean,
     onCompletePersist: (answer: string) => void,
-    specialtyCode: string | null = null
+    specialtyCode: string | null = null,
+    isSpecialtyOverrideRequest = false
   ): void {
     this.isTyping = false;
     const streamMessageId = this.startStreamMessage(specialtyCode);
@@ -578,26 +663,49 @@ export class Chat implements OnInit {
           this.removeStreamMessageIfEmpty(streamMessageId);
         }
 
+        this.subspecSuggestions = parsed.suggestions;
+        if (isSpecialtyOverrideRequest) {
+          this._showReturnToBaseSpecialtyButton = true;
+        }
         this._cdr.detectChanges();
         this.updateScrollState();
       }
     });
   }
 
-  applySubspecSuggestion(specialization: string): void {
-    this.messageText = specialization;
+  applySubspecSuggestion(suggestion: SubspecSuggestion): void {
+    if (this.mode === 'patient') {
+      this._activeSpecialtyOverrideCode = suggestion.code;
+      const overrideMessage = `Получить ответ в контексте ${suggestion.title}`;
+      this.sendMessageWithText(overrideMessage, false);
+    } else {
+      this.sendMessageWithText(suggestion.title, false);
+    }
+  }
+
+  returnToConversationSpecialty(): void {
+    this._activeSpecialtyOverrideCode = null;
+    this._showReturnToBaseSpecialtyButton = false;
     this._cdr.detectChanges();
     requestAnimationFrame(() => {
       this.chatTextarea?.nativeElement?.focus();
     });
   }
 
-  private extractSubspecSuggestions(text: string): { cleanText: string; suggestions: string[] } {
-    const suggestions: string[] = [];
+  get showReturnToBaseSpecialtyButton(): boolean {
+    return this.mode === 'patient' && this._showReturnToBaseSpecialtyButton && !!this._conversationBaseSpecialtyCode;
+  }
+
+  get returnToBaseSpecialtyTitle(): string {
+    return this._conversationBaseSpecialtyTitle ?? this._conversationBaseSpecialtyCode ?? 'базовую специальность';
+  }
+
+  private extractSubspecSuggestions(text: string): { cleanText: string; suggestions: SubspecSuggestion[] } {
+    const suggestionValues: string[] = [];
     const cleanText = text.replace(/<subspec>([\s\S]*?)<\/subspec>/gi, (_match: string, value: string) => {
       const normalized = value.trim();
       if (normalized) {
-        suggestions.push(normalized);
+        suggestionValues.push(normalized);
       }
       return '';
     });
@@ -607,24 +715,64 @@ export class Chat implements OnInit {
 
     return {
       cleanText: safeText,
-      suggestions: Array.from(new Set(suggestions))
+      suggestions: this.toSubspecSuggestions(suggestionValues)
     };
   }
 
-  private extractLatestSubspecSuggestions(messages: ChatMessage[]): string[] {
-    for (let index = messages.length - 1; index >= 0; index--) {
-      const message = messages[index];
-      if (message.isMine) {
-        continue;
-      }
-
-      const extracted = this.extractSubspecSuggestions(message.text).suggestions;
+  private extractLatestSubspecSuggestionsFromGeneralTurns(turns: GeneralChatTurn[]): SubspecSuggestion[] {
+    const sortedTurns = [...turns].sort((a: GeneralChatTurn, b: GeneralChatTurn) =>
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    for (let index = sortedTurns.length - 1; index >= 0; index--) {
+      const extracted = this.extractSubspecSuggestions(sortedTurns[index].assistantText).suggestions;
       if (extracted.length > 0) {
         return extracted;
       }
     }
 
     return [];
+  }
+
+  private extractLatestSubspecSuggestionsFromPatientTurns(turns: PatientChatTurn[]): SubspecSuggestion[] {
+    const sortedTurns = [...turns].sort((a: PatientChatTurn, b: PatientChatTurn) =>
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    for (let index = sortedTurns.length - 1; index >= 0; index--) {
+      const extracted = this.extractSubspecSuggestions(sortedTurns[index].assistantText).suggestions;
+      if (extracted.length > 0) {
+        return extracted;
+      }
+    }
+
+    return [];
+  }
+
+  private toSubspecSuggestions(values: string[]): SubspecSuggestion[] {
+    const uniqueByCode = new Map<string, SubspecSuggestion>();
+    let hasUnresolvedCodes = false;
+    values.forEach((value: string) => {
+      const code = value.trim();
+      if (!code) {
+        return;
+      }
+
+      const key = code.toLowerCase();
+      if (uniqueByCode.has(key)) {
+        return;
+      }
+
+      const title = this.resolveSpecialtyTitle(code);
+      if (title === code) {
+        hasUnresolvedCodes = true;
+      }
+      uniqueByCode.set(key, {code, title});
+    });
+
+    if (hasUnresolvedCodes && !this._isRefreshingSpecializations) {
+      this.loadSpecializationsCatalog(true);
+    }
+
+    return Array.from(uniqueByCode.values());
   }
 
   formatMessage(text: string): string {
@@ -748,6 +896,8 @@ export class Chat implements OnInit {
   clearChat(): void {
     this.messages = [];
     this.subspecSuggestions = [];
+    this._activeSpecialtyOverrideCode = null;
+    this._showReturnToBaseSpecialtyButton = false;
     this.isTyping = false;
     this._isUserNearBottom = true;
     this.showScrollButton = false;
