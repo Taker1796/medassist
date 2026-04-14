@@ -33,6 +33,7 @@ export class Chat implements OnInit {
   // Output для отправки сообщения родительскому компоненту
   sendMessageEvent = output<string>();
   messages: ChatMessage[] = [];
+  subspecSuggestions: string[] = [];
   isTyping = false;
   showScrollButton = false;
   private _isUserNearBottom = true;
@@ -81,8 +82,9 @@ export class Chat implements OnInit {
       return;
     }
 
-    // Не трогаем клавиатуру, если пользователь взаимодействует с зоной ввода.
-    if (target.closest('.chat-input-container')) {
+    // Не трогаем клавиатуру, если пользователь взаимодействует с зоной ввода
+    // или с кнопками подсказок специализаций.
+    if (target.closest('.chat-input-container') || target.closest('.subspec-toolbar')) {
       return;
     }
 
@@ -215,13 +217,15 @@ export class Chat implements OnInit {
   handleBotResponse(text: string) {
     const shouldStickToBottom = this._isUserNearBottom;
     this.isTyping = false;
+    const parsed = this.extractSubspecSuggestions(text);
 
     this.messages.push({
       id: crypto.randomUUID(),
-      text:  text,
+      text:  parsed.cleanText,
       isMine: false,
       createdAt: new Date().toISOString(),
     });
+    this.subspecSuggestions = parsed.suggestions;
     if (shouldStickToBottom) {
       setTimeout(() => {
         this.scrollToBottom(true);
@@ -328,6 +332,7 @@ export class Chat implements OnInit {
       })
     ).subscribe((turns: GeneralChatTurn[]) => {
       this.messages = this.mapTurnsToMessages(turns);
+      this.subspecSuggestions = this.extractLatestSubspecSuggestions(this.messages);
       this._cdr.detectChanges();
       setTimeout(() => {
         this.scrollToBottom(false);
@@ -350,6 +355,7 @@ export class Chat implements OnInit {
       })
     ).subscribe((turns: PatientChatTurn[]) => {
       this.messages = this.mapPatientTurnsToMessages(turns);
+      this.subspecSuggestions = this.extractLatestSubspecSuggestions(this.messages);
       this._cdr.detectChanges();
       setTimeout(() => {
         this.scrollToBottom(false);
@@ -369,7 +375,7 @@ export class Chat implements OnInit {
         },
         {
           id: `${turn.turnId}-assistant`,
-          text: turn.assistantText,
+          text: this.extractSubspecSuggestions(turn.assistantText).cleanText,
           isMine: false,
           createdAt: turn.createdAt,
         }
@@ -391,7 +397,7 @@ export class Chat implements OnInit {
         },
         {
           id: `${turn.turnId}-assistant`,
-          text: turn.assistantText,
+          text: this.extractSubspecSuggestions(turn.assistantText).cleanText,
           isMine: false,
           createdAt: turn.createdAt,
         }
@@ -415,12 +421,14 @@ export class Chat implements OnInit {
   }
 
   private updateStreamMessage(messageId: string, text: string): void {
+    const parsed = this.extractSubspecSuggestions(text);
     const message = this.messages.find((msg: ChatMessage) => msg.id === messageId);
     if (!message) {
       return;
     }
 
-    message.text = text;
+    message.text = parsed.cleanText;
+    this.subspecSuggestions = parsed.suggestions;
     this._cdr.detectChanges();
   }
 
@@ -505,8 +513,9 @@ export class Chat implements OnInit {
       },
       complete: () => {
         this.isTyping = false;
-        if (streamedAnswer.trim().length > 0) {
-          onCompletePersist(streamedAnswer);
+        const parsed = this.extractSubspecSuggestions(streamedAnswer);
+        if (parsed.cleanText.trim().length > 0) {
+          onCompletePersist(parsed.cleanText);
         } else {
           this.removeStreamMessageIfEmpty(streamMessageId);
         }
@@ -515,6 +524,49 @@ export class Chat implements OnInit {
         this.updateScrollState();
       }
     });
+  }
+
+  applySubspecSuggestion(specialization: string): void {
+    this.messageText = specialization;
+    this._cdr.detectChanges();
+    requestAnimationFrame(() => {
+      this.chatTextarea?.nativeElement?.focus();
+    });
+  }
+
+  private extractSubspecSuggestions(text: string): { cleanText: string; suggestions: string[] } {
+    const suggestions: string[] = [];
+    const cleanText = text.replace(/<subspec>([\s\S]*?)<\/subspec>/gi, (_match: string, value: string) => {
+      const normalized = value.trim();
+      if (normalized) {
+        suggestions.push(normalized);
+      }
+      return '';
+    });
+
+    const openTagIndex = cleanText.toLowerCase().lastIndexOf('<subspec');
+    const safeText = openTagIndex >= 0 ? cleanText.slice(0, openTagIndex) : cleanText;
+
+    return {
+      cleanText: safeText,
+      suggestions: Array.from(new Set(suggestions))
+    };
+  }
+
+  private extractLatestSubspecSuggestions(messages: ChatMessage[]): string[] {
+    for (let index = messages.length - 1; index >= 0; index--) {
+      const message = messages[index];
+      if (message.isMine) {
+        continue;
+      }
+
+      const extracted = this.extractSubspecSuggestions(message.text).suggestions;
+      if (extracted.length > 0) {
+        return extracted;
+      }
+    }
+
+    return [];
   }
 
   formatMessage(text: string): string {
@@ -637,6 +689,7 @@ export class Chat implements OnInit {
 
   clearChat(): void {
     this.messages = [];
+    this.subspecSuggestions = [];
     this.isTyping = false;
     this._isUserNearBottom = true;
     this.showScrollButton = false;

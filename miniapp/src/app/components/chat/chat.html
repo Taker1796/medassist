@@ -35,6 +35,21 @@
       ↓
     </button>
   }
+
+  @if (subspecSuggestions.length > 0) {
+    <div class="subspec-toolbar">
+      @for (subspec of subspecSuggestions; track subspec) {
+        <button
+          type="button"
+          class="subspec-button"
+          (click)="applySubspecSuggestion(subspec)"
+        >
+          {{ subspec }}
+        </button>
+      }
+    </div>
+  }
+
   <div class="chat-input-container">
     <div class="input-wrapper">
       <div class="textarea-shell">
