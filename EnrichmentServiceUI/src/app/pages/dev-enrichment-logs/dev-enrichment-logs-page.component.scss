@@ -45,14 +45,18 @@
   gap: 8px;
   padding: 12px;
   align-content: start;
-  max-height: calc(100vh - 180px);
-  overflow: auto;
+  height: calc(100dvh - 180px);
+  max-height: calc(100dvh - 180px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .log-item {
   display: grid;
   gap: 4px;
   width: 100%;
+  min-height: 38px;
+  height: auto;
   text-align: left;
   border: 1px solid #dbe6f2;
   background: #f9fbfe;
@@ -87,7 +91,8 @@
 }
 
 .panel {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   min-height: 0;
 }
@@ -100,6 +105,12 @@
   margin: 0;
   color: #183760;
   font-size: 18px;
+}
+
+.panel-llm-request pre {
+  height: calc(100dvh - 250px);
+  max-height: calc(100dvh - 250px);
+  overflow: auto;
 }
 
 pre {
@@ -143,7 +154,7 @@ pre {
   color: #b02d2d;
 }
 
-button {
+.header-actions button {
   min-width: 110px;
   height: 38px;
   border-radius: 8px;
@@ -162,7 +173,7 @@ button {
   color: #ffffff;
 }
 
-button:disabled {
+.header-actions button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
@@ -182,5 +193,10 @@ button:disabled {
 
   .page-header {
     flex-direction: column;
+  }
+
+  .panel-llm-request pre {
+    height: calc(100dvh - 320px);
+    max-height: calc(100dvh - 320px);
   }
 }

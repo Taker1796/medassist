@@ -42,10 +42,8 @@ public static class PromptTemplateDbInitializer
                 continue;
             }
 
-            if (existingTemplates.TryGetValue(template.Code, out var existing))
+            if (existingTemplates.ContainsKey(template.Code))
             {
-                existing.Name = template.Name;
-                existing.Text = template.Text;
                 continue;
             }
 
