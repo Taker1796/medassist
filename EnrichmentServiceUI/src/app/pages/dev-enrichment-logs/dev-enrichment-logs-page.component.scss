@@ -107,6 +107,7 @@
   font-size: 18px;
 }
 
+.panel-incoming-request pre,
 .panel-llm-request pre {
   height: calc(100dvh - 250px);
   max-height: calc(100dvh - 250px);
@@ -195,6 +196,7 @@ pre {
     flex-direction: column;
   }
 
+  .panel-incoming-request pre,
   .panel-llm-request pre {
     height: calc(100dvh - 320px);
     max-height: calc(100dvh - 320px);

@@ -15,15 +15,20 @@ export class DevEnrichmentLogsPageComponent {
   private readonly backend = inject(BackendService);
 
   logs = signal<DevEnrichmentLogEntry[]>([]);
-  selectedLogId = signal<string>('');
+  selectedLogIndex = signal<number>(-1);
   isLoading = signal(false);
   isClearing = signal(false);
   status = signal('');
   statusIsError = signal(false);
 
   selectedLog = computed(() => {
-    const selectedId = this.selectedLogId();
-    return this.logs().find((item) => item.Id === selectedId) ?? null;
+    const index = this.selectedLogIndex();
+    const items = this.logs();
+    if (index < 0 || index >= items.length) {
+      return null;
+    }
+
+    return items[index] ?? null;
   });
 
   incomingRequestJson = computed(() => this.formatJson(this.selectedLog()?.IncomingRequest));
@@ -40,23 +45,27 @@ export class DevEnrichmentLogsPageComponent {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (items) => {
+          const previousSelectedId = this.selectedLog()?.Id ?? '';
           this.logs.set(items);
-          const firstId = items[0]?.Id ?? '';
-          this.selectedLogId.set(items.some((item) => item.Id === this.selectedLogId()) ? this.selectedLogId() : firstId);
+          const nextIndex = previousSelectedId
+            ? items.findIndex((item) => item.Id === previousSelectedId)
+            : -1;
+
+          this.selectedLogIndex.set(nextIndex >= 0 ? nextIndex : (items.length ? 0 : -1));
           this.status.set(items.length ? '' : 'Логи пока не записаны.');
           this.statusIsError.set(false);
         },
         error: () => {
           this.logs.set([]);
-          this.selectedLogId.set('');
+          this.selectedLogIndex.set(-1);
           this.status.set('Не удалось загрузить логи.');
           this.statusIsError.set(true);
         }
       });
   }
 
-  selectLog(logId: string): void {
-    this.selectedLogId.set(logId);
+  selectLog(index: number): void {
+    this.selectedLogIndex.set(index);
   }
 
   clearLogs(): void {
@@ -71,7 +80,7 @@ export class DevEnrichmentLogsPageComponent {
       .subscribe({
         next: () => {
           this.logs.set([]);
-          this.selectedLogId.set('');
+          this.selectedLogIndex.set(-1);
           this.status.set('Логи очищены.');
           this.statusIsError.set(false);
         },

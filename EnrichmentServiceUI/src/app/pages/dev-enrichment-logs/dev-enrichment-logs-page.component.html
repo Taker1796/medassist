@@ -28,8 +28,8 @@
           <button
             type="button"
             class="log-item"
-            [class.active]="selectedLogId() === log.Id"
-            (click)="selectLog(log.Id)">
+            [class.active]="selectedLogIndex() === $index"
+            (click)="selectLog($index)">
             <span class="log-endpoint">{{ log.Endpoint }}</span>
             <span class="log-meta">{{ log.CreatedAtUtc | date:'dd.MM.yyyy HH:mm:ss':'UTC' }} UTC</span>
             <span class="log-meta">spec: {{ log.IncomingRequest.DoctorSpecializationCode || 'default' }}</span>
@@ -47,7 +47,7 @@
         <p class="placeholder">Выберите запись слева.</p>
       } @else {
         <div class="details-grid">
-          <article class="panel">
+          <article class="panel panel-incoming-request">
             <h2>Входящий запрос</h2>
             <pre>{{ incomingRequestJson() }}</pre>
           </article>
