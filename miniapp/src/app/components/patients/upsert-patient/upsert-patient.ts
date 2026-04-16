@@ -26,14 +26,20 @@ export class UpsertPatient implements OnInit {
   private _router = inject(Router);
   private readonly _patientId: string|null = null;
 
-  mode: 'create' | 'update' | null = null;
+  mode: 'create' | 'update' = 'create';
   buttonsConfig: IButtonConfig[] = [];
   backRoute = '/patients';
 
 
   constructor(private fb: FormBuilder) {
-    this.mode = this._router.currentNavigation()?.extras.state?.['mode'];
-    this._patientId = this._router.currentNavigation()?.extras.state?.['patientId'];
+    const stateMode = this._router.currentNavigation()?.extras.state?.['mode']
+      ?? history.state?.['mode']
+      ?? null;
+    this.mode = stateMode === 'update' ? 'update' : 'create';
+
+    this._patientId = this._router.currentNavigation()?.extras.state?.['patientId']
+      ?? history.state?.['patientId']
+      ?? null;
 
     if (this.mode === 'update' && this._patientId) {
       this.backRoute = `/patient-record?patientId=${encodeURIComponent(this._patientId)}`;
@@ -70,22 +76,21 @@ export class UpsertPatient implements OnInit {
           this._router.navigate(['/patients']);
         }
       )
+      return;
     }
-    else {
 
-      if(this._patientId == null){
+    if(this._patientId == null){
 
-        console.log('patientId is null');
-        return;
+      console.log('patientId is null');
+      return;
+    }
+
+    this._patientService.update(body, this._patientId).subscribe((val: UpsertPatientRequest) => {
+
+        alert(`Пациент ${val.nickname} обновлен!`);
+        this._router.navigateByUrl(`/patient-record?patientId=${encodeURIComponent(this._patientId!)}`);
       }
-
-      this._patientService.update(body, this._patientId).subscribe((val: UpsertPatientRequest) => {
-
-          alert(`Пациент ${val.nickname} обновлен!`);
-          this._router.navigateByUrl(`/patient-record?patientId=${encodeURIComponent(this._patientId!)}`);
-        }
-      )
-    }
+    );
   }
 
   private deletePatient(): void {

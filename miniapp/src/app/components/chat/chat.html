@@ -39,22 +39,24 @@
 
   @if (subspecSuggestions.length > 0 || showReturnToBaseSpecialtyButton) {
     <div class="subspec-toolbar">
-      @for (subspec of subspecSuggestions; track subspec.code) {
-        <button
-          type="button"
-          class="subspec-button"
-          (click)="applySubspecSuggestion(subspec)"
-        >
-          {{ subspec.title }}
-        </button>
-      }
       @if (showReturnToBaseSpecialtyButton) {
         <button
           type="button"
           class="subspec-button subspec-return-button"
+          [disabled]="isStreamingResponse"
           (click)="returnToConversationSpecialty()"
         >
           Вернуться в специальность {{ returnToBaseSpecialtyTitle }}
+        </button>
+      }
+      @for (subspec of subspecSuggestions; track subspec.code) {
+        <button
+          type="button"
+          class="subspec-button"
+          [disabled]="isStreamingResponse"
+          (click)="applySubspecSuggestion(subspec)"
+        >
+          {{ subspec.title }}
         </button>
       }
     </div>
@@ -80,12 +82,13 @@
 
       <button
         class="send-button"
+        [class.stop-mode]="isStreamingResponse"
         type="button"
-        aria-label="Отправить сообщение"
-        (click)="sendMessage()"
-        [disabled]="!messageText.trim()"
+        [attr.aria-label]="isStreamingResponse ? 'Прервать ответ' : 'Отправить сообщение'"
+        (click)="onSendButtonClick()"
+        [disabled]="!isStreamingResponse && !messageText.trim()"
       >
-        ➤
+        {{ isStreamingResponse ? '■' : '➤' }}
       </button>
     </div>
   </div>

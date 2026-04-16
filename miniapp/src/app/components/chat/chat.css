@@ -89,6 +89,10 @@
   margin: 0 0 2px;
 }
 
+.send-button.stop-mode {
+  background: #4f607f;
+}
+
 .send-button:focus-visible,
 .scroll-bottom-btn:focus-visible {
   outline: 2px solid #7f70d8;
@@ -212,15 +216,15 @@
 }
 
 .my-message.message-specialty-mismatch {
-  background: #5f7eb8;
-  color: #eff5ff;
-  box-shadow: inset 0 0 0 1px rgba(220, 233, 255, 0.25);
+  background: #416489 !important;
+  color: #eef5ff !important;
+  box-shadow: inset 0 0 0 1px rgba(165, 202, 249, 0.36);
 }
 
 .bot-message.message-specialty-mismatch {
-  background: #2f526b;
-  color: #e7f0ff;
-  box-shadow: inset 0 0 0 1px rgba(156, 205, 255, 0.28);
+  background: #2f526b !important;
+  color: #e9f2ff !important;
+  box-shadow: inset 0 0 0 1px rgba(161, 201, 255, 0.32);
 }
 
 .typing-indicator {
@@ -280,6 +284,11 @@
   font-size: 12px;
   line-height: 1.2;
   white-space: nowrap;
+}
+
+.subspec-button:disabled {
+  opacity: 0.55;
+  cursor: default;
 }
 
 .subspec-return-button {

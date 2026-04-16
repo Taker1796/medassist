@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, ElementRef, inject, Input, OnInit, output,
 import{ FormsModule} from '@angular/forms';
 import {LlmService} from '../../services/llm-service';
 import {LlmRequest} from '../../models/llmRequest.model';
-import {catchError, Observable, of} from 'rxjs';
+import {catchError, Observable, of, Subscription} from 'rxjs';
 import {GeneralChatTurn} from '../../models/generalChatTurn.model';
 import {PatientsService} from '../../services/patients-service';
 import {PatientChatTurn} from '../../models/patientChatTurn.model';
@@ -26,6 +26,11 @@ interface SubspecSuggestion {
   title: string;
 }
 
+interface ActiveStreamState {
+  subscription: Subscription;
+  finalize: (isInterrupted: boolean) => void;
+}
+
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -46,6 +51,7 @@ export class Chat implements OnInit {
   messages: ChatMessage[] = [];
   subspecSuggestions: SubspecSuggestion[] = [];
   isTyping = false;
+  isStreamingResponse = false;
   showScrollButton = false;
   private _isUserNearBottom = true;
   private readonly _bottomThreshold = 24;
@@ -62,12 +68,14 @@ export class Chat implements OnInit {
   private _showReturnToBaseSpecialtyButton = false;
   private _specializationTitleByCode = new Map<string, string>();
   private _isRefreshingSpecializations = false;
+  private _activeStreamState: ActiveStreamState | null = null;
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLElement>;
   @ViewChild('chatTextarea') chatTextarea!: ElementRef<HTMLTextAreaElement>;
 
   ngOnInit(): void {
     this.loadSpecializationsCatalog();
+    this.loadCurrentDoctorSpecialtyCode();
 
     if (this.mode === 'general') {
       this.loadGeneralTurns();
@@ -75,7 +83,6 @@ export class Chat implements OnInit {
     }
 
     if (this.mode === 'patient') {
-      this.loadCurrentDoctorSpecialtyCode();
       this.loadPatientTurns();
     }
   }
@@ -133,6 +140,15 @@ export class Chat implements OnInit {
     this.sendMessageWithText(this.messageText, true);
   }
 
+  onSendButtonClick(): void {
+    if (this.isStreamingResponse) {
+      this.stopStreamingResponse();
+      return;
+    }
+
+    this.sendMessage();
+  }
+
   private sendMessageWithText(rawText: string, clearInputAfterSend: boolean): void {
     const normalizedText = rawText.trim();
     if (!normalizedText) {
@@ -143,7 +159,8 @@ export class Chat implements OnInit {
     const userText = normalizedText;
     const requestId = crypto.randomUUID();
     const createdAt = new Date().toISOString();
-    const currentMessageSpecialtyCode = this.mode === 'patient' ? this.getEffectiveMessageSpecialtyCode() : null;
+    const currentMessageSpecialtyCode = this.mode === 'bot' ? null : this.getEffectiveMessageSpecialtyCode();
+    const forceAlternateTone = this.isSpecialtyOverrideActive();
 
     this.messages.push({
       id: requestId,
@@ -151,7 +168,7 @@ export class Chat implements OnInit {
       isMine: true,
       createdAt,
       specialtyCode: currentMessageSpecialtyCode,
-      isSpecialtyMismatch: this.isSpecialtyMismatch(currentMessageSpecialtyCode),
+      isSpecialtyMismatch: this.shouldUseAlternateTone(currentMessageSpecialtyCode, forceAlternateTone),
     });
 
     if (clearInputAfterSend) {
@@ -185,7 +202,8 @@ export class Chat implements OnInit {
 
     const body: LlmRequest = {
       requestId,
-      text:userText
+      text:userText,
+      ...(this._activeSpecialtyOverrideCode ? {specialtyCodeOverride: this._activeSpecialtyOverrideCode} : {})
     }
     if (this.mode === 'patient') {
       const patientId = this.patientId;
@@ -216,24 +234,29 @@ export class Chat implements OnInit {
           });
         },
         currentMessageSpecialtyCode,
-        this.mode === 'patient' && !!this._activeSpecialtyOverrideCode
+        this.mode === 'patient' && !!this._activeSpecialtyOverrideCode,
+        forceAlternateTone
       );
       return;
     }
 
     if (this.mode === 'general') {
       this.handleStreamingAssistantResponse(
-      this._llmService.askStream(body),
+        this._llmService.askStream(body),
         shouldStickToBottom,
         (answer: string) => {
           this._llmService.appendGeneralTurn({
-          turnId: crypto.randomUUID(),
-          requestId,
-          userText,
-          assistantText: answer,
-          createdAt,
-        });
-        }
+            turnId: crypto.randomUUID(),
+            requestId,
+            userText,
+            assistantText: answer,
+            specialtyCode: currentMessageSpecialtyCode,
+            createdAt,
+          });
+        },
+        currentMessageSpecialtyCode,
+        this.mode === 'general' && !!this._activeSpecialtyOverrideCode,
+        forceAlternateTone
       );
       return;
     }
@@ -453,16 +476,16 @@ export class Chat implements OnInit {
           text: turn.userText,
           isMine: true,
           createdAt: turn.createdAt,
-          specialtyCode: null,
-          isSpecialtyMismatch: false,
+          specialtyCode: this.normalizeSpecialtyCode(turn.specialtyCode),
+          isSpecialtyMismatch: this.isSpecialtyMismatch(turn.specialtyCode),
         },
         {
           id: `${turn.turnId}-assistant`,
           text: this.extractSubspecSuggestions(turn.assistantText).cleanText,
           isMine: false,
           createdAt: turn.createdAt,
-          specialtyCode: null,
-          isSpecialtyMismatch: false,
+          specialtyCode: this.normalizeSpecialtyCode(turn.specialtyCode),
+          isSpecialtyMismatch: this.isSpecialtyMismatch(turn.specialtyCode),
         }
       ])
       .filter((message: ChatMessage) => !!message.text?.trim())
@@ -475,7 +498,10 @@ export class Chat implements OnInit {
     const sortedTurns = [...turns].sort((a: PatientChatTurn, b: PatientChatTurn) =>
       new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
-    this._conversationBaseSpecialtyCode = this.resolveBaseSpecialtyCode(sortedTurns);
+    const resolvedBaseSpecialtyCode = this.resolveBaseSpecialtyCode(sortedTurns);
+    if (resolvedBaseSpecialtyCode) {
+      this._conversationBaseSpecialtyCode = resolvedBaseSpecialtyCode;
+    }
     this.updateConversationBaseSpecialtyTitle();
 
     return sortedTurns
@@ -500,7 +526,7 @@ export class Chat implements OnInit {
       .filter((message: ChatMessage) => !!message.text?.trim());
   }
 
-  private startStreamMessage(specialtyCode: string | null = null): string {
+  private startStreamMessage(specialtyCode: string | null = null, forceAlternateTone = false): string {
     const streamMessageId = crypto.randomUUID();
     this.messages.push({
       id: streamMessageId,
@@ -508,7 +534,7 @@ export class Chat implements OnInit {
       isMine: false,
       createdAt: new Date().toISOString(),
       specialtyCode,
-      isSpecialtyMismatch: this.isSpecialtyMismatch(specialtyCode),
+      isSpecialtyMismatch: this.shouldUseAlternateTone(specialtyCode, forceAlternateTone),
     });
     this._cdr.detectChanges();
     return streamMessageId;
@@ -575,11 +601,14 @@ export class Chat implements OnInit {
   }
 
   private resolveBaseSpecialtyCode(turns: PatientChatTurn[]): string | null {
-    if (turns.length === 0) {
-      return null;
+    for (const turn of turns) {
+      const normalizedCode = this.normalizeSpecialtyCode(turn.specialtyCode);
+      if (normalizedCode) {
+        return normalizedCode;
+      }
     }
 
-    return this.normalizeSpecialtyCode(turns[0].specialtyCode);
+    return null;
   }
 
   private normalizeSpecialtyCode(code: string | null | undefined): string | null {
@@ -589,11 +618,23 @@ export class Chat implements OnInit {
 
   private isSpecialtyMismatch(specialtyCode: string | null | undefined): boolean {
     const normalizedCode = this.normalizeSpecialtyCode(specialtyCode);
-    if (!normalizedCode || !this._conversationBaseSpecialtyCode) {
+    const baseCode = this._conversationBaseSpecialtyCode ?? this._currentDoctorSpecialtyCode;
+    if (!normalizedCode || !baseCode) {
       return false;
     }
 
-    return normalizedCode !== this._conversationBaseSpecialtyCode;
+    return normalizedCode !== baseCode;
+  }
+
+  private shouldUseAlternateTone(
+    specialtyCode: string | null | undefined,
+    forceAlternateTone = false
+  ): boolean {
+    return forceAlternateTone || this.isSpecialtyMismatch(specialtyCode);
+  }
+
+  private isSpecialtyOverrideActive(): boolean {
+    return this.mode !== 'bot' && !!this._activeSpecialtyOverrideCode;
   }
 
   private getEffectiveMessageSpecialtyCode(): string | null {
@@ -626,13 +667,49 @@ export class Chat implements OnInit {
     shouldStickToBottom: boolean,
     onCompletePersist: (answer: string) => void,
     specialtyCode: string | null = null,
-    isSpecialtyOverrideRequest = false
+    isSpecialtyOverrideRequest = false,
+    forceAlternateTone = false
   ): void {
     this.isTyping = false;
-    const streamMessageId = this.startStreamMessage(specialtyCode);
+    this.isStreamingResponse = true;
+    const streamMessageId = this.startStreamMessage(specialtyCode, forceAlternateTone);
     let streamedAnswer = '';
+    let isFinalized = false;
 
-    stream$.subscribe({
+    const finalizeStream = (isInterrupted: boolean): void => {
+      if (isFinalized) {
+        return;
+      }
+
+      isFinalized = true;
+      this.isStreamingResponse = false;
+      this._activeStreamState = null;
+
+      const parsed = this.extractSubspecSuggestions(streamedAnswer);
+      if (parsed.cleanText.trim().length > 0) {
+        onCompletePersist(parsed.cleanText);
+      } else {
+        this.removeStreamMessageIfEmpty(streamMessageId);
+      }
+
+      this.subspecSuggestions = parsed.suggestions;
+      if (isSpecialtyOverrideRequest) {
+        this._showReturnToBaseSpecialtyButton = true;
+      }
+
+      this._cdr.detectChanges();
+      this.updateScrollState();
+
+      if (isInterrupted) {
+        if (shouldStickToBottom) {
+          setTimeout(() => this.scrollToBottom(true), 0);
+        } else {
+          setTimeout(() => this.updateScrollState(), 0);
+        }
+      }
+    };
+
+    const subscription = stream$.subscribe({
       next: (chunk: string) => {
         if (!chunk) {
           return;
@@ -649,6 +726,8 @@ export class Chat implements OnInit {
       },
       error: (err: unknown) => {
         this.isTyping = false;
+        this.isStreamingResponse = false;
+        this._activeStreamState = null;
         this.removeStreamMessageIfEmpty(streamMessageId);
         alert('Произошла ошибка. Попробуйте перезагрузить страницу');
         console.log(err);
@@ -656,25 +735,28 @@ export class Chat implements OnInit {
       },
       complete: () => {
         this.isTyping = false;
-        const parsed = this.extractSubspecSuggestions(streamedAnswer);
-        if (parsed.cleanText.trim().length > 0) {
-          onCompletePersist(parsed.cleanText);
-        } else {
-          this.removeStreamMessageIfEmpty(streamMessageId);
-        }
-
-        this.subspecSuggestions = parsed.suggestions;
-        if (isSpecialtyOverrideRequest) {
-          this._showReturnToBaseSpecialtyButton = true;
-        }
-        this._cdr.detectChanges();
-        this.updateScrollState();
+        finalizeStream(false);
       }
     });
+
+    this._activeStreamState = {
+      subscription,
+      finalize: finalizeStream
+    };
+  }
+
+  private stopStreamingResponse(): void {
+    if (!this._activeStreamState) {
+      return;
+    }
+
+    const activeStreamState = this._activeStreamState;
+    activeStreamState.subscription.unsubscribe();
+    activeStreamState.finalize(true);
   }
 
   applySubspecSuggestion(suggestion: SubspecSuggestion): void {
-    if (this.mode === 'patient') {
+    if (this.mode !== 'bot') {
       this._activeSpecialtyOverrideCode = suggestion.code;
       const overrideMessage = `Получить ответ в контексте ${suggestion.title}`;
       this.sendMessageWithText(overrideMessage, false);
@@ -684,16 +766,36 @@ export class Chat implements OnInit {
   }
 
   returnToConversationSpecialty(): void {
+    const shouldStickToBottom = this._isUserNearBottom;
+    const returnMessage = `возврат в специализацию ${this.returnToBaseSpecialtyTitle}`;
     this._activeSpecialtyOverrideCode = null;
     this._showReturnToBaseSpecialtyButton = false;
+
+    this.messages.push({
+      id: crypto.randomUUID(),
+      text: returnMessage,
+      isMine: true,
+      createdAt: new Date().toISOString(),
+      specialtyCode: this.getEffectiveMessageSpecialtyCode(),
+      isSpecialtyMismatch: false,
+    });
+
     this._cdr.detectChanges();
+    if (shouldStickToBottom) {
+      setTimeout(() => this.scrollToBottom(true), 0);
+    } else {
+      setTimeout(() => this.updateScrollState(), 0);
+    }
+
     requestAnimationFrame(() => {
       this.chatTextarea?.nativeElement?.focus();
     });
   }
 
   get showReturnToBaseSpecialtyButton(): boolean {
-    return this.mode === 'patient' && this._showReturnToBaseSpecialtyButton && !!this._conversationBaseSpecialtyCode;
+    return this.mode !== 'bot'
+      && this._showReturnToBaseSpecialtyButton
+      && !!(this._conversationBaseSpecialtyCode || this._currentDoctorSpecialtyCode);
   }
 
   get returnToBaseSpecialtyTitle(): string {
