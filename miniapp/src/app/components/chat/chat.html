@@ -88,7 +88,11 @@
         (click)="onSendButtonClick()"
         [disabled]="!isStreamingResponse && !messageText.trim()"
       >
-        {{ isStreamingResponse ? '■' : '➤' }}
+        @if (isStreamingResponse) {
+          <span class="stop-icon" aria-hidden="true"></span>
+        } @else {
+          <span aria-hidden="true">➤</span>
+        }
       </button>
     </div>
   </div>

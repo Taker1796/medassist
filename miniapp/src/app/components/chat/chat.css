@@ -91,8 +91,27 @@
   margin: 0 0 2px;
 }
 
+.send-button > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 .send-button.stop-mode {
   background: #4f607f;
+}
+
+.send-button.stop-mode .stop-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: currentColor;
+  flex: 0 0 14px;
+}
+
+.send-button:not(.stop-mode) > span {
+  font-size: 18px;
 }
 
 .send-button:focus-visible,
