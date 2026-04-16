@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Environment } from '../environments/environment';
 
 @Component({
   selector: 'app-shell',
@@ -10,6 +11,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 })
 export class AppShellComponent {
   isMenuOpen = signal(false);
+  readonly devDiagnosticsEnabled = Environment.devDiagnosticsEnabled;
 
   toggleMenu(): void {
     this.isMenuOpen.set(!this.isMenuOpen());

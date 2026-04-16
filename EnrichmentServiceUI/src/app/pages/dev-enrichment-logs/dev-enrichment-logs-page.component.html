@@ -1,0 +1,75 @@
+<section class="logs-page">
+  <header class="page-header">
+    <div>
+      <h1>Логи обогащения</h1>
+      <p>Dev-only трассировка входящего запроса и payload, отправленного в LLM.</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="secondary" (click)="loadLogs()" [disabled]="isLoading()">Обновить</button>
+      <button type="button" class="danger" (click)="clearLogs()" [disabled]="isClearing() || !logs().length">
+        {{ isClearing() ? 'Очистка...' : 'Очистить' }}
+      </button>
+    </div>
+  </header>
+
+  @if (status()) {
+    <p class="status" [class.error]="statusIsError()">{{ status() }}</p>
+  }
+
+  <div class="workspace">
+    <aside class="logs-list">
+      @if (isLoading()) {
+        <p class="placeholder">Загрузка...</p>
+      } @else if (!logs().length) {
+        <p class="placeholder">Нет записей.</p>
+      } @else {
+        @for (log of logs(); track trackByLogId($index, log)) {
+          <button
+            type="button"
+            class="log-item"
+            [class.active]="selectedLogId() === log.Id"
+            (click)="selectLog(log.Id)">
+            <span class="log-endpoint">{{ log.Endpoint }}</span>
+            <span class="log-meta">{{ log.CreatedAtUtc | date:'dd.MM.yyyy HH:mm:ss':'UTC' }} UTC</span>
+            <span class="log-meta">spec: {{ log.IncomingRequest.DoctorSpecializationCode || 'default' }}</span>
+            @if (log.IncomingRequest.SpecialtyCodeOverride) {
+              <span class="log-meta">override: {{ log.IncomingRequest.SpecialtyCodeOverride }}</span>
+            }
+            <span class="log-meta">stream: {{ log.Stream ? 'yes' : 'no' }}</span>
+          </button>
+        }
+      }
+    </aside>
+
+    <section class="details">
+      @if (!selectedLog()) {
+        <p class="placeholder">Выберите запись слева.</p>
+      } @else {
+        <div class="details-grid">
+          <article class="panel">
+            <h2>Входящий запрос</h2>
+            <pre>{{ incomingRequestJson() }}</pre>
+          </article>
+
+          <article class="panel">
+            <h2>LLM request</h2>
+            <pre>{{ outgoingRequestJson() }}</pre>
+          </article>
+
+          <article class="panel panel-wide">
+            <h2>Обогащенные messages</h2>
+            <div class="message-list">
+              @for (message of selectedLog()!.EnrichedMessages; track $index) {
+                <div class="message-card">
+                  <div class="message-role">{{ message.Role }}</div>
+                  <pre>{{ message.Content }}</pre>
+                </div>
+              }
+            </div>
+          </article>
+        </div>
+      }
+    </section>
+  </div>
+</section>

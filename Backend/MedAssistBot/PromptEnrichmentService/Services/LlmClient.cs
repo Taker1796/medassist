@@ -66,6 +66,21 @@ public class LlmClient
         return response;
     }
 
+    public LlmRequest CreateRequestPayload(EnrichedData enrichedData, bool stream = false)
+    {
+        return BuildRequest(enrichedData, stream);
+    }
+
+    public string? GetResolvedEndpoint(bool stream = false)
+    {
+        if (string.IsNullOrWhiteSpace(_options.Endpoint))
+        {
+            return null;
+        }
+
+        return stream ? GetStreamEndpoint(_options.Endpoint) : _options.Endpoint;
+    }
+
     private static string GetStreamEndpoint(string endpoint)
     {
         const string streamSuffix = "/stream";

@@ -7,6 +7,7 @@ import {UpsertTemplateModel} from '../models/upsertTemplate.model';
 import {TemplateOption} from '../models/template-option.model';
 import {PatientCard} from '../models/patient-card.model';
 import {AskDialogQuestionModel} from '../models/ask-dialog-question.model';
+import {DevEnrichmentLogEntry} from '../models/dev-enrichment-log.model';
 
 @Injectable({ providedIn: 'root' })
 class BackendService {
@@ -55,6 +56,16 @@ class BackendService {
   getPatientCards(): Observable<PatientCard[]> {
     const url = `${this._baseUrl}/${Environment.patientCardsUrlPath}`;
     return this._http.get<PatientCard[]>(url);
+  }
+
+  getDevEnrichmentLogs(): Observable<DevEnrichmentLogEntry[]> {
+    const url = `${this._baseUrl}/${Environment.devEnrichmentLogsUrlPath}`;
+    return this._http.get<DevEnrichmentLogEntry[]>(url);
+  }
+
+  clearDevEnrichmentLogs(): Observable<void> {
+    const url = `${this._baseUrl}/${Environment.devEnrichmentLogsUrlPath}`;
+    return this._http.delete<void>(url);
   }
 
   getTemplateByCode(templateCode: string): Observable<string> {

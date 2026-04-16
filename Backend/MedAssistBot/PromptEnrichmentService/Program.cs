@@ -30,6 +30,10 @@ builder.Services.AddHttpClient<LlmClient>();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<PromptTemplateService>();
 builder.Services.AddScoped<IPromptTemplateRepository, PromptTemplateRepository>();
+builder.Services.AddSingleton<IEnrichmentTraceStore>(
+    builder.Environment.IsDevelopment()
+        ? new DevelopmentEnrichmentTraceStore()
+        : new NoOpEnrichmentTraceStore());
 builder.Services.AddDbContext<PromptDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("Postgres");

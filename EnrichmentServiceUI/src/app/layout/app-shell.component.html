@@ -12,6 +12,9 @@
   <aside class="sidebar" [class.open]="isMenuOpen()">
     <nav>
       <a routerLink="/templates" routerLinkActive="active" (click)="closeMenu()">Шаблоны</a>
+      @if (devDiagnosticsEnabled) {
+        <a routerLink="/dev-enrichment-logs" routerLinkActive="active" (click)="closeMenu()">Логи обогащения</a>
+      }
     </nav>
   </aside>
 

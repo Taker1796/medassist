@@ -12,11 +12,13 @@ public class Enrichment : ControllerBase
 {
     private readonly PromptTemplateService _promptService;
     private readonly LlmClient _llmClient;
+    private readonly IEnrichmentTraceStore _traceStore;
 
-    public Enrichment(PromptTemplateService templateService, LlmClient llmClient)
+    public Enrichment(PromptTemplateService templateService, LlmClient llmClient, IEnrichmentTraceStore traceStore)
     {
         _promptService = templateService;
         _llmClient = llmClient;
+        _traceStore = traceStore;
     }
 
     [HttpPost]
@@ -33,6 +35,7 @@ public class Enrichment : ControllerBase
             request.SpecialtyCodeOverride,
             request.Messages,
             cancellationToken);
+        WriteTrace("v1/enrich", request, enrichedData, stream: false);
         var llmResponse = await _llmClient.SendAsync(enrichedData, cancellationToken);
         var enrichedText = FormatMessages(enrichedData.Messages);
 
@@ -60,6 +63,7 @@ public class Enrichment : ControllerBase
             request.SpecialtyCodeOverride,
             request.Messages,
             cancellationToken);
+        WriteTrace("v1/enrich/stream", request, enrichedData, stream: true);
 
         using var llmResponse = await _llmClient.SendStreamAsync(enrichedData, cancellationToken);
         if (llmResponse == null)
@@ -209,5 +213,72 @@ public class Enrichment : ControllerBase
     private static string GetContentTypeOrDefault(MediaTypeHeaderValue? contentType)
     {
         return contentType?.ToString() ?? "text/event-stream";
+    }
+
+    private void WriteTrace(string endpoint, AddPromptRequest request, EnrichedData enrichedData, bool stream)
+    {
+        if (!_traceStore.IsEnabled)
+        {
+            return;
+        }
+
+        _traceStore.Add(new DevEnrichmentTraceEntry
+        {
+            Id = Guid.NewGuid(),
+            CreatedAtUtc = DateTime.UtcNow,
+            Endpoint = endpoint,
+            Stream = stream,
+            LlmEndpoint = _llmClient.GetResolvedEndpoint(stream) ?? string.Empty,
+            IncomingRequest = CloneRequest(request),
+            EnrichedMessages = CloneMessages(enrichedData.Messages),
+            OutgoingLlmRequest = CloneLlmRequest(_llmClient.CreateRequestPayload(enrichedData, stream))
+        });
+    }
+
+    private static AddPromptRequest CloneRequest(AddPromptRequest request)
+    {
+        return new AddPromptRequest
+        {
+            Patient = request.Patient == null
+                ? null
+                : new AddPromptPatientRequest
+                {
+                    PatientId = request.Patient.PatientId,
+                    Sex = request.Patient.Sex,
+                    AgeYears = request.Patient.AgeYears,
+                    Nickname = request.Patient.Nickname,
+                    Allergies = request.Patient.Allergies,
+                    ChronicConditions = request.Patient.ChronicConditions,
+                    Tags = request.Patient.Tags,
+                    Status = request.Patient.Status,
+                    Notes = request.Patient.Notes
+                },
+            DoctorSpecializationCode = request.DoctorSpecializationCode,
+            SpecialtyCodeOverride = request.SpecialtyCodeOverride,
+            Messages = CloneMessages(request.Messages)
+        };
+    }
+
+    private static Message[] CloneMessages(Message[] messages)
+    {
+        return messages
+            .Select(message => new Message
+            {
+                Role = message.Role,
+                Content = message.Content
+            })
+            .ToArray();
+    }
+
+    private static LlmRequest CloneLlmRequest(LlmRequest request)
+    {
+        return new LlmRequest
+        {
+            Messages = CloneMessages(request.Messages),
+            Model = request.Model,
+            Temperature = request.Temperature,
+            MaxTokens = request.MaxTokens,
+            Stream = request.Stream
+        };
     }
 }
