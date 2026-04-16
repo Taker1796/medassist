@@ -1011,6 +1011,11 @@ export class Chat implements OnInit {
       return;
     }
 
+    if (this.isStreamingResponse) {
+      this.showScrollButton = false;
+      return;
+    }
+
     const el = this.messagesContainer.nativeElement;
     const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
     this._isUserNearBottom = distanceToBottom <= this._bottomThreshold;

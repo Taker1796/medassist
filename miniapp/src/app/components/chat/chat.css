@@ -68,6 +68,8 @@
 }
 
 .send-button {
+  position: relative;
+  z-index: 7;
   display: flex;
   align-items: center;
   justify-content: center;

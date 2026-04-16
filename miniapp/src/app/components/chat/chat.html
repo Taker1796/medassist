@@ -25,7 +25,7 @@
   </div>
 
   <!-- Кнопка новых сообщений -->
-  @if (showScrollButton) {
+  @if (showScrollButton && !isStreamingResponse) {
     <button
       class="scroll-bottom-btn"
       type="button"
