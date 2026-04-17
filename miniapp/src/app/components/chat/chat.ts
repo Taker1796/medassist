@@ -161,6 +161,7 @@ export class Chat implements OnInit {
     const createdAt = new Date().toISOString();
     const currentMessageSpecialtyCode = this.mode === 'bot' ? null : this.getEffectiveMessageSpecialtyCode();
     const forceAlternateTone = this.isSpecialtyOverrideActive();
+    this.subspecSuggestions = [];
 
     this.messages.push({
       id: requestId,
@@ -397,6 +398,7 @@ export class Chat implements OnInit {
       })
     ).subscribe((turns: GeneralChatTurn[]) => {
       this.messages = this.mapTurnsToMessages(turns);
+      this.restoreSpecialtyOverrideFromMessages();
       this.subspecSuggestions = this.extractLatestSubspecSuggestionsFromGeneralTurns(turns);
       this._cdr.detectChanges();
       setTimeout(() => {
@@ -416,6 +418,9 @@ export class Chat implements OnInit {
         this._conversationBaseSpecialtyCode = this._currentDoctorSpecialtyCode;
       }
       this.updateConversationBaseSpecialtyTitle();
+      if (this.mode !== 'bot' && this.messages.length > 0) {
+        this.restoreSpecialtyOverrideFromMessages();
+      }
     });
   }
 
@@ -459,6 +464,7 @@ export class Chat implements OnInit {
       })
     ).subscribe((turns: PatientChatTurn[]) => {
       this.messages = this.mapPatientTurnsToMessages(turns);
+      this.restoreSpecialtyOverrideFromMessages();
       this.subspecSuggestions = this.extractLatestSubspecSuggestionsFromPatientTurns(turns);
       this._cdr.detectChanges();
       setTimeout(() => {
@@ -469,7 +475,22 @@ export class Chat implements OnInit {
   }
 
   private mapTurnsToMessages(turns: GeneralChatTurn[]): ChatMessage[] {
-    return turns
+    const sortedTurns = [...turns].sort((a: GeneralChatTurn, b: GeneralChatTurn) =>
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+
+    for (const turn of sortedTurns) {
+      const normalizedCode = this.normalizeSpecialtyCode(turn.specialtyCode);
+      if (!normalizedCode) {
+        continue;
+      }
+
+      this._conversationBaseSpecialtyCode = normalizedCode;
+      break;
+    }
+    this.updateConversationBaseSpecialtyTitle();
+
+    return sortedTurns
       .flatMap((turn: GeneralChatTurn) => [
         {
           id: `${turn.turnId}-user`,
@@ -488,10 +509,7 @@ export class Chat implements OnInit {
           isSpecialtyMismatch: this.isSpecialtyMismatch(turn.specialtyCode),
         }
       ])
-      .filter((message: ChatMessage) => !!message.text?.trim())
-      .sort((a: ChatMessage, b: ChatMessage) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
+      .filter((message: ChatMessage) => !!message.text?.trim());
   }
 
   private mapPatientTurnsToMessages(turns: PatientChatTurn[]): ChatMessage[] {
@@ -609,6 +627,47 @@ export class Chat implements OnInit {
     }
 
     return null;
+  }
+
+  private resolveFirstSpecialtyCodeFromMessages(): string | null {
+    for (const message of this.messages) {
+      const normalizedCode = this.normalizeSpecialtyCode(message.specialtyCode);
+      if (normalizedCode) {
+        return normalizedCode;
+      }
+    }
+
+    return null;
+  }
+
+  private resolveLastSpecialtyCodeFromMessages(): string | null {
+    for (let index = this.messages.length - 1; index >= 0; index--) {
+      const normalizedCode = this.normalizeSpecialtyCode(this.messages[index].specialtyCode);
+      if (normalizedCode) {
+        return normalizedCode;
+      }
+    }
+
+    return null;
+  }
+
+  private restoreSpecialtyOverrideFromMessages(): void {
+    const firstSpecialtyCode = this.resolveFirstSpecialtyCodeFromMessages() ?? this._conversationBaseSpecialtyCode;
+    const lastSpecialtyCode = this.resolveLastSpecialtyCodeFromMessages();
+
+    if (firstSpecialtyCode) {
+      this._conversationBaseSpecialtyCode = firstSpecialtyCode;
+      this.updateConversationBaseSpecialtyTitle();
+    }
+
+    if (firstSpecialtyCode && lastSpecialtyCode && firstSpecialtyCode !== lastSpecialtyCode) {
+      this._activeSpecialtyOverrideCode = lastSpecialtyCode;
+      this._showReturnToBaseSpecialtyButton = true;
+      return;
+    }
+
+    this._activeSpecialtyOverrideCode = null;
+    this._showReturnToBaseSpecialtyButton = false;
   }
 
   private normalizeSpecialtyCode(code: string | null | undefined): string | null {
@@ -770,6 +829,7 @@ export class Chat implements OnInit {
     const returnMessage = `возврат в специализацию ${this.returnToBaseSpecialtyTitle}`;
     this._activeSpecialtyOverrideCode = null;
     this._showReturnToBaseSpecialtyButton = false;
+    this.subspecSuggestions = [];
 
     this.messages.push({
       id: crypto.randomUUID(),
@@ -822,31 +882,27 @@ export class Chat implements OnInit {
   }
 
   private extractLatestSubspecSuggestionsFromGeneralTurns(turns: GeneralChatTurn[]): SubspecSuggestion[] {
+    if (turns.length === 0) {
+      return [];
+    }
+
     const sortedTurns = [...turns].sort((a: GeneralChatTurn, b: GeneralChatTurn) =>
       new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
-    for (let index = sortedTurns.length - 1; index >= 0; index--) {
-      const extracted = this.extractSubspecSuggestions(sortedTurns[index].assistantText).suggestions;
-      if (extracted.length > 0) {
-        return extracted;
-      }
-    }
-
-    return [];
+    const latestTurn = sortedTurns[sortedTurns.length - 1];
+    return this.extractSubspecSuggestions(latestTurn.assistantText).suggestions;
   }
 
   private extractLatestSubspecSuggestionsFromPatientTurns(turns: PatientChatTurn[]): SubspecSuggestion[] {
+    if (turns.length === 0) {
+      return [];
+    }
+
     const sortedTurns = [...turns].sort((a: PatientChatTurn, b: PatientChatTurn) =>
       new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
-    for (let index = sortedTurns.length - 1; index >= 0; index--) {
-      const extracted = this.extractSubspecSuggestions(sortedTurns[index].assistantText).suggestions;
-      if (extracted.length > 0) {
-        return extracted;
-      }
-    }
-
-    return [];
+    const latestTurn = sortedTurns[sortedTurns.length - 1];
+    return this.extractSubspecSuggestions(latestTurn.assistantText).suggestions;
   }
 
   private toSubspecSuggestions(values: string[]): SubspecSuggestion[] {

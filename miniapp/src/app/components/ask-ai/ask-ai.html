@@ -1,4 +1,10 @@
-<app-menu-shell [showHome]="true" title="Спросить у ИИ" backRoute="/" [allowSpecializationEdit]="false">
+<app-menu-shell
+  [showHome]="true"
+  title="Спросить у ИИ"
+  backRoute="/"
+  [allowSpecializationEdit]="false"
+  [specializationTitleOverride]="conversationSpecializationTitle"
+>
   <div class="content">
     <div class="ask-ai-layout">
       <div class="chat-toolbar">
