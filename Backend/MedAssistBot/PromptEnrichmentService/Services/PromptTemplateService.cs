@@ -39,7 +39,7 @@ public class PromptTemplateService
         var patientJson = patient == null
             ? string.Empty
             : JsonSerializer.Serialize(patient, PatientJsonOptions);
-        var systemPrompt = ApplySpecializationOverrides(template.Text, templates, specialtyCodeOverride);
+        var systemPrompt = ApplySpecializationOverrides(template.Text, templates, specialtyCode, specialtyCodeOverride);
 
         return BuildEnrichedMessages(
             systemPrompt,
@@ -115,6 +115,7 @@ public class PromptTemplateService
     private string ApplySpecializationOverrides(
         string systemPrompt,
         IReadOnlyDictionary<string, PromptTemplate> templates,
+        string specialtyCode,
         string? specialtyCodeOverride)
     {
         if (!systemPrompt.Contains(Placeholders.Specialisations, StringComparison.Ordinal))
@@ -131,7 +132,9 @@ public class PromptTemplateService
         else
         {
             var specListTemplate = GetRequiredTemplate(templates, TechnicalTemplateCodes.SpecList);
-            var specCodes = string.Join(", ", TemplateCodes.All);
+            var specCodes = string.Join(
+                ", ",
+                TemplateCodes.All.Where(code => !string.Equals(code, specialtyCode, StringComparison.OrdinalIgnoreCase)));
             replacement = specListTemplate.Text.Replace(Placeholders.SpecCodes, specCodes, StringComparison.Ordinal);
         }
 
