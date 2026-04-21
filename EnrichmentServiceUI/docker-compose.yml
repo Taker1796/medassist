@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        ANGULAR_CONFIGURATION: ${ANGULAR_CONFIGURATION:-production}
     container_name: enrichment-service-ui
     ports:
       - "8081:80"
