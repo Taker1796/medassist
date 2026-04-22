@@ -4,19 +4,18 @@ services:
     container_name: prompt_enrichment_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: prompts
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-prompts}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d prompts" ]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 5s
       timeout: 5s
       retries: 10
       start_period: 10s
-    ports:
-      - "5432:5432"
     volumes:
       - prompt_enrichment_pgdata:/var/lib/postgresql/data
+
   prompt-enrichment-service:
     build:
       context: .
@@ -27,13 +26,15 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=prompts;Username=postgres;Password=postgres
-      Llm__Endpoint: https://llm.muk.i234.me/v1/generate
-      ApiKey: fe7ca238-92e3-4d80-b18e-4f0dc9c6af25
+      ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=${POSTGRES_DB:-prompts};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD}
+      Llm__Endpoint: ${LLM_ENDPOINT:-https://llm.muk.i234.me/v1/generate}
+      Llm__ApiKeyHeader: ${LLM_API_KEY_HEADER:-X-Api-Key}
+      Llm__ApiKey: ${LLM_API_KEY:-}
+      ApiKey: ${PROMPT_ENRICHMENT_API_KEY:?PROMPT_ENRICHMENT_API_KEY is required}
     ports:
-      - "8080:8080"
+      - "${PROMPT_ENRICHMENT_BIND_ADDRESS:-127.0.0.1}:${PROMPT_ENRICHMENT_PORT:-8080}:8080"
 
 volumes:
   prompt_enrichment_pgdata:
