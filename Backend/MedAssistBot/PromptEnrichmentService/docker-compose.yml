@@ -32,6 +32,7 @@ services:
       Llm__Endpoint: ${LLM_ENDPOINT:-https://llm.muk.i234.me/v1/generate}
       Llm__ApiKeyHeader: ${LLM_API_KEY_HEADER:-X-Api-Key}
       Llm__ApiKey: ${LLM_API_KEY:-}
+      AllowedCorsOrigins: ${ALLOWED_CORS_ORIGINS:-https://enrichpanel-p.muk.i234.me}
       ApiKey: ${PROMPT_ENRICHMENT_API_KEY:?PROMPT_ENRICHMENT_API_KEY is required}
     ports:
       - "${PROMPT_ENRICHMENT_BIND_ADDRESS:-127.0.0.1}:${PROMPT_ENRICHMENT_PORT:-8080}:8080"

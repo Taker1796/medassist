@@ -6,13 +6,27 @@ using PromptEnrichmentService.Repositories;
 using PromptEnrichmentService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-if (builder.Environment.IsDevelopment())
+var allowedCorsOrigins = (builder.Configuration["AllowedCorsOrigins"]
+                          ?? (builder.Environment.IsDevelopment() ? string.Empty : "https://enrichpanel-p.muk.i234.me"))
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    .Distinct(StringComparer.OrdinalIgnoreCase)
+    .ToArray();
+
+if (builder.Environment.IsDevelopment() || allowedCorsOrigins.Length > 0)
 {
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowFrontend", policy =>
         {
-            policy.AllowAnyOrigin()
+            if (builder.Environment.IsDevelopment() && allowedCorsOrigins.Length == 0)
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                return;
+            }
+
+            policy.WithOrigins(allowedCorsOrigins)
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -80,6 +94,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+if (app.Environment.IsDevelopment() || allowedCorsOrigins.Length > 0)
+{
     app.UseCors("AllowFrontend");
 }
 
