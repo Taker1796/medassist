@@ -11,9 +11,11 @@ COPY . .
 RUN npm run build -- --configuration ${ANGULAR_CONFIGURATION}
 
 # Runtime stage
-FROM nginx:1.27-alpine AS runtime
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/dist/enrichment-service-ui/browser /usr/share/nginx/html
+FROM node:24-alpine AS runtime
+WORKDIR /app
+
+COPY server.js ./server.js
+COPY --from=builder /app/dist/enrichment-service-ui/browser ./dist
 
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]
