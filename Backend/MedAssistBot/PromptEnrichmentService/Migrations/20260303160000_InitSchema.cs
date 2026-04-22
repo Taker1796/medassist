@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using PromptEnrichmentService.Data;
-using PromptEnrichmentService.Constants;
 
 #nullable disable
 
@@ -25,32 +24,6 @@ public partial class InitSchema : Migration
             {
                 table.PrimaryKey("PK_PromptTemplates", x => x.Code);
             });
-
-        migrationBuilder.Sql($$"""
-            INSERT INTO "PromptTemplates" ("Code", "Name", "Text")
-            VALUES
-                ('{{TemplateCodes.Cardiology}}', 'Кардиология', ''),
-                ('{{TemplateCodes.Neurology}}', 'Неврология', ''),
-                ('{{TemplateCodes.Pediatrics}}', 'Педиатрия', ''),
-                ('{{TemplateCodes.Dermatology}}', 'Дерматология', ''),
-                ('{{TemplateCodes.Therapy}}', 'Therapy / Internal medicine', ''),
-                ('{{TemplateCodes.Psychiatry}}', 'Психиатрия', ''),
-                ('{{TemplateCodes.Gynecology}}', 'Гинекология', ''),
-                ('{{TemplateCodes.Default}}', 'Общая практика', ''),
-                ('{{TemplateCodes.Gastroenterology}}', 'Гастроэнтерология', ''),
-                ('{{TechnicalTemplateCodes.SubSpec}}', 'Technical: subspec', ''),
-                ('{{TechnicalTemplateCodes.SpecList}}', 'Technical: spec_list', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Cardiology)}}', 'S_Кардиология', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Neurology)}}', 'S_Неврология', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Pediatrics)}}', 'S_Педиатрия', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Dermatology)}}', 'S_Дерматология', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Therapy)}}', 'S_Therapy / Internal medicine', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Psychiatry)}}', 'S_Психиатрия', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Gynecology)}}', 'S_Гинекология', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Gastroenterology)}}', 'S_Гастроэнтерология', ''),
-                ('{{TemplateCodes.ToSummaryCode(TemplateCodes.Default)}}', 'S_Общая практика', '');
-            """);
-
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)

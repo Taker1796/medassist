@@ -32,17 +32,16 @@ public static class PromptTemplateDbInitializer
             throw new InvalidOperationException($"Prompt template seed file is empty: {seedPath}");
         }
 
-        var existingTemplates = await dbContext.PromptTemplates
-            .ToDictionaryAsync(t => t.Code, StringComparer.OrdinalIgnoreCase, cancellationToken);
+        var hasExistingTemplates = await dbContext.PromptTemplates.AnyAsync(cancellationToken);
+        if (hasExistingTemplates)
+        {
+            logger.LogInformation("Prompt templates seeding skipped because the table already contains data.");
+            return;
+        }
 
         foreach (var template in templates)
         {
             if (string.IsNullOrWhiteSpace(template.Code))
-            {
-                continue;
-            }
-
-            if (existingTemplates.ContainsKey(template.Code))
             {
                 continue;
             }
