@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PromptEnrichmentService.Data;
 
 #nullable disable
@@ -16,7 +17,8 @@ public partial class AddLlmConfiguration : Migration
             name: "LlmConfigurations",
             columns: table => new
             {
-                Id = table.Column<int>(type: "integer", nullable: false),
+                Id = table.Column<int>(type: "integer", nullable: false)
+                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                 Endpoint = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                 ApiKeyHeader = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                 ApiKey = table.Column<string>(type: "text", nullable: false)
