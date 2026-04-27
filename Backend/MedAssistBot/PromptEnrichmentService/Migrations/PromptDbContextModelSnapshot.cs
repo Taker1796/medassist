@@ -18,6 +18,31 @@ namespace PromptEnrichmentService.Migrations
                 .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            modelBuilder.Entity("PromptEnrichmentService.Models.LlmConfiguration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ApiKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ApiKeyHeader")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Endpoint")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LlmConfigurations");
+                });
+
             modelBuilder.Entity("PromptEnrichmentService.Models.PromptTemplate", b =>
                 {
                     b.Property<string>("Code")

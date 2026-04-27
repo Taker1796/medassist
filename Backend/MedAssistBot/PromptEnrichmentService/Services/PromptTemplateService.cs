@@ -98,6 +98,11 @@ public class PromptTemplateService
             throw new ArgumentNullException(nameof(messages));
         }
 
+        systemPrompt = systemPrompt.Replace(
+            Placeholders.CurrentDate,
+            DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss zzz"),
+            StringComparison.Ordinal);
+
         var systemMessage = new Message()
         {
             Content = systemPrompt,

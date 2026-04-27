@@ -1,5 +1,4 @@
 using System.Net.Http.Json;
-using Microsoft.Extensions.Options;
 using PromptEnrichmentService.Models;
 using PromptEnrichmentService.Constants;
 
@@ -8,29 +7,30 @@ namespace PromptEnrichmentService.Services;
 public class LlmClient
 {
     private readonly HttpClient _httpClient;
-    private readonly LlmOptions _options;
+    private readonly LlmConfigurationService _llmConfigurationService;
 
-    public LlmClient(HttpClient httpClient, IOptions<LlmOptions> options)
+    public LlmClient(HttpClient httpClient, LlmConfigurationService llmConfigurationService)
     {
         _httpClient = httpClient;
-        _options = options.Value;
+        _llmConfigurationService = llmConfigurationService;
     }
 
     public async Task<string?> SendAsync(EnrichedData enrichedData, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(_options.Endpoint))
+        var configuration = await _llmConfigurationService.GetAsync(cancellationToken);
+        if (configuration == null || string.IsNullOrWhiteSpace(configuration.Endpoint))
         {
             return null;
         }
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, _options.Endpoint)
+        using var request = new HttpRequestMessage(HttpMethod.Post, configuration.Endpoint)
         {
             Content = JsonContent.Create(BuildRequest(enrichedData))
         };
 
-        if (!string.IsNullOrWhiteSpace(_options.ApiKey) && !string.IsNullOrWhiteSpace(_options.ApiKeyHeader))
+        if (!string.IsNullOrWhiteSpace(configuration.ApiKey) && !string.IsNullOrWhiteSpace(configuration.ApiKeyHeader))
         {
-            request.Headers.TryAddWithoutValidation(_options.ApiKeyHeader, _options.ApiKey);
+            request.Headers.TryAddWithoutValidation(configuration.ApiKeyHeader, configuration.ApiKey);
         }
 
         using var response = await _httpClient.SendAsync(request, cancellationToken);
@@ -42,19 +42,20 @@ public class LlmClient
 
     public async Task<HttpResponseMessage?> SendStreamAsync(EnrichedData enrichedData, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(_options.Endpoint))
+        var configuration = await _llmConfigurationService.GetAsync(cancellationToken);
+        if (configuration == null || string.IsNullOrWhiteSpace(configuration.Endpoint))
         {
             return null;
         }
 
-        var request = new HttpRequestMessage(HttpMethod.Post, GetStreamEndpoint(_options.Endpoint))
+        var request = new HttpRequestMessage(HttpMethod.Post, GetStreamEndpoint(configuration.Endpoint))
         {
             Content = JsonContent.Create(BuildRequest(enrichedData, stream: true))
         };
 
-        if (!string.IsNullOrWhiteSpace(_options.ApiKey) && !string.IsNullOrWhiteSpace(_options.ApiKeyHeader))
+        if (!string.IsNullOrWhiteSpace(configuration.ApiKey) && !string.IsNullOrWhiteSpace(configuration.ApiKeyHeader))
         {
-            request.Headers.TryAddWithoutValidation(_options.ApiKeyHeader, _options.ApiKey);
+            request.Headers.TryAddWithoutValidation(configuration.ApiKeyHeader, configuration.ApiKey);
         }
 
         var response = await _httpClient.SendAsync(
@@ -71,14 +72,15 @@ public class LlmClient
         return BuildRequest(enrichedData, stream);
     }
 
-    public string? GetResolvedEndpoint(bool stream = false)
+    public async Task<string?> GetResolvedEndpointAsync(bool stream, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(_options.Endpoint))
+        var configuration = await _llmConfigurationService.GetAsync(cancellationToken);
+        if (configuration == null || string.IsNullOrWhiteSpace(configuration.Endpoint))
         {
             return null;
         }
 
-        return stream ? GetStreamEndpoint(_options.Endpoint) : _options.Endpoint;
+        return stream ? GetStreamEndpoint(configuration.Endpoint) : configuration.Endpoint;
     }
 
     private static string GetStreamEndpoint(string endpoint)

@@ -7,4 +7,5 @@ public class Placeholders
     public const string Specialisations = "{specialisations}";
     public const string SubSpec = "{subspec}";
     public const string SpecCodes = "{spec_codes}";
+    public const string CurrentDate = "{current_date}";
 }

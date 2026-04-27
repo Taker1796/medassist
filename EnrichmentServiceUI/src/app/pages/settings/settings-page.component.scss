@@ -1,0 +1,86 @@
+.settings-page {
+  display: grid;
+  gap: 16px;
+  max-width: 900px;
+}
+
+.page-header h1 {
+  margin: 0 0 6px;
+  color: #183760;
+}
+
+.page-header p {
+  margin: 0;
+  color: #5d7390;
+}
+
+.card {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #b7cce3;
+  border-radius: 12px;
+}
+
+label {
+  font-size: 14px;
+  color: #27476f;
+  font-weight: 600;
+}
+
+input,
+textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #b7cce3;
+  padding: 10px 12px;
+  background: #fff;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+input:focus,
+textarea:focus {
+  outline: 2px solid #2b73d4;
+  border-color: transparent;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 6px;
+}
+
+button {
+  min-width: 120px;
+  height: 38px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.primary {
+  background: #1f5fb4;
+  color: #fff;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.status {
+  margin: 0;
+  color: #2f5f20;
+}
+
+.status.error {
+  color: #b02d2d;
+}

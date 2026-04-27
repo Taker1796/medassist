@@ -44,6 +44,8 @@ builder.Services.AddHttpClient<LlmClient>();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<PromptTemplateService>();
 builder.Services.AddScoped<IPromptTemplateRepository, PromptTemplateRepository>();
+builder.Services.AddScoped<ILlmConfigurationRepository, LlmConfigurationRepository>();
+builder.Services.AddScoped<LlmConfigurationService>();
 builder.Services.AddSingleton<IEnrichmentTraceStore>(
     builder.Environment.IsDevelopment()
         ? new DevelopmentEnrichmentTraceStore()

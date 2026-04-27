@@ -8,6 +8,7 @@ import {TemplateOption} from '../models/template-option.model';
 import {PatientCard} from '../models/patient-card.model';
 import {AskDialogQuestionModel} from '../models/ask-dialog-question.model';
 import {DevEnrichmentLogEntry} from '../models/dev-enrichment-log.model';
+import {LlmConfiguration, LlmConfigurationUpdateRequest} from '../models/llm-configuration.model';
 
 @Injectable({ providedIn: 'root' })
 class BackendService {
@@ -61,6 +62,16 @@ class BackendService {
   getDevEnrichmentLogs(): Observable<DevEnrichmentLogEntry[]> {
     const url = `${this._baseUrl}/${Environment.devEnrichmentLogsUrlPath}`;
     return this._http.get<DevEnrichmentLogEntry[]>(url);
+  }
+
+  getLlmConfiguration(): Observable<LlmConfiguration> {
+    const url = `${this._baseUrl}/${Environment.llmConfigurationUrlPath}`;
+    return this._http.get<LlmConfiguration>(url);
+  }
+
+  updateLlmConfiguration(payload: LlmConfigurationUpdateRequest): Observable<LlmConfiguration> {
+    const url = `${this._baseUrl}/${Environment.llmConfigurationUrlPath}`;
+    return this._http.patch<LlmConfiguration>(url, payload);
   }
 
   clearDevEnrichmentLogs(): Observable<void> {

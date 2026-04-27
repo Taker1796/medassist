@@ -35,7 +35,7 @@ public class Enrichment : ControllerBase
             request.SpecialtyCodeOverride,
             request.Messages,
             cancellationToken);
-        WriteTrace("v1/enrich", request, enrichedData, stream: false);
+        await WriteTraceAsync("v1/enrich", request, enrichedData, stream: false, cancellationToken);
         var llmResponse = await _llmClient.SendAsync(enrichedData, cancellationToken);
         var enrichedText = FormatMessages(enrichedData.Messages);
 
@@ -63,7 +63,7 @@ public class Enrichment : ControllerBase
             request.SpecialtyCodeOverride,
             request.Messages,
             cancellationToken);
-        WriteTrace("v1/enrich/stream", request, enrichedData, stream: true);
+        await WriteTraceAsync("v1/enrich/stream", request, enrichedData, stream: true, cancellationToken);
 
         using var llmResponse = await _llmClient.SendStreamAsync(enrichedData, cancellationToken);
         if (llmResponse == null)
@@ -215,7 +215,7 @@ public class Enrichment : ControllerBase
         return contentType?.ToString() ?? "text/event-stream";
     }
 
-    private void WriteTrace(string endpoint, AddPromptRequest request, EnrichedData enrichedData, bool stream)
+    private async Task WriteTraceAsync(string endpoint, AddPromptRequest request, EnrichedData enrichedData, bool stream, CancellationToken cancellationToken)
     {
         if (!_traceStore.IsEnabled)
         {
@@ -228,7 +228,7 @@ public class Enrichment : ControllerBase
             CreatedAtUtc = DateTime.UtcNow,
             Endpoint = endpoint,
             Stream = stream,
-            LlmEndpoint = _llmClient.GetResolvedEndpoint(stream) ?? string.Empty,
+            LlmEndpoint = await _llmClient.GetResolvedEndpointAsync(stream, cancellationToken) ?? string.Empty,
             IncomingRequest = CloneRequest(request),
             EnrichedMessages = CloneMessages(enrichedData.Messages),
             OutgoingLlmRequest = CloneLlmRequest(_llmClient.CreateRequestPayload(enrichedData, stream))

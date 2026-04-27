@@ -1,0 +1,48 @@
+<section class="settings-page">
+  <header class="page-header">
+    <div>
+      <h1>Настройки</h1>
+      <p>Конфигурация подключения к LLM.</p>
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <p class="status">Загрузка...</p>
+  } @else {
+    <div class="card">
+      <label for="endpoint">LLM Endpoint</label>
+      <input
+        id="endpoint"
+        type="text"
+        [value]="endpoint()"
+        (input)="onEndpointInput($any($event.target).value)"
+        placeholder="https://llm.muk.i234.me/v1/generate" />
+
+      <label for="apiKeyHeader">ApiKeyHeader</label>
+      <input
+        id="apiKeyHeader"
+        type="text"
+        [value]="apiKeyHeader()"
+        (input)="onApiKeyHeaderInput($any($event.target).value)"
+        placeholder="X-Api-Key" />
+
+      <label for="apiKey">ApiKey</label>
+      <textarea
+        id="apiKey"
+        rows="5"
+        [value]="apiKey()"
+        (input)="onApiKeyInput($any($event.target).value)"
+        placeholder="Введите API key"></textarea>
+
+      <div class="actions">
+        <button type="button" class="primary" (click)="save()" [disabled]="isSaving()">
+          {{ isSaving() ? 'Сохранение...' : 'Сохранить' }}
+        </button>
+      </div>
+
+      @if (status()) {
+        <p class="status" [class.error]="statusIsError()">{{ status() }}</p>
+      }
+    </div>
+  }
+</section>
