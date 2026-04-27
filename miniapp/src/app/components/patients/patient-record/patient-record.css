@@ -127,6 +127,60 @@
   margin-left: auto;
 }
 
+.visits-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.visits-header-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.refresh-hint,
+.refresh-meta {
+  margin: 0;
+  color: var(--muted-text-color);
+}
+
+.refresh-hint {
+  font-size: 13px;
+}
+
+.refresh-meta {
+  font-size: 12px;
+}
+
+.refresh-page-btn {
+  width: auto;
+  min-width: 148px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-inline: 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.refresh-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.refresh-icon.spinning {
+  animation: patient-record-refresh-spin 0.85s linear infinite;
+}
+
 @media (max-width: 820px) {
   .visit-actions {
     flex-direction: column;
@@ -142,6 +196,16 @@
     width: 100%;
     min-width: 0;
     margin-left: 0;
+  }
+
+  .visits-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .refresh-page-btn {
+    width: 100%;
+    min-width: 0;
   }
 }
 
@@ -214,6 +278,16 @@
   color: var(--muted-text-color);
 }
 
+@keyframes patient-record-refresh-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 900px) {
   .patient-main {
     grid-template-columns: 1fr;
@@ -259,5 +333,9 @@
     min-height: 0;
     max-height: none;
     overflow: visible;
+  }
+
+  .refresh-hint {
+    font-size: 12px;
   }
 }

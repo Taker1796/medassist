@@ -46,7 +46,30 @@
       </section>
 
       <section class="visits-section">
-        <h3>История приёмов</h3>
+        <div class="visits-header">
+          <div class="visits-header-copy">
+            <h3>История приёмов</h3>
+            <p class="refresh-hint">
+              После завершения приёма обновите страницу вручную, чтобы проверить новый статус.
+            </p>
+            @if (lastRefreshedAt; as refreshedAt) {
+              <p class="refresh-meta">
+                Обновлено: {{ formatConversationDate(refreshedAt.toISOString()) }}
+              </p>
+            }
+          </div>
+          <button
+            type="button"
+            class="refresh-page-btn"
+            (click)="refreshPageData()"
+            [disabled]="isRefreshingPage || isStartingVisit || isCompletingVisit"
+            aria-label="Обновить данные страницы"
+            title="Обновить данные страницы"
+          >
+            <span class="refresh-icon" [class.spinning]="isRefreshingPage" aria-hidden="true">↻</span>
+            <span>{{ isRefreshingPage ? 'Обновление...' : 'Обновить' }}</span>
+          </button>
+        </div>
         @if (!hasConversationsApi) {
           <p class="hint">История приёмов пока недоступна.</p>
         } @else if (conversations.length === 0) {

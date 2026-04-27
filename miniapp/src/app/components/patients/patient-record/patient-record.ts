@@ -37,6 +37,8 @@ export class PatientRecord implements OnInit {
   isLoadingConversationStatus = false;
   isStartingVisit = false;
   isCompletingVisit = false;
+  isRefreshingPage = false;
+  lastRefreshedAt: Date | null = null;
 
   ngOnInit(): void {
     const statePatientId = this._router.currentNavigation()?.extras.state?.['patientId'];
@@ -48,7 +50,7 @@ export class PatientRecord implements OnInit {
       return;
     }
 
-    this.loadData();
+    this.refreshPageData();
   }
 
   startVisit(): void {
@@ -56,19 +58,7 @@ export class PatientRecord implements OnInit {
 
     this.isStartingVisit = true;
     if (this.hasActiveConversation) {
-      this._patientsService.getCurrentConversationTurns(this.patientId, true).pipe(
-        catchError((err: unknown) => {
-          alert('Не удалось открыть приём. Попробуйте еще раз.');
-          console.log(err);
-          return of(null);
-        })
-      ).subscribe((turns: PatientChatTurn[] | null) => {
-        this.isStartingVisit = false;
-        if (!turns) {
-          return;
-        }
-        this.openConsultation();
-      });
+      this.continueActiveVisit();
       return;
     }
 
@@ -174,6 +164,12 @@ export class PatientRecord implements OnInit {
     const conversation = this.conversations.find((item: PatientChatConversationHistory) => item.conversationId === conversationId);
     const status = this.resolveConversationStatus(conversation);
 
+    if (status === PatientChatStatus.Active || status === PatientChatStatus.New) {
+      this.isStartingVisit = true;
+      this.continueActiveVisit();
+      return;
+    }
+
     this._router.navigate(['/patient-visit-summary'], {
       queryParams: {
         patientId: this.patientId,
@@ -206,6 +202,76 @@ export class PatientRecord implements OnInit {
     return 'Активный';
   }
 
+  refreshPageData(): void {
+    if (!this.patientId || this.isRefreshingPage) {
+      return;
+    }
+
+    this.isRefreshingPage = true;
+    this.hasConversationsApi = true;
+
+    forkJoin({
+      patient: this._patientsService.getById(this.patientId).pipe(
+        catchError((err: unknown) => {
+          console.log(err);
+          return of<PatientResponse | null>(null);
+        })
+      ),
+      currentConversation: this.refreshConversationStatus(true),
+      conversations: this._patientsService.getChatConversations(this.patientId).pipe(
+        catchError((err: unknown) => {
+          console.log(err);
+          this.hasConversationsApi = false;
+          return of<PatientChatConversationHistory[]>([]);
+        })
+      )
+    }).pipe(
+      finalize(() => {
+        this.isRefreshingPage = false;
+        this._cdr.detectChanges();
+      })
+    ).subscribe(({patient, currentConversation, conversations}: {
+      patient: PatientResponse | null;
+      currentConversation: PatientChatCurrentResponse;
+      conversations: PatientChatConversationHistory[];
+    }) => {
+      if (patient) {
+        this.patient = patient;
+      }
+
+      this.hasActiveConversation = !!currentConversation.hasActiveConversation;
+      this.conversations = [...conversations].sort((a: PatientChatConversationHistory, b: PatientChatConversationHistory) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      this.lastRefreshedAt = new Date();
+      this._cdr.detectChanges();
+    });
+  }
+
+  private continueActiveVisit(): void {
+    if (!this.patientId) {
+      this.isStartingVisit = false;
+      return;
+    }
+
+    this._patientsService.getCurrentConversationTurns(this.patientId, true).pipe(
+      catchError((err: unknown) => {
+        alert('Не удалось открыть приём. Попробуйте еще раз.');
+        console.log(err);
+        return of<PatientChatTurn[] | null>(null);
+      })
+    ).subscribe((turns: PatientChatTurn[] | null) => {
+      this.isStartingVisit = false;
+      if (!turns) {
+        return;
+      }
+
+      this.hasActiveConversation = true;
+      this._patientsService.setCurrentConversationTurns(this.patientId!, turns);
+      this.openConsultation();
+    });
+  }
+
   private openConsultation(): void {
     this._router.navigate(['/consultation'], {
       queryParams: {patientId: this.patientId},
@@ -214,21 +280,6 @@ export class PatientRecord implements OnInit {
         patientNickname: this.patient?.nickname ?? null
       }
     });
-  }
-
-  private loadData(): void {
-    if (!this.patientId) return;
-
-    forkJoin({
-      patient: this._patientsService.getById(this.patientId),
-      currentConversation: this.refreshConversationStatus(true)
-    }).subscribe(({patient, currentConversation}: {patient: PatientResponse; currentConversation: PatientChatCurrentResponse}) => {
-      this.patient = patient;
-      this.hasActiveConversation = !!currentConversation.hasActiveConversation;
-      this._cdr.detectChanges();
-    });
-
-    this.loadConversations();
   }
 
   private loadConversations(): void {

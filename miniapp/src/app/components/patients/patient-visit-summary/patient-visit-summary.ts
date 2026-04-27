@@ -117,11 +117,6 @@ export class PatientVisitSummary implements OnInit {
       return;
     }
 
-    if (status === PatientChatStatus.Active || status === PatientChatStatus.New) {
-      this.statusHint = 'Приём ещё не завершён. Итоги будут доступны после завершения приёма.';
-      return;
-    }
-
     this.statusHint = '';
   }
 
