@@ -7,6 +7,7 @@ import {CreateRegistrationRequestModel} from '../models/createRegistrationReques
 import {CreateRegistrationResponseModel} from '../models/createRegistrationResponse.model';
 import {Router} from '@angular/router';
 import {TgService} from './tg-service';
+import {ToastService} from './toast.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,11 +22,12 @@ export class RegistrationService {
   private _tgService = inject(TgService);
   private _baseUrl = Environment.apiUrl;
   private _router = inject(Router);
+  private _toast = inject(ToastService);
 
   register(specializations:string[]): void {
 
     if(!this._tgService.userName){
-      alert("Регистрация невозможна. Не получен tgUserName");
+      this._toast.error('Регистрация невозможна. Не получен tgUserName');
       return;
     }
 

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import {Toast} from './components/toast/toast';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   templateUrl: './app.html',
   styleUrls: ['./app.scss'],
-  imports: [RouterOutlet]
+  imports: [RouterOutlet, Toast]
 })
 export class AppComponent implements OnInit {
   constructor() {}
@@ -19,8 +20,6 @@ export class AppComponent implements OnInit {
       tg.expand();         // Развернуть на весь экран
 
       console.log("User:", tg.initDataUnsafe);
-    } else {
-      alert("Telegram WebApp не доступен!");
     }
   }
 }

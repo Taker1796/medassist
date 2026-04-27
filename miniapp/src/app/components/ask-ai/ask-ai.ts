@@ -6,6 +6,7 @@ import {catchError, EMPTY, finalize, map, Observable, of, switchMap} from 'rxjs'
 import {GeneralChatTurn} from '../../models/generalChatTurn.model';
 import {SpecializationsService} from '../../services/specializations-service';
 import {Specialization} from '../../models/specializationModel';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-ask-ai',
@@ -21,6 +22,7 @@ export class AskAi implements OnInit {
   private _llmService = inject(LlmService);
   private _specializationsService = inject(SpecializationsService);
   private _cdr = inject(ChangeDetectorRef);
+  private _toast = inject(ToastService);
 
   isClearing = false;
   conversationSpecializationTitle: string | null = null;
@@ -41,7 +43,7 @@ export class AskAi implements OnInit {
     this._cdr.detectChanges();
     this._llmService.clearGeneralTurns().pipe(
       catchError(err => {
-        alert('Не удалось очистить чат. Попробуйте еще раз.');
+        this._toast.error('Не удалось очистить чат. Попробуйте ещё раз.');
         console.log(err);
         return EMPTY;
       }),

@@ -7,6 +7,7 @@ import {IButtonConfig, TransitionButtons} from '../../transition-buttons/transit
 import {BlurOnOutsideTap} from '../../../directives/blur-on-outside-tap';
 import {PatientResponse} from '../../../models/patientResponse.model';
 import {MenuShell} from '../../menu-shell/menu-shell';
+import {ToastService} from '../../../services/toast.service';
 
 @Component({
   selector: 'app-upsert-patient',
@@ -24,6 +25,7 @@ export class UpsertPatient implements OnInit {
   form!: FormGroup;
   private _patientService  = inject(PatientsService)
   private _router = inject(Router);
+  private _toast = inject(ToastService);
   private readonly _patientId: string|null = null;
 
   mode: 'create' | 'update' = 'create';
@@ -54,7 +56,7 @@ export class UpsertPatient implements OnInit {
   private upsert() {
     if (!this.form.valid) {
       this.form.markAllAsTouched();
-      alert("Заполните обязательные поля");
+      this._toast.error('Заполните обязательные поля');
       return;
     }
 
@@ -72,7 +74,7 @@ export class UpsertPatient implements OnInit {
 
     if(this.mode === 'create'){
       this._patientService.create(body).subscribe((val: UpsertPatientRequest) => {
-          alert(`Пациент ${val.nickname} создан!`);
+          this._toast.success(`Пациент ${val.nickname} создан`);
           this._router.navigate(['/patients']);
         }
       )
@@ -87,7 +89,7 @@ export class UpsertPatient implements OnInit {
 
     this._patientService.update(body, this._patientId).subscribe((val: UpsertPatientRequest) => {
 
-        alert(`Пациент ${val.nickname} обновлен!`);
+        this._toast.success(`Пациент ${val.nickname} обновлён`);
         this._router.navigateByUrl(`/patient-record?patientId=${encodeURIComponent(this._patientId!)}`);
       }
     );
@@ -103,7 +105,7 @@ export class UpsertPatient implements OnInit {
     }
 
     this._patientService.delete(this._patientId).subscribe(() => {
-      alert('Пациент удалён');
+      this._toast.success('Пациент удалён');
       this._router.navigate(['/patients']);
     });
   }

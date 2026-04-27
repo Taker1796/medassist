@@ -1,0 +1,20 @@
+@if (toast(); as activeToast) {
+  <div class="toast-layer" aria-live="polite" aria-atomic="true">
+    <button
+      type="button"
+      class="toast"
+      [class.toast-visible]="activeToast.visible"
+      [class.toast-error]="activeToast.kind === 'error'"
+      [attr.aria-label]="'Закрыть уведомление: ' + activeToast.text"
+      (click)="dismiss()">
+      <span class="toast-icon" aria-hidden="true">
+        @if (activeToast.kind === 'error') {
+          !
+        } @else {
+          ✓
+        }
+      </span>
+      <span class="toast-text">{{ activeToast.text }}</span>
+    </button>
+  </div>
+}

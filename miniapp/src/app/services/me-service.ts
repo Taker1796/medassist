@@ -8,6 +8,7 @@ import {Specialization} from '../models/specializationModel';
 import {UpdateSpecialization} from '../models/updateSpecializationRequest.model';
 import {TgService} from './tg-service';
 import {RegistrationService} from './registration-service';
+import {ToastService} from './toast.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class MeService {
   private _http: HttpClient = inject(HttpClient);
   private _tgService = inject(TgService);
   private _regService = inject(RegistrationService);
+  private _toast = inject(ToastService);
   private _baseUrl = Environment.apiUrl;
   private _meCache$: Observable<MeResponse> | null = null;
 
@@ -48,7 +50,7 @@ export class MeService {
         }));
     }
     else {
-      alert("Не удалось определить пользователя")
+      this._toast.error('Не удалось определить пользователя');
     }
 
     return of(false);

@@ -11,6 +11,7 @@ import {MeService} from '../../services/me-service';
 import {MeResponse} from '../../models/meResponse.model';
 import {SpecializationsService} from '../../services/specializations-service';
 import {Specialization} from '../../models/specializationModel';
+import {ToastService} from '../../services/toast.service';
 
 interface ChatMessage {
   id: string;
@@ -60,6 +61,7 @@ export class Chat implements OnInit {
   private _patientsService = inject(PatientsService);
   private _meService = inject(MeService);
   private _specializationsService = inject(SpecializationsService);
+  private _toast = inject(ToastService);
   private _currentDoctorSpecialtyCode: string | null = null;
   private _currentDoctorSpecialtyTitle: string | null = null;
   private _conversationBaseSpecialtyCode: string | null = null;
@@ -210,7 +212,7 @@ export class Chat implements OnInit {
       const patientId = this.patientId;
       if (!patientId) {
         this.isTyping = false;
-        alert('Не удалось определить пациента для чата');
+        this._toast.error('Не удалось определить пациента для чата');
         return;
       }
 
@@ -265,7 +267,7 @@ export class Chat implements OnInit {
     this._llmService.ask(body).pipe(
       catchError(err => {
         this.isTyping = false;
-        alert('Произошла ошибка. Попробуйте перезагрузить страницу')
+        this._toast.error('Произошла ошибка. Попробуйте перезагрузить страницу');
         console.log(err);
         return of(null);
       })
@@ -392,7 +394,7 @@ export class Chat implements OnInit {
   private loadGeneralTurns(): void {
     this._llmService.getGeneralTurns(true).pipe(
       catchError(err => {
-        alert('Не удалось загрузить историю диалога')
+        this._toast.error('Не удалось загрузить историю диалога');
         console.log(err);
         return of([]);
       })
@@ -458,7 +460,7 @@ export class Chat implements OnInit {
 
     this._patientsService.getCurrentConversationTurns(patientId).pipe(
       catchError(err => {
-        alert('Не удалось загрузить историю приёма');
+        this._toast.error('Не удалось загрузить историю приёма');
         console.log(err);
         return of([]);
       })
@@ -788,7 +790,7 @@ export class Chat implements OnInit {
         this.isStreamingResponse = false;
         this._activeStreamState = null;
         this.removeStreamMessageIfEmpty(streamMessageId);
-        alert('Произошла ошибка. Попробуйте перезагрузить страницу');
+        this._toast.error('Произошла ошибка. Попробуйте перезагрузить страницу');
         console.log(err);
         this._cdr.detectChanges();
       },

@@ -10,6 +10,7 @@ import {PatientChatTurn} from '../../models/patientChatTurn.model';
 import {MeService} from '../../services/me-service';
 import {MeResponse} from '../../models/meResponse.model';
 import {Specialization} from '../../models/specializationModel';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-consultation',
@@ -27,6 +28,7 @@ export class Consultation implements OnInit {
   private _patientsService = inject(PatientsService);
   private _specializationsService = inject(SpecializationsService);
   private _meService = inject(MeService);
+  private _toast = inject(ToastService);
 
   backRoute = '/patients';
   patientId: string | null = null;
@@ -84,7 +86,7 @@ export class Consultation implements OnInit {
     this._patientsService.completeCurrentConversation(this.patientId).pipe(
       map(() => true),
       catchError((err: unknown) => {
-        alert('Не удалось завершить приём. Попробуйте еще раз.');
+        this._toast.error('Не удалось завершить приём. Попробуйте ещё раз.');
         console.log(err);
         return of(false);
       }),

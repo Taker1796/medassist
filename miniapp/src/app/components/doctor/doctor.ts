@@ -6,6 +6,7 @@ import {MenuShell} from '../menu-shell/menu-shell';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MeResponse} from '../../models/meResponse.model';
 import {UpdateMeRequest} from '../../models/updateMeRequest.model';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-doctor',
@@ -23,6 +24,7 @@ export class Doctor implements OnInit {
   private _meService = inject(MeService);
   private _fb = inject(FormBuilder);
   private _cdr = inject(ChangeDetectorRef);
+  private _toast = inject(ToastService);
 
   buttonsConfig = [
     { label: 'Удалить регистрацию', onClick: () => this.deleteRegistration() }
@@ -52,7 +54,7 @@ export class Doctor implements OnInit {
       this.userData = updated;
       this.doctorForm.patchValue({ nickName: updated.nickname || '' });
       this._cdr.detectChanges();
-      alert('Данные обновлены');
+      this._toast.success('Данные обновлены');
     });
   }
 

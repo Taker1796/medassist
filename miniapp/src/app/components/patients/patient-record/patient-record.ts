@@ -12,6 +12,7 @@ import {PatientChatTurn} from '../../../models/patientChatTurn.model';
 import {PatientChatConversationHistory} from '../../../models/patientChatConversationHistory.model';
 import {FormsModule} from '@angular/forms';
 import {PatientChatStatus} from '../../../models/patientChatStatus.model';
+import {ToastService} from '../../../services/toast.service';
 
 @Component({
   selector: 'app-patient-record',
@@ -27,6 +28,7 @@ export class PatientRecord implements OnInit {
   private _route = inject(ActivatedRoute);
   private _patientsService = inject(PatientsService);
   private _cdr = inject(ChangeDetectorRef);
+  private _toast = inject(ToastService);
 
   patient: PatientResponse | null = null;
   conversations: PatientChatConversationHistory[] = [];
@@ -80,7 +82,7 @@ export class PatientRecord implements OnInit {
 
     this._patientsService.createChatConversation(this.patientId).pipe(
       catchError((err: unknown) => {
-        alert('Не удалось открыть приём. Попробуйте еще раз.');
+        this._toast.error('Не удалось открыть приём. Попробуйте ещё раз.');
         console.log(err);
         return of(null);
       })
@@ -113,7 +115,7 @@ export class PatientRecord implements OnInit {
       this.loadConversations();
       this._cdr.detectChanges();
     } catch (err: unknown) {
-      alert('Не удалось завершить приём. Попробуйте еще раз.');
+      this._toast.error('Не удалось завершить приём. Попробуйте ещё раз.');
       console.log(err);
     } finally {
       this.isCompletingVisit = false;
@@ -256,7 +258,7 @@ export class PatientRecord implements OnInit {
 
     this._patientsService.getCurrentConversationTurns(this.patientId, true).pipe(
       catchError((err: unknown) => {
-        alert('Не удалось открыть приём. Попробуйте еще раз.');
+        this._toast.error('Не удалось открыть приём. Попробуйте ещё раз.');
         console.log(err);
         return of<PatientChatTurn[] | null>(null);
       })

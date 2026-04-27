@@ -10,6 +10,7 @@ import {RegistrationService} from '../../services/registration-service';
 import {IButtonConfig, TransitionButtons} from '../transition-buttons/transition-buttons';
 import {MeService} from '../../services/me-service';
 import {MenuShell} from '../menu-shell/menu-shell';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-specializations',
@@ -31,6 +32,7 @@ export class Specializations implements OnInit {
   registrationService: RegistrationService = inject(RegistrationService);
   meService = inject(MeService);
   router = inject(Router);
+  toast = inject(ToastService);
   mode: string|null  = null;
   returnUrl = '/doctor';
   buttonsConfig: IButtonConfig[] = [];
@@ -62,7 +64,7 @@ export class Specializations implements OnInit {
     const val = this.selected.size > 0 ? (this.selected.values().next().value as string) : null;
 
     this.meService.changeSpecialization(val).subscribe(() => {
-      alert("Специализация указана");
+      this.toast.success('Специализация указана');
       this.router.navigateByUrl(this.returnUrl);
     });
   }
