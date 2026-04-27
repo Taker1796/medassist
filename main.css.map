@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/main/main.css"],
+  "sourcesContent": [".content {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  flex: 1;\n  min-height: 0;\n}\n\n.main-card {\n  width: min(100%, 560px);\n  padding: clamp(18px, 4vw, 28px);\n  border: 1px solid var(--border-color);\n  border-radius: 16px;\n  background: rgba(43, 54, 72, 0.7);\n  box-sizing: border-box;\n  text-align: center;\n}\n\n.main-card h1 {\n  margin: 0 0 8px;\n  font-size: clamp(24px, 5vw, 34px);\n}\n\n.main-card p {\n  margin: 0 0 16px;\n  color: var(--muted-text-color);\n}\n\n.main-card .alt-action-text {\n  margin: 20px 0 10px;\n}\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,mBAAiB;AACjB,eAAa;AACb,QAAM;AACN,cAAY;AACd;AAEA,CAAC;AACC,SAAO,IAAI,IAAI,EAAE;AACjB,WAAS,MAAM,IAAI,EAAE,GAAG,EAAE;AAC1B,UAAQ,IAAI,MAAM,IAAI;AACtB,iBAAe;AACf,cAAY,KAAK,EAAE,EAAE,EAAE,EAAE,EAAE,EAAE;AAC7B,cAAY;AACZ,cAAY;AACd;AAEA,CAVC,UAUU;AACT,UAAQ,EAAE,EAAE;AACZ,aAAW,MAAM,IAAI,EAAE,GAAG,EAAE;AAC9B;AAEA,CAfC,UAeU;AACT,UAAQ,EAAE,EAAE;AACZ,SAAO,IAAI;AACb;AAEA,CApBC,UAoBU,CAAC;AACV,UAAQ,KAAK,EAAE;AACjB;",
+  "names": []
+}

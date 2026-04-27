@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/errors/isnottelegram/isnottelegram.css"],
+  "sourcesContent": [".header {\n  margin: auto;\n  width: min(100%, 540px);\n  padding: clamp(16px, 3vw, 24px);\n  text-align: center;\n  border: 1px solid var(--border-color);\n  border-radius: 12px;\n  background: rgba(43, 54, 72, 0.72);\n  box-sizing: border-box;\n}\n\n.subtitle {\n  margin: 0 0 10px;\n}\n\n.subtitle:last-child {\n  margin-bottom: 0;\n}\n\n:host {\n  display: flex;\n  flex: 1;\n}\n"],
+  "mappings": ";AAAA,CAAC;AACC,UAAQ;AACR,SAAO,IAAI,IAAI,EAAE;AACjB,WAAS,MAAM,IAAI,EAAE,GAAG,EAAE;AAC1B,cAAY;AACZ,UAAQ,IAAI,MAAM,IAAI;AACtB,iBAAe;AACf,cAAY,KAAK,EAAE,EAAE,EAAE,EAAE,EAAE,EAAE;AAC7B,cAAY;AACd;AAEA,CAAC;AACC,UAAQ,EAAE,EAAE;AACd;AAEA,CAJC,QAIQ;AACP,iBAAe;AACjB;AAEA;AACE,WAAS;AACT,QAAM;AACR;",
+  "names": []
+}

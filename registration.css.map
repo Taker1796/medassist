@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/registration/registration.css"],
+  "sourcesContent": [".registration-wrap {\n  margin: auto;\n  width: min(100%, 560px);\n  padding: clamp(20px, 4vw, 36px);\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 14px;\n  text-align: center;\n  border: 1px solid var(--border-color);\n  border-radius: 16px;\n  background: rgba(43, 54, 72, 0.7);\n  box-sizing: border-box;\n}\n\n.title {\n  margin: 0;\n  font-size: clamp(28px, 5vw, 40px);\n  font-weight: 600;\n}\n\n.subtitle {\n  margin: 0;\n  max-width: 420px;\n  opacity: 0.85;\n}\n\n:host {\n  display: flex;\n  flex: 1;\n}\n"],
+  "mappings": ";AAAA,CAAC;AACC,UAAQ;AACR,SAAO,IAAI,IAAI,EAAE;AACjB,WAAS,MAAM,IAAI,EAAE,GAAG,EAAE;AAC1B,WAAS;AACT,kBAAgB;AAChB,eAAa;AACb,OAAK;AACL,cAAY;AACZ,UAAQ,IAAI,MAAM,IAAI;AACtB,iBAAe;AACf,cAAY,KAAK,EAAE,EAAE,EAAE,EAAE,EAAE,EAAE;AAC7B,cAAY;AACd;AAEA,CAAC;AACC,UAAQ;AACR,aAAW,MAAM,IAAI,EAAE,GAAG,EAAE;AAC5B,eAAa;AACf;AAEA,CAAC;AACC,UAAQ;AACR,aAAW;AACX,WAAS;AACX;AAEA;AACE,WAAS;AACT,QAAM;AACR;",
+  "names": []
+}

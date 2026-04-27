@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/transition-buttons/transition-buttons.css"],
+  "sourcesContent": [".transition-buttons-container {\n  width: min(100%, 420px);\n  margin-top: auto;\n  padding-top: 14px;\n  padding-bottom: 52px;\n  margin-left: auto;\n  margin-right: auto;\n  display: grid;\n  grid-template-columns: 1fr;\n  justify-items: center;\n  gap: 8px;\n  box-sizing: border-box;\n}\n\n.transition-buttons-container button {\n  width: 100%;\n  max-width: 420px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n@media (max-width: 640px) {\n  .transition-buttons-container {\n    width: 100%;\n  }\n}\n"],
+  "mappings": ";AAAA,CAAC;AACC,SAAO,IAAI,IAAI,EAAE;AACjB,cAAY;AACZ,eAAa;AACb,kBAAgB;AAChB,eAAa;AACb,gBAAc;AACd,WAAS;AACT,yBAAuB;AACvB,iBAAe;AACf,OAAK;AACL,cAAY;AACd;AAEA,CAdC,6BAc6B;AAC5B,SAAO;AACP,aAAW;AACX,YAAU;AACV,iBAAe;AACf,eAAa;AACf;AAEA,QAAO,WAAY;AACjB,GAvBD;AAwBG,WAAO;AACT;AACF;",
+  "names": []
+}
