@@ -4,8 +4,8 @@
   padding: clamp(16px, 3vw, 24px);
   text-align: center;
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  background: rgba(43, 54, 72, 0.72);
+  border-radius: 8px;
+  background: #fff;
   box-sizing: border-box;
 }
 

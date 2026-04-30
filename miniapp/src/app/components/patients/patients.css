@@ -10,8 +10,8 @@
   margin: 0 auto;
   padding: 14px;
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  background: rgba(43, 54, 72, 0.68);
+  border-radius: 8px;
+  background: #fff;
   box-sizing: border-box;
 }
 
@@ -26,16 +26,16 @@
   min-height: 42px;
   margin-top: 10px;
   padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(231, 237, 247, 0.24);
-  background-color: rgba(19, 25, 35, 0.55);
+  border-radius: 7px;
+  border: 1px solid #ccd5df;
+  background-color: #fff;
   color: var(--text-color);
   box-sizing: border-box;
 }
 
 .search-input:focus {
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(120, 166, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(32, 115, 91, 0.14);
   outline: none;
 }
 

@@ -8,8 +8,8 @@
   gap: 14px;
   text-align: center;
   border: 1px solid var(--border-color);
-  border-radius: 16px;
-  background: rgba(43, 54, 72, 0.7);
+  border-radius: 8px;
+  background: #fff;
   box-sizing: border-box;
 }
 

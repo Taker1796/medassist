@@ -16,8 +16,8 @@
 
 .summary-card {
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  background: rgba(43, 54, 72, 0.68);
+  border-radius: 8px;
+  background: #fff;
   padding: 14px;
   box-sizing: border-box;
   display: grid;
@@ -33,9 +33,9 @@
 .summary-text {
   margin: 0;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: 7px;
   border: 1px solid var(--border-color);
-  background: rgba(19, 25, 35, 0.35);
+  background: #f8fcfa;
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.5;
