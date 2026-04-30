@@ -40,7 +40,7 @@ export class Login {
     this._authService.login(login, password).subscribe({
       next: () => {
         this.isSubmitting = false;
-        void this._router.navigate(['/']);
+        void this._router.navigate(['/app']);
       },
       error: (error: unknown) => {
         this.isSubmitting = false;

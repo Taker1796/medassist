@@ -14,10 +14,10 @@ export class Main {
   private _router = inject(Router);
 
   goToPatients(){
-    this._router.navigate(['/patients']);
+    this._router.navigate(['/app/patients']);
   }
 
   goToAskAi(): void {
-    this._router.navigate(['/ask-ai']);
+    this._router.navigate(['/app/ask-ai']);
   }
 }

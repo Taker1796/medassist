@@ -48,7 +48,7 @@ export class PatientRecord implements OnInit {
     this.patientId = statePatientId ?? history.state?.['patientId'] ?? queryPatientId ?? null;
 
     if (!this.patientId) {
-      this._router.navigate(['/patients']);
+      this._router.navigate(['/app/patients']);
       return;
     }
 
@@ -100,7 +100,7 @@ export class PatientRecord implements OnInit {
 
   openEditPatient(): void {
     if (!this.patientId) return;
-    this._router.navigate(['/upsert-patient'], {state: {mode: 'update', patientId: this.patientId}});
+    this._router.navigate(['/app/upsert-patient'], {state: {mode: 'update', patientId: this.patientId}});
   }
 
   async completeVisit(): Promise<void> {
@@ -172,7 +172,7 @@ export class PatientRecord implements OnInit {
       return;
     }
 
-    this._router.navigate(['/patient-visit-summary'], {
+    this._router.navigate(['/app/patient-visit-summary'], {
       queryParams: {
         patientId: this.patientId,
         conversationId,
@@ -275,7 +275,7 @@ export class PatientRecord implements OnInit {
   }
 
   private openConsultation(): void {
-    this._router.navigate(['/consultation'], {
+    this._router.navigate(['/app/consultation'], {
       queryParams: {patientId: this.patientId},
       state: {
         patientId: this.patientId,

@@ -40,19 +40,19 @@ export class MenuShell {
   }
 
   goToMain(): void {
-    this._router.navigate(['']);
+    this._router.navigate(['/app']);
   }
 
   goToDoctor(): void {
-    this._router.navigate(['/doctor']);
+    this._router.navigate(['/app/doctor']);
   }
 
   goToPatients(): void {
-    this._router.navigate(['/patients']);
+    this._router.navigate(['/app/patients']);
   }
 
   goToAskAi(): void {
-    this._router.navigate(['/ask-ai']);
+    this._router.navigate(['/app/ask-ai']);
   }
 
   logout(): void {
@@ -60,15 +60,15 @@ export class MenuShell {
   }
 
   isActiveRoute(path: string): boolean {
-    if (path === '/') {
-      return this._router.url === '/';
+    if (path === '/app') {
+      return this._router.url === '/app';
     }
 
     return this._router.url.startsWith(path);
   }
 
   goToSpecializations(): void {
-    this._router.navigate(['/specializations'], {
+    this._router.navigate(['/app/specializations'], {
       state: {
         mode: 'change',
         returnUrl: this._router.url

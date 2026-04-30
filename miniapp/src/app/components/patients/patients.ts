@@ -51,11 +51,11 @@ export class Patients implements OnInit{
   buttonsConfig: IButtonConfig[] = [];
 
   create (){
-    this.router.navigate(['/upsert-patient'], { state:{mode:"create"}});
+    this.router.navigate(['/app/upsert-patient'], { state:{mode:"create"}});
   }
 
   openPatientRecord(patientId: string): void {
-    this.router.navigate(['/patient-record'], {state: {patientId}});
+    this.router.navigate(['/app/patient-record'], {state: {patientId}});
   }
 
   ngOnInit(){

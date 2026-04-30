@@ -8,6 +8,6 @@ export const PublicOnlyGuard = () => {
   const router = inject(Router);
 
   return authService.Authenticate().pipe(
-    map((isAuthenticated: boolean) => isAuthenticated ? router.createUrlTree(['/']) : true)
+    map((isAuthenticated: boolean) => isAuthenticated ? router.createUrlTree(['/app']) : true)
   );
 };

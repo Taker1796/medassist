@@ -57,7 +57,7 @@ export class Register {
     }).subscribe({
       next: () => {
         this.isSubmitting = false;
-        void this._router.navigate(['/']);
+        void this._router.navigate(['/app']);
       },
       error: (error: unknown) => {
         this.isSubmitting = false;

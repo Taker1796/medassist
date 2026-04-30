@@ -13,7 +13,7 @@
 
       <nav class="nav-list">
         @if (showHome) {
-          <button type="button" class="nav-item" [class.active]="isActiveRoute('/')" (click)="goToMain()">
+          <button type="button" class="nav-item" [class.active]="isActiveRoute('/app')" (click)="goToMain()">
             <span class="nav-label">Главная</span>
             <span class="nav-hint">Обзор</span>
           </button>

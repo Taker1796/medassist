@@ -98,7 +98,7 @@ export class Consultation implements OnInit {
         return;
       }
 
-      this._router.navigate(['/patient-record'], {
+      this._router.navigate(['/app/patient-record'], {
         queryParams: {patientId: this.patientId},
         state: {patientId: this.patientId}
       });

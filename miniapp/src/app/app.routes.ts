@@ -12,10 +12,12 @@ import {AuthGuard} from './guards/auth.guard';
 import {Login} from './components/auth/login/login';
 import {Register} from './components/auth/register/register';
 import {PublicOnlyGuard} from './guards/public-only.guard';
+import {Landing} from './components/landing/landing';
 
 export const routes: Routes = [
+  { path: '', component: Landing },
   {
-    path: '',
+    path: 'app',
     canActivate: [AuthGuard],
     children: [
       { path: '', component: Main },
@@ -26,6 +28,7 @@ export const routes: Routes = [
       { path: 'patient-record', component: PatientRecord },
       { path: 'patient-visit-summary', component: PatientVisitSummary },
       { path: 'upsert-patient', component: UpsertPatient },
+      { path: 'specializations', component: Specializations },
     ]
   },
   { path: 'login', component: Login, canActivate: [PublicOnlyGuard] },
@@ -33,6 +36,13 @@ export const routes: Routes = [
   { path: 'registration', redirectTo: 'register', pathMatch: 'full' },
   { path: 'user-agreement', redirectTo: 'register', pathMatch: 'full' },
   { path: 'isnottelegram', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'specializations', component: Specializations, canActivate: [AuthGuard] },
+  { path: 'doctor', redirectTo: 'app/doctor', pathMatch: 'full' },
+  { path: 'patients', redirectTo: 'app/patients', pathMatch: 'full' },
+  { path: 'consultation', redirectTo: 'app/consultation', pathMatch: 'full' },
+  { path: 'ask-ai', redirectTo: 'app/ask-ai', pathMatch: 'full' },
+  { path: 'patient-record', redirectTo: 'app/patient-record', pathMatch: 'full' },
+  { path: 'patient-visit-summary', redirectTo: 'app/patient-visit-summary', pathMatch: 'full' },
+  { path: 'upsert-patient', redirectTo: 'app/upsert-patient', pathMatch: 'full' },
+  { path: 'specializations', redirectTo: 'app/specializations', pathMatch: 'full' },
   { path: '**', redirectTo: '' },
 ];

@@ -75,7 +75,7 @@ export class UpsertPatient implements OnInit {
     if(this.mode === 'create'){
       this._patientService.create(body).subscribe((val: UpsertPatientRequest) => {
           this._toast.success(`Пациент ${val.nickname} создан`);
-          this._router.navigate(['/patients']);
+          this._router.navigate(['/app/patients']);
         }
       )
       return;
@@ -106,7 +106,7 @@ export class UpsertPatient implements OnInit {
 
     this._patientService.delete(this._patientId).subscribe(() => {
       this._toast.success('Пациент удалён');
-      this._router.navigate(['/patients']);
+      this._router.navigate(['/app/patients']);
     });
   }
 
