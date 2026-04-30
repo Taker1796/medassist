@@ -1,31 +1,80 @@
 .content {
   display: flex;
   justify-content: center;
-  align-items: center;
   flex: 1;
   min-height: 0;
 }
 
 .main-card {
-  width: min(100%, 560px);
-  padding: clamp(18px, 4vw, 28px);
+  width: min(100%, 980px);
+  padding: clamp(24px, 4vw, 40px);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
-  background: rgba(43, 54, 72, 0.7);
+  border-radius: 26px;
+  background:
+    linear-gradient(135deg, rgba(32, 115, 91, 0.96), rgba(27, 59, 91, 0.94)),
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 38%);
   box-sizing: border-box;
-  text-align: center;
+  color: #f7fffb;
+  box-shadow: 0 28px 64px rgba(26, 43, 68, 0.16);
+}
+
+.hero-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: end;
+}
+
+.hero-copy {
+  max-width: 620px;
+}
+
+.hero-kicker {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(247, 255, 251, 0.72);
 }
 
 .main-card h1 {
-  margin: 0 0 8px;
-  font-size: clamp(24px, 5vw, 34px);
+  margin: 0 0 10px;
+  font-size: clamp(38px, 5vw, 64px);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
 }
 
 .main-card p {
-  margin: 0 0 16px;
-  color: var(--muted-text-color);
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.65;
+  color: rgba(247, 255, 251, 0.84);
 }
 
-.main-card .alt-action-text {
-  margin: 20px 0 10px;
+.hero-actions {
+  display: grid;
+  gap: 12px;
+  justify-items: stretch;
+  min-width: 240px;
+}
+
+.hero-actions button {
+  width: 100%;
+}
+
+.secondary-action {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f7fffb;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+@media (max-width: 840px) {
+  .hero-card {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions {
+    min-width: 0;
+  }
 }

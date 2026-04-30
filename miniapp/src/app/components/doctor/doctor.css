@@ -59,6 +59,10 @@
   margin-bottom: 0;
 }
 
+.profile-hint {
+  color: var(--muted-text-color);
+}
+
 :host {
   display: flex;
   flex-direction: column;

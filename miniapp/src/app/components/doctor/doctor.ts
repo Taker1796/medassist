@@ -1,5 +1,4 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
-import {RegistrationService} from '../../services/registration-service';
 import {MeService} from '../../services/me-service';
 import {TransitionButtons} from '../transition-buttons/transition-buttons';
 import {MenuShell} from '../menu-shell/menu-shell';
@@ -7,6 +6,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MeResponse} from '../../models/meResponse.model';
 import {UpdateMeRequest} from '../../models/updateMeRequest.model';
 import {ToastService} from '../../services/toast.service';
+import {AuthService} from '../../services/auth-service';
 
 @Component({
   selector: 'app-doctor',
@@ -19,15 +19,14 @@ import {ToastService} from '../../services/toast.service';
   styleUrl: './doctor.css',
 })
 export class Doctor implements OnInit {
-
-  private _regService = inject(RegistrationService);
   private _meService = inject(MeService);
   private _fb = inject(FormBuilder);
   private _cdr = inject(ChangeDetectorRef);
   private _toast = inject(ToastService);
+  private _authService = inject(AuthService);
 
   buttonsConfig = [
-    { label: 'Удалить регистрацию', onClick: () => this.deleteRegistration() }
+    { label: 'Выйти из аккаунта', onClick: () => this.logout() }
   ];
 
   userData: MeResponse | null = null;
@@ -39,9 +38,9 @@ export class Doctor implements OnInit {
     this.loadDoctorData();
   }
 
-  deleteRegistration(){
-    if(confirm("Вы уверены?")){
-      this._regService.delete();
+  logout(): void {
+    if (confirm('Завершить текущую сессию?')) {
+      this._authService.logout();
     }
   }
 

@@ -1,14 +1,12 @@
 import {inject, Injectable} from '@angular/core';
-import {firstValueFrom, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {AuthService} from './auth-service';
-import {TgService} from './tg-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SseStreamService {
   private _authService = inject(AuthService);
-  private _tgService = inject(TgService);
 
   postStream(url: string, body: unknown): Observable<string> {
     return new Observable<string>((observer) => {
@@ -16,10 +14,10 @@ export class SseStreamService {
 
       const start = async () => {
         try {
-          let response = await this.fetchStream(url, body, abortController.signal, false);
-
+          const response = await this.fetchStream(url, body, abortController.signal);
           if (response.status === 401) {
-            response = await this.fetchStream(url, body, abortController.signal, true);
+            this._authService.handleUnauthorized();
+            throw new Error('Сессия истекла');
           }
 
           if (!response.ok) {
@@ -49,14 +47,8 @@ export class SseStreamService {
   private async fetchStream(
     url: string,
     body: unknown,
-    signal: AbortSignal,
-    forceReAuth: boolean
+    signal: AbortSignal
   ): Promise<Response> {
-    const isAuthorized = await this.ensureAuthToken(forceReAuth);
-    if (!isAuthorized) {
-      throw new Error('Authentication failed');
-    }
-
     const token = this._authService.GetToken;
     if (!token) {
       throw new Error('Token is missing');
@@ -68,24 +60,12 @@ export class SseStreamService {
       'Authorization': `Bearer ${token}`
     };
 
-    if (this._tgService.id) {
-      headers['X-Telegram-User-Id'] = this._tgService.id.toString();
-    }
-
     return fetch(url, {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
       signal
     });
-  }
-
-  private async ensureAuthToken(forceReAuth: boolean): Promise<boolean> {
-    if (forceReAuth || !this._authService.GetToken) {
-      return firstValueFrom(this._authService.Authenticate());
-    }
-
-    return true;
   }
 
   private async readSseStream(

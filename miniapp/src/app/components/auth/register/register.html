@@ -1,0 +1,88 @@
+<div class="auth-page">
+  <section class="auth-visual auth-visual-register">
+    <div class="auth-brand">
+      <span class="brand-mark">M</span>
+      <span>MedAssist</span>
+    </div>
+
+    <div class="auth-copy">
+      <p class="eyebrow">Новый кабинет</p>
+      <h1>Создайте desktop-доступ для работы с пациентами вне Telegram.</h1>
+      <p>
+        Регистрация сразу создает врача и учетную запись для входа по логину и паролю.
+        После этого доступен тот же backend: пациенты, чат с ИИ и история приёмов.
+      </p>
+    </div>
+
+    <div class="auth-meta">
+      <span>Secure access</span>
+      <span>MedAssist Web</span>
+    </div>
+  </section>
+
+  <section class="auth-panel">
+    <form class="auth-card register-card" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="auth-card-header">
+        <h2>Регистрация</h2>
+        <p>Создайте аккаунт врача для web-версии.</p>
+      </div>
+
+      <label class="field" [class.has-error]="form.controls.login.invalid && form.controls.login.touched">
+        <span>Логин</span>
+        <input
+          formControlName="login"
+          type="text"
+          autocomplete="username"
+          placeholder="doctor@example.com"
+        />
+      </label>
+
+      <label class="field" [class.has-error]="form.controls.password.invalid && form.controls.password.touched">
+        <span>Пароль</span>
+        <input
+          formControlName="password"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Минимум 8 символов"
+        />
+      </label>
+
+      <label class="field" [class.has-error]="form.controls.nickname.invalid && form.controls.nickname.touched">
+        <span>Никнейм врача</span>
+        <input
+          formControlName="nickname"
+          type="text"
+          autocomplete="nickname"
+          placeholder="Доктор"
+        />
+      </label>
+
+      <div class="field">
+        <span>Специализация</span>
+        @if (specializations$ | async; as specializations) {
+          <div class="specialization-grid">
+            @for (specialization of specializations; track specialization.code) {
+              <button
+                type="button"
+                class="specialization-chip"
+                [class.selected]="selectedSpecialization === specialization.code"
+                (click)="toggleSpecialization(specialization.code)"
+              >
+                {{ specialization.title }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <button class="submit-button" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Создаем...' : 'Создать аккаунт' }}
+      </button>
+
+      <div class="auth-footer">
+        <span>Уже есть аккаунт?</span>
+        <a routerLink="/login">Войти</a>
+      </div>
+    </form>
+  </section>
+</div>

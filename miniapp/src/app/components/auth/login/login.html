@@ -1,0 +1,65 @@
+<div class="auth-page">
+  <section class="auth-visual">
+    <div class="auth-brand">
+      <span class="brand-mark">M</span>
+      <span>MedAssist</span>
+    </div>
+
+    <div class="auth-copy">
+      <p class="eyebrow">Кабинет врача</p>
+      <h1>Ведите пациентов и консультируйтесь с ИИ в desktop-интерфейсе.</h1>
+      <p>
+        Веб-версия переносит функционал Telegram miniapp в отдельный кабинет:
+        карты пациентов, история приёмов, ИИ-консультации и профиль врача.
+      </p>
+    </div>
+
+    <div class="auth-meta">
+      <span>MedAssist Web</span>
+      <span>Desktop workflow</span>
+    </div>
+  </section>
+
+  <section class="auth-panel">
+    <form class="auth-card form-grid" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="auth-card-header">
+        <h2>Вход</h2>
+        <p>Войдите в кабинет врача.</p>
+      </div>
+
+      <label class="field" [class.has-error]="form.controls.login.invalid && form.controls.login.touched">
+        <span>Логин</span>
+        <input
+          formControlName="login"
+          type="text"
+          autocomplete="username"
+          placeholder="doctor@example.com"
+        />
+      </label>
+
+      <label class="field" [class.has-error]="form.controls.password.invalid && form.controls.password.touched">
+        <span>Пароль</span>
+        <div class="password-field">
+          <input
+            formControlName="password"
+            [type]="showPassword ? 'text' : 'password'"
+            autocomplete="current-password"
+            placeholder="Введите пароль"
+          />
+          <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
+            {{ showPassword ? 'Скрыть' : 'Показать' }}
+          </button>
+        </div>
+      </label>
+
+      <button class="submit-button" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Входим...' : 'Войти' }}
+      </button>
+
+      <div class="auth-footer">
+        <span>Нет аккаунта?</span>
+        <a routerLink="/register">Зарегистрироваться</a>
+      </div>
+    </form>
+  </section>
+</div>

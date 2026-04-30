@@ -9,7 +9,8 @@
             <button class="save-name-btn" type="button" (click)="saveDoctorData()">Сохранить</button>
           </div>
         </form>
-        <p>Специализация: {{ data.specializations?.length ? data.specializations[0].title : 'Не выбрана' }}</p>
+        <p>Специализация: {{ data.specializations.length ? data.specializations[0].title : 'Не выбрана' }}</p>
+        <p class="profile-hint">Из профиля можно изменить имя, специализацию и завершить сессию на этом устройстве.</p>
       </div>
     }
   </div>

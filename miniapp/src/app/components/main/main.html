@@ -1,11 +1,16 @@
 <app-menu-shell title="Главная" [showBack]="false">
   <div class="content">
-    <section class="main-card">
-      <h1>MedAssist</h1>
-      <p>Выберите пациента в разделе «Пациенты», затем начните приём.</p>
-      <button type="button" (click)="goToPatients()">Список пациентов</button>
-      <p class="alt-action-text">или задайте вопрос ИИ</p>
-      <button type="button" (click)="goToAskAi()">Спросить у ИИ</button>
+    <section class="main-card hero-card">
+      <div class="hero-copy">
+        <p class="hero-kicker">Desktop dashboard</p>
+        <h1>MedAssist</h1>
+        <p>Ведите пациентов, открывайте карту приёма и консультируйтесь с ИИ из отдельного веб-кабинета.</p>
+      </div>
+
+      <div class="hero-actions">
+        <button type="button" (click)="goToPatients()">Открыть пациентов</button>
+        <button type="button" class="secondary-action" (click)="goToAskAi()">Спросить у ИИ</button>
+      </div>
     </section>
   </div>
 </app-menu-shell>

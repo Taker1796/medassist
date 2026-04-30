@@ -1,84 +1,100 @@
 <div class="shell-wrapper" appBlurOnOutsideTap>
-  <div class="header">
-    @if (showBack) {
-      <button class="back-button" type="button" aria-label="Назад" (click)="goBack()">
-        ←
-      </button>
-    }
-    <button class="burger" type="button" aria-label="Открыть меню" (click)="toggleMenu()">
-      ☰
-    </button>
-
-    @if (showPatient) {
-      @if (userData$ | async; as data) {
-        <div class="session-meta">
-          <p class="session-info">
-            Пациент:
-            {{
-              data.lastSelectedPatientNickname
-                ? (data.lastSelectedPatientNickname.length > 15
-                    ? (data.lastSelectedPatientNickname | slice:0:12) + '...'
-                    : data.lastSelectedPatientNickname)
-                : ' - '
-            }}
-          </p>
-          <div class="specialization-meta">
-            <p class="specialization-info">
-              Специализация:
-              {{ getSpecializationTitle(data) }}
-            </p>
-            @if (allowSpecializationEdit) {
-              <button
-                class="edit-specialization"
-                type="button"
-                aria-label="Редактировать специализацию"
-                title="Редактировать специализацию"
-                (click)="goToSpecializations()"
-              >
-                ✎
-              </button>
-            }
-          </div>
-        </div>
-      }
-    } @else {
-      @if (userData$ | async; as data) {
-        <div class="session-meta">
-          <p class="session-info">{{ title }}</p>
-          <div class="specialization-meta">
-            <p class="specialization-info">
-              Специализация:
-              {{ getSpecializationTitle(data) }}
-            </p>
-            @if (allowSpecializationEdit) {
-              <button
-                class="edit-specialization"
-                type="button"
-                aria-label="Редактировать специализацию"
-                title="Редактировать специализацию"
-                (click)="goToSpecializations()"
-              >
-                ✎
-              </button>
-            }
-          </div>
-        </div>
-      }
-    }
-  </div>
-
   <div class="menu-overlay" [class.open]="menuOpen" (click)="menuOpen = false"></div>
 
-  <nav class="side-menu" [class.open]="menuOpen">
-    @if (showHome) {
-      <button type="button" (click)="goToMain()">Главная</button>
-    }
-    <button type="button" (click)="goToDoctor()">Профиль врача</button>
-    <button type="button" (click)="goToPatients()">Пациенты</button>
-    <button type="button" (click)="goToAskAi()">Спросить у ИИ</button>
-  </nav>
+  <div class="shell-grid">
+    <nav class="side-menu" [class.open]="menuOpen">
+      <div class="side-menu-brand">
+        <span class="brand-mark">M</span>
+        <div class="side-menu-brand-copy">
+          <strong>MedAssist</strong>
+          <span>Desktop Web</span>
+        </div>
+      </div>
 
-  <div class="shell-content" (click)="menuOpen = false">
-    <ng-content></ng-content>
+      <div class="side-menu-links">
+        @if (showHome) {
+          <button type="button" (click)="goToMain()">Главная</button>
+        }
+        <button type="button" (click)="goToDoctor()">Профиль врача</button>
+        <button type="button" (click)="goToPatients()">Пациенты</button>
+        <button type="button" (click)="goToAskAi()">Спросить у ИИ</button>
+      </div>
+
+      <button type="button" class="logout-button" (click)="logout()">Выйти</button>
+    </nav>
+
+    <div class="shell-main" (click)="menuOpen = false">
+      <div class="header">
+        @if (showBack) {
+          <button class="back-button" type="button" aria-label="Назад" (click)="goBack()">
+            ←
+          </button>
+        }
+        <button class="burger" type="button" aria-label="Открыть меню" (click)="toggleMenu()">
+          ☰
+        </button>
+
+        @if (showPatient) {
+          @if (userData$ | async; as data) {
+            <div class="session-meta">
+              <p class="session-info">
+                Пациент:
+                {{
+                  data.lastSelectedPatientNickname
+                    ? (data.lastSelectedPatientNickname.length > 20
+                        ? (data.lastSelectedPatientNickname | slice:0:18) + '...'
+                        : data.lastSelectedPatientNickname)
+                    : ' - '
+                }}
+              </p>
+              <div class="specialization-meta">
+                <p class="specialization-info">
+                  Специализация:
+                  {{ getSpecializationTitle(data) }}
+                </p>
+                @if (allowSpecializationEdit) {
+                  <button
+                    class="edit-specialization"
+                    type="button"
+                    aria-label="Редактировать специализацию"
+                    title="Редактировать специализацию"
+                    (click)="goToSpecializations()"
+                  >
+                    ✎
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        } @else {
+          @if (userData$ | async; as data) {
+            <div class="session-meta">
+              <p class="session-info">{{ title }}</p>
+              <div class="specialization-meta">
+                <p class="specialization-info">
+                  Специализация:
+                  {{ getSpecializationTitle(data) }}
+                </p>
+                @if (allowSpecializationEdit) {
+                  <button
+                    class="edit-specialization"
+                    type="button"
+                    aria-label="Редактировать специализацию"
+                    title="Редактировать специализацию"
+                    (click)="goToSpecializations()"
+                  >
+                    ✎
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <div class="shell-content">
+        <ng-content></ng-content>
+      </div>
+    </div>
   </div>
 </div>

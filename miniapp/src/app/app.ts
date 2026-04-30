@@ -12,14 +12,5 @@ import {Toast} from './components/toast/toast';
 export class AppComponent implements OnInit {
   constructor() {}
 
-  ngOnInit() {
-
-    if (window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
-
-      tg.expand();         // Развернуть на весь экран
-
-      console.log("User:", tg.initDataUnsafe);
-    }
-  }
+  ngOnInit() {}
 }

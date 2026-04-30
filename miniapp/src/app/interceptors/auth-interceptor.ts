@@ -1,17 +1,14 @@
 import {HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest} from '@angular/common/http';
 import {AuthService} from '../services/auth-service';
 import {inject} from '@angular/core';
-import {BehaviorSubject, catchError, filter, finalize, switchMap, throwError} from 'rxjs';
+import {catchError, throwError} from 'rxjs';
 import {Environment} from '../environments/environment';
 
-let isRefreshing$ = new BehaviorSubject(false);
-
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-
   const authService = inject(AuthService);
   const token = authService.GetToken;
 
-  if (req.url.includes('/token')) {
+  if (req.url.includes('/token') || req.url.includes('/register')) {
     if (!Environment.production) {
       return next(req.clone({
         setHeaders: {
@@ -23,58 +20,21 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  if (isRefreshing$.value) {
-    return refreshToken(authService, req, next);
-  }
-
   if (!token) {
-    return refreshToken(authService, req, next);
+    authService.handleUnauthorized();
+    return throwError(() => new Error('Отсутствует токен авторизации'));
   }
 
   return next(setToken(req, token)).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status === 401) {
-        return refreshToken(authService, req, next);
+        authService.handleUnauthorized();
       }
 
       return throwError(() => err);
     })
   );
 };
-
-const refreshToken =
-  (authService : AuthService,
-   req : HttpRequest<any>,
-   next: HttpHandlerFn) => {
-
-  if (!isRefreshing$.value) {
-    isRefreshing$.next(true);
-
-    return authService.Authenticate().pipe(
-      switchMap((isAuthSuccess: boolean) => {
-        const refreshedToken = authService.GetToken;
-        if (!isAuthSuccess || !refreshedToken) {
-          return throwError(() => new Error('не удалось обновить токен'));
-        }
-
-        return next(setToken(req, refreshedToken));
-      }),
-      finalize(() => isRefreshing$.next(false))
-    )
-  }
-
-  return isRefreshing$.pipe(
-    filter(isRefreshing => !isRefreshing),
-    switchMap(() => {
-      const refreshedToken = authService.GetToken;
-      if (!refreshedToken) {
-        return throwError(() => new Error('токен отсутствует после обновления'));
-      }
-
-      return next(setToken(req, refreshedToken));
-    })
-  );
-}
 
 const setToken =
   (req : HttpRequest<any>,

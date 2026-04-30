@@ -1,90 +1,134 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Environment} from '../environments/environment';
-import {catchError, map, Observable, of} from 'rxjs';
+import {catchError, Observable, of, tap, throwError} from 'rxjs';
 import {AuthResponseModel} from '../models/authResponse.model';
-import {TgService} from './tg-service';
-import {CookieService} from 'ngx-cookie-service';
 import {Router} from '@angular/router';
+import {AuthRequestModel} from '../models/authRequest.model';
+
+interface AuthSession {
+  accessToken: string;
+  expiresAt: number;
+  tokenType: string;
+  actorType: string;
+  doctorId: string | null;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-
   private _http: HttpClient = inject(HttpClient);
   private _baseUrl = Environment.apiUrl;
-  private _tgService = inject(TgService);
-  private _cookiesService = inject(CookieService);
   private _router = inject(Router);
-  private _token = this._cookiesService.get('token') || null;
+  private readonly _sessionStorageKey = 'medassist.web.session';
+  private _session: AuthSession | null = this.readSession();
 
   get IsAuth(): boolean {
-    return !!this._token;
+    return !!this._session?.accessToken && this._session.expiresAt > Date.now();
   }
 
   get GetToken(): string | null {
-    return this._token;
+    if (!this.IsAuth) {
+      this.clearSession();
+      return null;
+    }
+
+    return this._session?.accessToken ?? null;
   }
 
   Authenticate(): Observable<boolean> {
+    return of(this.IsAuth);
+  }
 
-    if(!Environment.production){
-      const body = {
-        type: "api_key",
-        payload: {}
+  login(login: string, password: string): Observable<AuthResponseModel> {
+    const body: AuthRequestModel = {
+      type: 'password',
+      payload: {
+        login,
+        password
       }
+    };
 
-      return this.Auth(body);
-    }
+    return this.requestAuth(`${this._baseUrl}${Environment.authUrlPath}/token`, body);
+  }
 
-    if (Environment.production && this._tgService.initData) {
+  register(body: {
+    login: string;
+    password: string;
+    nickname: string;
+    specializationCodes: string[];
+  }): Observable<AuthResponseModel> {
+    return this.requestAuth(`${this._baseUrl}${Environment.authUrlPath}/register`, body);
+  }
 
-      const body = {
-        type: "telegram_init_data",
-        payload: {
-          initData: `${this._tgService.initData}`
-        }
-      }
+  logout(redirectToLogin = true): void {
+    this.clearSession();
 
-      console.log('Request body:', JSON.stringify(body, null, 2));
-
-      return this.Auth(body);
-    }
-    else{
-      this.logout();
-      return of(false);
+    if (redirectToLogin) {
+      void this._router.navigate(['/login']);
     }
   }
 
-  logout(): void {
-    this._token = null;
-    this._cookiesService.delete('token');
-    this._router.navigate(['/isnottelegram']);
+  handleUnauthorized(): void {
+    this.logout();
   }
 
-  private Auth(body: object): Observable<boolean> {
-    return this._http.post<AuthResponseModel>(`${this._baseUrl}${Environment.authUrlPath}/token`, body).pipe(
+  getErrorMessage(error: unknown, fallback: string): string {
+    const payload = (error as { error?: { error?: string; title?: string; detail?: string } })?.error;
+    return payload?.error || payload?.title || payload?.detail || fallback;
+  }
 
-      map((response: AuthResponseModel) => {
+  private requestAuth(url: string, body: object): Observable<AuthResponseModel> {
+    return this._http.post<AuthResponseModel>(url, body).pipe(
+      tap((response: AuthResponseModel) => {
         if (!response?.accessToken) {
-          this.logout();
-          return false;
+          throw new Error('Токен не получен');
         }
 
-        this._token = response.accessToken;
-        this._cookiesService.set('token', response.accessToken);
-
-        return true;
+        this.persistSession(response);
       }),
-
-      catchError(error => {
-
-        this.logout();
-
-        console.error('Ошибка запроса:', error);
-        return of(false);
+      catchError((error: unknown) => {
+        this.clearSession();
+        return throwError(() => error);
       })
     );
+  }
+
+  private persistSession(response: AuthResponseModel): void {
+    this._session = {
+      accessToken: response.accessToken,
+      expiresAt: Date.now() + response.expiresIn * 1000,
+      tokenType: response.tokenType,
+      actorType: response.actorType,
+      doctorId: response.doctorId ?? null
+    };
+
+    sessionStorage.setItem(this._sessionStorageKey, JSON.stringify(this._session));
+  }
+
+  private readSession(): AuthSession | null {
+    const rawSession = sessionStorage.getItem(this._sessionStorageKey);
+    if (!rawSession) {
+      return null;
+    }
+
+    try {
+      const parsedSession = JSON.parse(rawSession) as AuthSession;
+      if (!parsedSession.accessToken || parsedSession.expiresAt <= Date.now()) {
+        sessionStorage.removeItem(this._sessionStorageKey);
+        return null;
+      }
+
+      return parsedSession;
+    } catch {
+      sessionStorage.removeItem(this._sessionStorageKey);
+      return null;
+    }
+  }
+
+  private clearSession(): void {
+    this._session = null;
+    sessionStorage.removeItem(this._sessionStorageKey);
   }
 }

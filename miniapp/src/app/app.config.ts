@@ -3,7 +3,6 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
-import {customHeaderInterceptor} from './interceptors/custom-header-interceptor';
 import {authInterceptor} from './interceptors/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -11,7 +10,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([
-      authInterceptor,
-      customHeaderInterceptor]))
+      authInterceptor]))
   ]
 };

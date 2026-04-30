@@ -5,6 +5,7 @@ import {AsyncPipe, SlicePipe} from '@angular/common';
 import {MeService} from '../../services/me-service';
 import {Location} from '@angular/common';
 import {MeResponse} from '../../models/meResponse.model';
+import {AuthService} from '../../services/auth-service';
 
 @Component({
   selector: 'app-menu-shell',
@@ -29,6 +30,7 @@ export class MenuShell {
   private _router = inject(Router);
   private _meService = inject(MeService);
   private _location = inject(Location);
+  private _authService = inject(AuthService);
 
   menuOpen = false;
   userData$ = this._meService.me();
@@ -51,6 +53,10 @@ export class MenuShell {
 
   goToAskAi(): void {
     this._router.navigate(['/ask-ai']);
+  }
+
+  logout(): void {
+    this._authService.logout();
   }
 
   goToSpecializations(): void {
