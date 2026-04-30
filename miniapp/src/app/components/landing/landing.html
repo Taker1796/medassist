@@ -1,154 +1,208 @@
 <div class="landing-page">
   <header class="landing-header">
-    <a class="landing-brand" routerLink="/">
+    <div class="landing-brand">
       <span class="brand-mark">M</span>
-      <span>MedAssist</span>
-    </a>
-
-    <nav class="landing-nav">
-      <a href="#platforms">Платформы</a>
-      <a href="#features">Возможности</a>
-      <a href="#workflow">Сценарий</a>
-    </nav>
-
-    <div class="landing-actions">
-      <a class="nav-link" routerLink="/login">Войти</a>
-      <a class="nav-button" routerLink="/register">Попробовать</a>
+      <div class="brand-copy">
+        <strong>MedAssist</strong>
+        <span>AI-платформа для врача</span>
+      </div>
     </div>
+
+    <div class="header-note">Telegram miniapp, desktop-кабинет и PWA в одном клиническом контуре</div>
   </header>
 
   <main class="landing-main">
     <section class="hero-section">
       <div class="hero-copy">
         <p class="eyebrow">MedAssist for doctors</p>
-        <h1>Telegram miniapp, desktop-кабинет и PWA в одной системе для врача.</h1>
+        <h1>Платформа, которая снимает с врача рутину вокруг приема и медицинской документации.</h1>
         <p class="hero-description">
-          MedAssist помогает вести карты пациентов, консультироваться с ИИ, интерпретировать анализы,
-          собирать аллергию и хронические заболевания, а после приема автоматически формирует итог консультации.
+          MedAssist объединяет карту пациента, ИИ-консультации и рабочие сценарии врача в одном продукте.
+          Врач ведет прием, уточняет клинические вопросы, фиксирует значимые данные по пациенту и получает
+          готовый итог визита без ручной сборки summary.
         </p>
 
-        <div class="hero-actions">
-          <a class="primary-button" routerLink="/register">Запустить кабинет</a>
-          <a class="secondary-button" routerLink="/login">Открыть вход</a>
+        <div class="hero-points">
+          <div class="hero-point">
+            <span class="point-badge">AI</span>
+            <p>ИИ помогает врачу во время приема, а не только после него.</p>
+          </div>
+          <div class="hero-point">
+            <span class="point-badge">EMR</span>
+            <p>Карта пациента остается структурированной и актуальной без лишнего ручного ввода.</p>
+          </div>
+          <div class="hero-point">
+            <span class="point-badge">PWA</span>
+            <p>Один рабочий контур доступен в Telegram, на desktop и на мобильном устройстве.</p>
+          </div>
         </div>
 
         <div class="hero-metrics">
           <div class="metric-card">
-            <strong>3 формата</strong>
-            <span>Miniapp в Telegram, desktop web и мобильный PWA</span>
+            <strong>3 точки доступа</strong>
+            <span>Telegram miniapp, desktop web и мобильный PWA для одного врача и одной базы пациентов</span>
           </div>
           <div class="metric-card">
             <strong>AI copilot</strong>
-            <span>Поддержка врача во время приема и после него</span>
+            <span>Поддержка в интерпретации анализов, клинических гипотезах и оформлении приема</span>
           </div>
           <div class="metric-card">
-            <strong>1 карта пациента</strong>
-            <span>История, приемы, заметки и summary в едином контексте</span>
+            <strong>Единый контекст</strong>
+            <span>История визитов, заметки, аллергии, хронические заболевания и summary пациента в одном месте</span>
           </div>
         </div>
       </div>
 
       <div class="hero-panel">
-        <div class="surface-card emphasis-card">
-          <span class="surface-kicker">Что умеет ИИ</span>
-          <h2>Снимает рутину вокруг клинической документации.</h2>
-          <ul>
-            <li>Собирает и дополняет итог приема.</li>
-            <li>Заполняет аллергии и хронические заболевания в карте.</li>
-            <li>Помогает интерпретировать анализы и лабораторные данные.</li>
-            <li>Подсказывает гипотезы, уточняющие вопросы и следующие шаги.</li>
-          </ul>
+        <div class="surface-card emphasis-card intake-card">
+          <div class="surface-head">
+            <span class="surface-kicker">Рабочий цикл приема</span>
+            <span class="surface-status">Live clinical workflow</span>
+          </div>
+
+          <div class="intake-flow">
+            <div class="intake-step">
+              <strong>1. Открыть пациента</strong>
+              <p>Врач сразу видит накопленный контекст, прошлые визиты и важные особенности пациента.</p>
+            </div>
+            <div class="intake-step">
+              <strong>2. Вести консультацию с ИИ</strong>
+              <p>Во время диалога ИИ помогает структурировать жалобы, анализы и клинические наблюдения.</p>
+            </div>
+            <div class="intake-step">
+              <strong>3. Обновить карту</strong>
+              <p>Аллергии, хронические заболевания и ключевые факты ложатся в карту пациента как часть процесса.</p>
+            </div>
+            <div class="intake-step">
+              <strong>4. Получить итог приема</strong>
+              <p>Система формирует summary визита и оставляет врачу уже собранную основу документации.</p>
+            </div>
+          </div>
+
+          <div class="surface-foot">
+            <div>
+              <span class="foot-label">Фокус</span>
+              <p>Меньше ручной рутины, больше времени на клиническое решение.</p>
+            </div>
+            <div>
+              <span class="foot-label">Результат</span>
+              <p>Быстрее оформленный прием и более полная история пациента.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="platforms-section" id="platforms">
+    <section class="platforms-section">
       <div class="section-heading">
         <p class="eyebrow">Платформы</p>
-        <h2>Выберите тот формат работы, который удобен врачу в конкретный момент.</h2>
+        <h2>Один продукт под разные рабочие контексты врача.</h2>
+        <p>MedAssist не привязан к одному устройству. Сценарий остается единым, а формат доступа подстраивается под ситуацию.</p>
       </div>
 
       <div class="platform-grid">
         <article class="surface-card platform-card">
           <span class="platform-label">Telegram miniapp</span>
           <h3>Быстрый доступ из бота</h3>
-          <p>Подходит для оперативного мобильного сценария без отдельного браузерного окна.</p>
+          <p>Подходит для оперативных действий, когда врачу нужен короткий мобильный сценарий без отдельного приложения.</p>
         </article>
 
         <article class="surface-card platform-card">
           <span class="platform-label">Desktop web</span>
-          <h3>Полноценный кабинет с компьютера</h3>
-          <p>Удобен для длительной работы с пациентами, историей приемов, чатом и профилем врача.</p>
+          <h3>Основной кабинет для работы с компьютера</h3>
+          <p>Комфортный формат для длительного приема, анализа истории визитов, ведения карт пациентов и работы с ИИ.</p>
         </article>
 
         <article class="surface-card platform-card">
           <span class="platform-label">PWA</span>
           <h3>Мобильное приложение без стора</h3>
-          <p>Устанавливается на устройство и дает быстрый доступ к тем же рабочим сценариям.</p>
+          <p>Устанавливается на устройство и дает быстрый доступ к тем же данным и клиническим сценариям врача.</p>
         </article>
       </div>
     </section>
 
-    <section class="features-section" id="features">
+    <section class="features-section">
       <div class="section-heading">
-        <p class="eyebrow">Возможности</p>
-        <h2>MedAssist помогает врачу и во время приема, и в оформлении результата.</h2>
+        <p class="eyebrow">Что умеет продукт</p>
+        <h2>Функции собраны вокруг реального врачебного процесса, а не вокруг абстрактного чата.</h2>
       </div>
 
       <div class="feature-grid">
         <article class="surface-card feature-card">
           <h3>Карты пациентов</h3>
-          <p>Единая структура данных пациента: возраст, пол, заметки, аллергии, хронические заболевания и визиты.</p>
+          <p>Единая структура данных пациента: профиль, заметки, аллергии, хронические заболевания, визиты и накопленная история.</p>
         </article>
         <article class="surface-card feature-card">
           <h3>ИИ-консультации</h3>
-          <p>Можно консультироваться с ИИ по конкретному пациенту или в общем рабочем чате для клинических вопросов.</p>
+          <p>Врач может обсуждать конкретный клинический кейс или использовать ИИ как рабочий инструмент для уточнения решений.</p>
         </article>
         <article class="surface-card feature-card">
           <h3>Итог приема</h3>
-          <p>После завершения консультации ИИ сам генерирует итог приема и подготавливает summary по визиту.</p>
+          <p>После завершения консультации ИИ сам собирает summary визита и формирует основу для итоговой документации.</p>
         </article>
         <article class="surface-card feature-card">
-          <h3>Автозаполнение данных</h3>
-          <p>Аллергии, хронические заболевания и ключевые наблюдения не теряются, а попадают в карту пациента.</p>
+          <h3>Структурирование карты</h3>
+          <p>Аллергии, хронические заболевания и клинически значимые факты не теряются в чате, а оседают в карте пациента.</p>
         </article>
         <article class="surface-card feature-card">
           <h3>Интерпретация анализов</h3>
-          <p>ИИ помогает врачу быстрее ориентироваться в результатах анализов и формулировать клинические выводы.</p>
+          <p>ИИ помогает быстрее ориентироваться в лабораторных показателях и формулировать клинические интерпретации.</p>
         </article>
         <article class="surface-card feature-card">
           <h3>Непрерывный контекст</h3>
-          <p>История общения и история визитов сохраняются, поэтому врач видит динамику и не начинает заново.</p>
+          <p>История общения и история визитов сохраняются, поэтому каждый следующий прием начинается не с нуля.</p>
         </article>
       </div>
     </section>
 
-    <section class="workflow-section" id="workflow">
+    <section class="workflow-section">
       <div class="section-heading">
-        <p class="eyebrow">Как это работает</p>
-        <h2>От открытия карты пациента до готового summary за один рабочий цикл.</h2>
+        <p class="eyebrow">Ключевые сценарии</p>
+        <h2>MedAssist закрывает не один экран, а весь путь врача от консультации до оформленного результата.</h2>
       </div>
 
       <div class="workflow-grid">
         <article class="workflow-step">
           <span>1</span>
-          <h3>Открыть карту</h3>
-          <p>Врач открывает пациента в miniapp, desktop-кабинете или PWA и видит весь накопленный контекст.</p>
+          <h3>Ведение приема</h3>
+          <p>Врач работает с пациентом в привычном темпе, а ИИ помогает удерживать структуру и не терять детали.</p>
         </article>
         <article class="workflow-step">
           <span>2</span>
-          <h3>Вести прием с ИИ</h3>
-          <p>ИИ помогает фиксировать значимые данные, не терять детали и быстрее двигаться по приему.</p>
+          <h3>Сбор значимых данных</h3>
+          <p>Факты о состоянии пациента, аллергиях, хронических заболеваниях и наблюдениях собираются в едином контексте.</p>
         </article>
         <article class="workflow-step">
           <span>3</span>
-          <h3>Заполнить карту</h3>
-          <p>Аллергии, хронические заболевания, заметки и наблюдения структурируются в самой карте пациента.</p>
+          <h3>Клиническая поддержка</h3>
+          <p>ИИ помогает с интерпретацией анализов, уточняющими вопросами и рабочими гипотезами по кейсу.</p>
         </article>
         <article class="workflow-step">
           <span>4</span>
-          <h3>Получить итог</h3>
-          <p>После приема система сама формирует summary, который можно использовать как основу документации.</p>
+          <h3>Готовый итог визита</h3>
+          <p>После консультации врач получает сформированный summary, который можно использовать как основу оформления.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="proof-section">
+      <div class="section-heading">
+        <p class="eyebrow">Что получает врач</p>
+        <h2>Продукт помогает ускорять рутину, но не ломает клинический процесс.</h2>
+      </div>
+
+      <div class="proof-grid">
+        <article class="surface-card proof-card">
+          <strong>Меньше ручного ввода</strong>
+          <p>Данные о пациенте и результаты приема собираются в процессе работы, а не вручную после нее.</p>
+        </article>
+        <article class="surface-card proof-card">
+          <strong>Лучше continuity of care</strong>
+          <p>Каждый следующий прием опирается на уже накопленную историю, а не начинается с пустого листа.</p>
+        </article>
+        <article class="surface-card proof-card">
+          <strong>Быстрее доступ к ИИ</strong>
+          <p>Врач может консультироваться с ИИ там, где ему удобно: в Telegram, в desktop-кабинете или в PWA.</p>
         </article>
       </div>
     </section>
@@ -156,16 +210,26 @@
     <section class="cta-section">
       <div class="surface-card cta-card">
         <div class="cta-copy">
-          <p class="eyebrow">Готово к работе</p>
-          <h2>Запустите MedAssist в удобном для врача формате.</h2>
+          <p class="eyebrow">Итог</p>
+          <h2>MedAssist это единая AI-инфраструктура для врача: карта пациента, консультации и итог приема в одном продукте.</h2>
           <p>
-            Один продукт, три точки доступа: Telegram miniapp, desktop-кабинет и PWA.
-            Везде один и тот же рабочий контекст врача и один AI слой помощи в приеме.
+            Telegram miniapp, desktop-версия и мобильный PWA работают как единая система.
+            Врач не переключается между разрозненными инструментами и не теряет клинический контекст по пациенту.
           </p>
         </div>
-        <div class="cta-actions">
-          <a class="primary-button" routerLink="/register">Создать аккаунт</a>
-          <a class="secondary-button" routerLink="/login">Войти в кабинет</a>
+        <div class="cta-facts">
+          <div class="cta-fact">
+            <span>Пациенты</span>
+            <strong>Карты, визиты, история</strong>
+          </div>
+          <div class="cta-fact">
+            <span>ИИ</span>
+            <strong>Консультации, анализы, summary</strong>
+          </div>
+          <div class="cta-fact">
+            <span>Доступ</span>
+            <strong>Telegram, desktop, PWA</strong>
+          </div>
         </div>
       </div>
     </section>
