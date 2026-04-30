@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Environment} from '../environments/environment';
-import {catchError, Observable, of, tap, throwError} from 'rxjs';
+import {catchError, map, Observable, of, tap, throwError} from 'rxjs';
 import {AuthResponseModel} from '../models/authResponse.model';
 import {Router} from '@angular/router';
 import {AuthRequestModel} from '../models/authRequest.model';
@@ -12,6 +12,8 @@ interface AuthSession {
   tokenType: string;
   actorType: string;
   doctorId: string | null;
+  login: string | null;
+  password: string | null;
 }
 
 @Injectable({
@@ -28,17 +30,42 @@ export class AuthService {
     return !!this._session?.accessToken && this._session.expiresAt > Date.now();
   }
 
+  get HasRefreshCredentials(): boolean {
+    return !!this._session?.login && !!this._session?.password;
+  }
+
   get GetToken(): string | null {
     if (!this.IsAuth) {
-      this.clearSession();
+      if (!this.HasRefreshCredentials) {
+        this.clearSession();
+      }
       return null;
     }
 
     return this._session?.accessToken ?? null;
   }
 
-  Authenticate(): Observable<boolean> {
-    return of(this.IsAuth);
+  isTokenExpiringSoon(leewayMs = 60_000): boolean {
+    if (!this._session?.accessToken) {
+      return true;
+    }
+
+    return this._session.expiresAt <= Date.now() + leewayMs;
+  }
+
+  Authenticate(forceRefresh = false): Observable<boolean> {
+    if (!forceRefresh && this.IsAuth && !this.isTokenExpiringSoon()) {
+      return of(true);
+    }
+
+    if (!this.HasRefreshCredentials) {
+      return of(false);
+    }
+
+    return this.refreshAccessToken().pipe(
+      map((token: string | null) => !!token),
+      catchError(() => of(false))
+    );
   }
 
   login(login: string, password: string): Observable<AuthResponseModel> {
@@ -50,7 +77,7 @@ export class AuthService {
       }
     };
 
-    return this.requestAuth(`${this._baseUrl}${Environment.authUrlPath}/token`, body);
+    return this.requestAuth(`${this._baseUrl}${Environment.authUrlPath}/token`, body, {login, password});
   }
 
   register(body: {
@@ -59,7 +86,30 @@ export class AuthService {
     nickname: string;
     specializationCodes: string[];
   }): Observable<AuthResponseModel> {
-    return this.requestAuth(`${this._baseUrl}${Environment.authUrlPath}/register`, body);
+    return this.requestAuth(`${this._baseUrl}${Environment.authUrlPath}/register`, body, {
+      login: body.login,
+      password: body.password
+    });
+  }
+
+  refreshAccessToken(): Observable<string | null> {
+    if (!this.HasRefreshCredentials) {
+      return of(null);
+    }
+
+    const credentials = {
+      login: this._session?.login ?? '',
+      password: this._session?.password ?? ''
+    };
+
+    const body: AuthRequestModel = {
+      type: 'password',
+      payload: credentials
+    };
+
+    return this.requestAuth(`${this._baseUrl}${Environment.authUrlPath}/token`, body, credentials).pipe(
+      map((response: AuthResponseModel) => response.accessToken ?? null)
+    );
   }
 
   logout(redirectToLogin = true): void {
@@ -79,29 +129,43 @@ export class AuthService {
     return payload?.error || payload?.title || payload?.detail || fallback;
   }
 
-  private requestAuth(url: string, body: object): Observable<AuthResponseModel> {
+  private requestAuth(
+    url: string,
+    body: object,
+    credentials?: { login: string; password: string }
+  ): Observable<AuthResponseModel> {
     return this._http.post<AuthResponseModel>(url, body).pipe(
       tap((response: AuthResponseModel) => {
         if (!response?.accessToken) {
           throw new Error('Токен не получен');
         }
 
-        this.persistSession(response);
+        this.persistSession(response, credentials);
       }),
       catchError((error: unknown) => {
-        this.clearSession();
+        if (!this.IsAuth) {
+          this.clearSession();
+        }
         return throwError(() => error);
       })
     );
   }
 
-  private persistSession(response: AuthResponseModel): void {
+  private persistSession(
+    response: AuthResponseModel,
+    credentials?: { login: string; password: string }
+  ): void {
+    const login = credentials?.login ?? this._session?.login ?? null;
+    const password = credentials?.password ?? this._session?.password ?? null;
+
     this._session = {
       accessToken: response.accessToken,
       expiresAt: Date.now() + response.expiresIn * 1000,
       tokenType: response.tokenType,
       actorType: response.actorType,
-      doctorId: response.doctorId ?? null
+      doctorId: response.doctorId ?? null,
+      login,
+      password
     };
 
     sessionStorage.setItem(this._sessionStorageKey, JSON.stringify(this._session));
@@ -115,7 +179,12 @@ export class AuthService {
 
     try {
       const parsedSession = JSON.parse(rawSession) as AuthSession;
-      if (!parsedSession.accessToken || parsedSession.expiresAt <= Date.now()) {
+      if (!parsedSession.login || !parsedSession.password) {
+        sessionStorage.removeItem(this._sessionStorageKey);
+        return null;
+      }
+
+      if (!parsedSession.accessToken) {
         sessionStorage.removeItem(this._sessionStorageKey);
         return null;
       }

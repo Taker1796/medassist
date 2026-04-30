@@ -1,14 +1,13 @@
 import {inject} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from '../services/auth-service';
+import {map} from 'rxjs';
 
 export const PublicOnlyGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.IsAuth) {
-    return router.createUrlTree(['/']);
-  }
-
-  return true;
+  return authService.Authenticate().pipe(
+    map((isAuthenticated: boolean) => isAuthenticated ? router.createUrlTree(['/']) : true)
+  );
 };

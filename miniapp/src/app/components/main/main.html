@@ -1,16 +1,33 @@
 <app-menu-shell title="Главная" [showBack]="false">
-  <div class="content">
-    <section class="main-card hero-card">
+  <div class="dashboard-page">
+    <section class="dashboard-hero">
       <div class="hero-copy">
-        <p class="hero-kicker">Desktop dashboard</p>
-        <h1>MedAssist</h1>
-        <p>Ведите пациентов, открывайте карту приёма и консультируйтесь с ИИ из отдельного веб-кабинета.</p>
+        <p class="hero-kicker">Clinical desktop workspace</p>
+        <h2>Рабочий кабинет врача для ведения пациентов и консультаций с ИИ.</h2>
+        <p>
+          Переключайтесь между реестром пациентов, картой приёма и общим ИИ-чатом без Telegram-обвязки,
+          в интерфейсе, рассчитанном на работу с компьютера.
+        </p>
       </div>
 
       <div class="hero-actions">
-        <button type="button" (click)="goToPatients()">Открыть пациентов</button>
-        <button type="button" class="secondary-action" (click)="goToAskAi()">Спросить у ИИ</button>
+        <button type="button" (click)="goToPatients()">Открыть реестр пациентов</button>
+        <button type="button" class="secondary-action" (click)="goToAskAi()">Перейти в ИИ-чат</button>
       </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <button type="button" class="workspace-card" (click)="goToPatients()">
+        <span class="workspace-card-label">Пациенты</span>
+        <strong>Карты, история приемов и быстрый переход в консультацию.</strong>
+        <p>Используйте как основной рабочий реестр.</p>
+      </button>
+
+      <button type="button" class="workspace-card" (click)="goToAskAi()">
+        <span class="workspace-card-label">ИИ-помощник</span>
+        <strong>Общие клинические вопросы без привязки к пациенту.</strong>
+        <p>Удобно для первичных гипотез и справочных запросов.</p>
+      </button>
     </section>
   </div>
 </app-menu-shell>

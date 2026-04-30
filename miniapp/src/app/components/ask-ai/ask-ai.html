@@ -7,7 +7,12 @@
 >
   <div class="content">
     <div class="ask-ai-layout">
-      <div class="chat-toolbar">
+      <section class="chat-page-header">
+        <div class="chat-page-copy">
+          <h2>Общий ИИ-чат</h2>
+          <p>Используйте его для быстрых клинических вопросов и гипотез вне контекста конкретного пациента.</p>
+        </div>
+
         <button
           class="clear-chat-button"
           type="button"
@@ -19,8 +24,11 @@
           <span class="clear-chat-icon" aria-hidden="true">🗑</span>
           <span>{{ isClearing ? 'Очистка...' : 'Очистить чат' }}</span>
         </button>
-      </div>
-      <app-chat [mode]="'general'"></app-chat>
+      </section>
+
+      <section class="chat-surface">
+        <app-chat [mode]="'general'"></app-chat>
+      </section>
     </div>
   </div>
 </app-menu-shell>

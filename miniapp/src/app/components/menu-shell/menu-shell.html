@@ -1,100 +1,115 @@
 <div class="shell-wrapper" appBlurOnOutsideTap>
   <div class="menu-overlay" [class.open]="menuOpen" (click)="menuOpen = false"></div>
 
-  <div class="shell-grid">
-    <nav class="side-menu" [class.open]="menuOpen">
-      <div class="side-menu-brand">
+  <div class="app-shell">
+    <aside class="sidebar" [class.open]="menuOpen">
+      <div class="sidebar-brand">
         <span class="brand-mark">M</span>
-        <div class="side-menu-brand-copy">
+        <div class="brand-copy">
           <strong>MedAssist</strong>
-          <span>Desktop Web</span>
+          <span>Doctor Workspace</span>
         </div>
       </div>
 
-      <div class="side-menu-links">
+      <nav class="nav-list">
         @if (showHome) {
-          <button type="button" (click)="goToMain()">Главная</button>
-        }
-        <button type="button" (click)="goToDoctor()">Профиль врача</button>
-        <button type="button" (click)="goToPatients()">Пациенты</button>
-        <button type="button" (click)="goToAskAi()">Спросить у ИИ</button>
-      </div>
-
-      <button type="button" class="logout-button" (click)="logout()">Выйти</button>
-    </nav>
-
-    <div class="shell-main" (click)="menuOpen = false">
-      <div class="header">
-        @if (showBack) {
-          <button class="back-button" type="button" aria-label="Назад" (click)="goBack()">
-            ←
+          <button type="button" class="nav-item" [class.active]="isActiveRoute('/')" (click)="goToMain()">
+            <span class="nav-label">Главная</span>
+            <span class="nav-hint">Обзор</span>
           </button>
         }
-        <button class="burger" type="button" aria-label="Открыть меню" (click)="toggleMenu()">
-          ☰
+
+        <button type="button" class="nav-item" [class.active]="isActiveRoute('/doctor')" (click)="goToDoctor()">
+          <span class="nav-label">Профиль врача</span>
+          <span class="nav-hint">Настройки</span>
         </button>
 
-        @if (showPatient) {
-          @if (userData$ | async; as data) {
-            <div class="session-meta">
-              <p class="session-info">
-                Пациент:
-                {{
-                  data.lastSelectedPatientNickname
-                    ? (data.lastSelectedPatientNickname.length > 20
-                        ? (data.lastSelectedPatientNickname | slice:0:18) + '...'
-                        : data.lastSelectedPatientNickname)
-                    : ' - '
-                }}
-              </p>
-              <div class="specialization-meta">
-                <p class="specialization-info">
-                  Специализация:
-                  {{ getSpecializationTitle(data) }}
-                </p>
-                @if (allowSpecializationEdit) {
-                  <button
-                    class="edit-specialization"
-                    type="button"
-                    aria-label="Редактировать специализацию"
-                    title="Редактировать специализацию"
-                    (click)="goToSpecializations()"
-                  >
-                    ✎
-                  </button>
-                }
-              </div>
-            </div>
-          }
-        } @else {
-          @if (userData$ | async; as data) {
-            <div class="session-meta">
-              <p class="session-info">{{ title }}</p>
-              <div class="specialization-meta">
-                <p class="specialization-info">
-                  Специализация:
-                  {{ getSpecializationTitle(data) }}
-                </p>
-                @if (allowSpecializationEdit) {
-                  <button
-                    class="edit-specialization"
-                    type="button"
-                    aria-label="Редактировать специализацию"
-                    title="Редактировать специализацию"
-                    (click)="goToSpecializations()"
-                  >
-                    ✎
-                  </button>
-                }
-              </div>
-            </div>
-          }
-        }
-      </div>
+        <button type="button" class="nav-item" [class.active]="isActiveRoute('/patients')" (click)="goToPatients()">
+          <span class="nav-label">Пациенты</span>
+          <span class="nav-hint">Реестр и карты</span>
+        </button>
 
-      <div class="shell-content">
+        <button type="button" class="nav-item" [class.active]="isActiveRoute('/ask-ai')" (click)="goToAskAi()">
+          <span class="nav-label">Спросить у ИИ</span>
+          <span class="nav-hint">Общий чат</span>
+        </button>
+      </nav>
+
+      @if (userData$ | async; as data) {
+        <section class="sidebar-doctor">
+          <div class="doctor-avatar">{{ getUserInitials(data) }}</div>
+          <div class="doctor-details">
+            <strong>{{ getUserDisplayName(data) }}</strong>
+            <span>{{ getSpecializationTitle(data) }}</span>
+          </div>
+          @if (data.tokenBalance !== undefined) {
+            <div class="token-badge">{{ data.tokenBalance }}</div>
+          }
+        </section>
+      }
+
+      <div class="sidebar-footer">
+        <button
+          type="button"
+          class="sidebar-secondary"
+          [disabled]="!(userData$ | async)"
+          (click)="goToSpecializations()"
+        >
+          Изменить специализацию
+        </button>
+        <button type="button" class="sidebar-danger" (click)="logout()">Выйти</button>
+      </div>
+    </aside>
+
+    <section class="workspace" (click)="menuOpen = false">
+      <header class="topbar">
+        <div class="topbar-main">
+          <div class="topbar-actions">
+            @if (showBack) {
+              <button class="icon-button" type="button" aria-label="Назад" (click)="goBack()">←</button>
+            }
+            <button class="icon-button menu-button" type="button" aria-label="Открыть меню" (click)="toggleMenu()">☰</button>
+          </div>
+
+          <div class="page-heading">
+            <p class="eyebrow">{{ getEyebrow() }}</p>
+            <h1>{{ title }}</h1>
+
+            @if (showPatient) {
+              @if (userData$ | async; as data) {
+                <p class="page-subtitle">
+                  Текущий пациент:
+                  {{
+                    data.lastSelectedPatientNickname
+                      ? (data.lastSelectedPatientNickname.length > 28
+                          ? (data.lastSelectedPatientNickname | slice:0:26) + '...'
+                          : data.lastSelectedPatientNickname)
+                      : 'не выбран'
+                  }}
+                </p>
+              } @else {
+                <p class="page-subtitle">Текущий пациент: не выбран</p>
+              }
+            } @else {
+              <p class="page-subtitle">{{ getPageSubtitle() }}</p>
+            }
+          </div>
+        </div>
+
+        @if (userData$ | async; as data) {
+          <div class="doctor-summary">
+            <div class="doctor-avatar doctor-avatar-small">{{ getUserInitials(data) }}</div>
+            <div class="doctor-summary-copy">
+              <strong>{{ getUserDisplayName(data) }}</strong>
+              <span>{{ getSpecializationTitle(data) }}</span>
+            </div>
+          </div>
+        }
+      </header>
+
+      <div class="workspace-body">
         <ng-content></ng-content>
       </div>
-    </div>
+    </section>
   </div>
 </div>

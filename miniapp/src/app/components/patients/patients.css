@@ -8,16 +8,34 @@
 .list-section {
   width: min(100%, 960px);
   margin: 0 auto;
-  padding: 14px;
+  padding: 20px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: #fff;
   box-sizing: border-box;
 }
 
+.list-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.list-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.list-copy h2 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: -0.03em;
+}
+
 .list-hint {
-  margin: 8px 0 0;
-  font-size: 13px;
+  margin: 0;
+  font-size: 14px;
   color: var(--muted-text-color);
 }
 
@@ -39,21 +57,94 @@
   outline: none;
 }
 
-.list-section .chip-table {
-  grid-template-columns: 1fr;
-  margin-top: 12px;
-  max-height: none;
-  overflow-y: visible;
+.patient-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
 }
 
-.list-section .chip-table.scrollable {
-  max-height: clamp(280px, 48vh, 520px);
+.patient-grid.scrollable {
+  max-height: clamp(320px, 56vh, 640px);
   overflow-y: auto;
 }
 
-.list-section .chip-cell {
-  justify-content: flex-start;
-  padding: 0 14px;
+.patient-card {
+  width: 100%;
+  min-height: 172px;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  justify-items: stretch;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  text-align: left;
+  box-shadow: 0 10px 24px rgba(23, 32, 51, 0.05);
+}
+
+.patient-card:hover {
+  background: #f8fcfa;
+}
+
+.patient-card-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.patient-avatar {
+  width: 42px;
+  height: 42px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #edf6f2;
+  color: var(--accent-color);
+  font-weight: 800;
+}
+
+.patient-card-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.patient-card-copy strong {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.patient-card-copy span {
+  color: var(--muted-text-color);
+  font-size: 13px;
+}
+
+.patient-card-meta {
+  display: grid;
+  gap: 8px;
+  color: var(--muted-text-color);
+  font-size: 14px;
+}
+
+.patient-card-footer {
+  margin-top: auto;
+}
+
+.patient-card-action {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #edf6f2;
+  color: var(--accent-color);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .empty-state {
@@ -63,8 +154,8 @@
   grid-column: 1 / -1;
 }
 
-@media (min-width: 900px) {
-  .list-section .chip-table {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 860px) {
+  .patient-grid {
+    grid-template-columns: 1fr;
   }
 }

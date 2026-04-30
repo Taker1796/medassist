@@ -1,8 +1,14 @@
 <app-menu-shell [showHome]="true" title="Пациенты" backRoute="/">
   <div class="content-wrapper">
     <section class="list-section">
-      <p class="subtitle">Список пациентов:</p>
-      <p class="list-hint">Выберите одного пациента, чтобы продолжить.</p>
+      <div class="list-header">
+        <div class="list-copy">
+          <p class="subtitle">Реестр пациентов</p>
+          <h2>Откройте карту, чтобы перейти к приему, истории и заметкам.</h2>
+          <p class="list-hint">Поиск работает по описательному имени или номеру пациента.</p>
+        </div>
+      </div>
+
       <input
         class="search-input"
         type="text"
@@ -12,14 +18,30 @@
         aria-label="Поиск пациента"
       />
       @if (filteredPatients$ | async; as patients) {
-        <div class="chip-table" [class.scrollable]="patients.length > 8">
+        <div class="patient-grid" [class.scrollable]="patients.length > 8">
           @for (patient of patients; track patient.id) {
-            <div class="chip-cell"
-                 (click)="openPatientRecord(patient.id)">
-              <span class="chip-text">
-                {{ patient.nickname }}
-              </span>
-            </div>
+            <button type="button" class="patient-card" (click)="openPatientRecord(patient.id)">
+              <div class="patient-card-header">
+                <span class="patient-avatar">{{ getPatientInitials(patient) }}</span>
+                <div class="patient-card-copy">
+                  <strong>{{ patient.nickname || 'Без имени' }}</strong>
+                  <span>
+                    {{ patient.ageYears ? patient.ageYears + ' лет' : 'Возраст не указан' }}
+                    ·
+                    {{ getSexLabel(patient.sex) }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="patient-card-meta">
+                <span>Аллергии: {{ patient.allergies || '—' }}</span>
+                <span>Хронические: {{ patient.chronicConditions || '—' }}</span>
+              </div>
+
+              <div class="patient-card-footer">
+                <span class="patient-card-action">Открыть карту</span>
+              </div>
+            </button>
           } @empty {
             <p class="empty-state">Пациенты пока не добавлены.</p>
           }

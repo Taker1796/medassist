@@ -66,6 +66,28 @@ export class Patients implements OnInit{
     this.search$.next(query);
   }
 
+  getPatientInitials(patient: PatientResponse): string {
+    const nickname = patient.nickname?.trim();
+    if (!nickname) {
+      return 'P';
+    }
+
+    const parts = nickname.split(/\s+/).filter(Boolean).slice(0, 2);
+    return parts.map((part: string) => part[0]?.toUpperCase() ?? '').join('');
+  }
+
+  getSexLabel(value: number): string {
+    if (value === 0) {
+      return 'Женский';
+    }
+
+    if (value === 1) {
+      return 'Мужской';
+    }
+
+    return 'Не указан';
+  }
+
   private initButtons(): void {
 
     this.buttonsConfig = [

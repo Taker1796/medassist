@@ -59,6 +59,14 @@ export class MenuShell {
     this._authService.logout();
   }
 
+  isActiveRoute(path: string): boolean {
+    if (path === '/') {
+      return this._router.url === '/';
+    }
+
+    return this._router.url.startsWith(path);
+  }
+
   goToSpecializations(): void {
     this._router.navigate(['/specializations'], {
       state: {
@@ -83,5 +91,48 @@ export class MenuShell {
     }
 
     return data.specializations?.length ? data.specializations[0].title : 'Не выбрана';
+  }
+
+  getUserInitials(data: MeResponse): string {
+    const displayName = this.getUserDisplayName(data).trim();
+    const parts = displayName.split(/\s+/).filter(Boolean).slice(0, 2);
+
+    if (parts.length === 0) {
+      return 'M';
+    }
+
+    return parts.map((part: string) => part[0]?.toUpperCase() ?? '').join('');
+  }
+
+  getUserDisplayName(data: MeResponse): string {
+    const nickname = data.nickname?.trim();
+    return nickname && nickname.length > 0 ? nickname : 'Доктор';
+  }
+
+  getEyebrow(): string {
+    if (this.showPatient) {
+      return 'Patient workspace';
+    }
+
+    return 'Desktop workspace';
+  }
+
+  getPageSubtitle(): string {
+    switch (this.title) {
+      case 'Главная':
+        return 'Быстрый доступ к пациентам, профилю и ИИ-консультациям.';
+      case 'Пациенты':
+        return 'Работайте с реестром пациентов и открывайте клинические карты.';
+      case 'Профиль врача':
+        return 'Управляйте профилем, специализацией и текущей сессией.';
+      case 'Спросить у ИИ':
+        return 'Общий диалог с ИИ-помощником для клинических вопросов.';
+      case 'Карта пациента':
+        return 'Данные пациента, история приемов и быстрые действия.';
+      case 'Итоги приёма':
+        return 'Сводка по завершенному приему и готовый итог консультации.';
+      default:
+        return 'Рабочее пространство врача в desktop-формате.';
+    }
   }
 }

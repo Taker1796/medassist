@@ -7,7 +7,12 @@
 >
   <div class="content">
     <div class="consultation-layout">
-      <div class="chat-toolbar">
+      <section class="chat-page-header">
+        <div class="chat-page-copy">
+          <h2>{{ title }}</h2>
+          <p>Рабочий чат по текущему пациенту с возможностью завершить прием после фиксации результата.</p>
+        </div>
+
         <button
           class="complete-visit-button"
           type="button"
@@ -19,8 +24,11 @@
           <span class="complete-visit-icon" aria-hidden="true">✔️</span>
           <span>{{ isCompletingVisit ? 'Завершение...' : 'Завершить приём' }}</span>
         </button>
-      </div>
-      <app-chat [mode]="'patient'" [patientId]="patientId"></app-chat>
+      </section>
+
+      <section class="chat-surface">
+        <app-chat [mode]="'patient'" [patientId]="patientId"></app-chat>
+      </section>
     </div>
   </div>
 </app-menu-shell>

@@ -1,16 +1,48 @@
 <app-menu-shell [showHome]="true" title="Профиль врача" backRoute="/">
   <div class="content-wrapper">
     @if (userData; as data) {
-      <div class="user-info">
-        <form class="name-editor" [formGroup]="doctorForm">
-          <label class="name-label" for="doctor-nickname">Имя пользователя</label>
-          <div class="name-controls">
-            <input id="doctor-nickname" class="name-input" formControlName="nickName" />
-            <button class="save-name-btn" type="button" (click)="saveDoctorData()">Сохранить</button>
+      <div class="profile-page">
+        <section class="profile-card profile-hero-card">
+          <div class="profile-avatar">{{ (data.nickname || 'Доктор').slice(0, 1).toUpperCase() }}</div>
+          <div class="profile-hero-copy">
+            <h2>{{ data.nickname || 'Доктор' }}</h2>
+            <p>Врач · {{ data.specializations.length ? data.specializations[0].title : 'Специализация не выбрана' }}</p>
           </div>
-        </form>
-        <p>Специализация: {{ data.specializations.length ? data.specializations[0].title : 'Не выбрана' }}</p>
-        <p class="profile-hint">Из профиля можно изменить имя, специализацию и завершить сессию на этом устройстве.</p>
+          @if (data.tokenBalance !== undefined) {
+            <div class="profile-balance-card">
+              <span class="profile-section-label">Баланс</span>
+              <strong>{{ data.tokenBalance }}</strong>
+            </div>
+          }
+        </section>
+
+        <section class="profile-card profile-section-card">
+          <div class="profile-section-heading">
+            <h3>Настройки аккаунта</h3>
+            <p>Изменяйте отображаемое имя и проверяйте данные текущего профиля.</p>
+          </div>
+
+          <form class="profile-control" [formGroup]="doctorForm">
+            <label class="name-label" for="doctor-nickname">Имя пользователя</label>
+            <div class="name-controls">
+              <input id="doctor-nickname" class="name-input" formControlName="nickName" />
+              <button class="save-name-btn" type="button" (click)="saveDoctorData()">Сохранить</button>
+            </div>
+          </form>
+
+          <div class="profile-meta">
+            <div class="meta-row">
+              <span>Специализация</span>
+              <strong>{{ data.specializations.length ? data.specializations[0].title : 'Не выбрана' }}</strong>
+            </div>
+            <div class="meta-row">
+              <span>Doctor ID</span>
+              <strong>{{ data.doctorId }}</strong>
+            </div>
+          </div>
+
+          <p class="profile-hint">Из профиля можно изменить имя, специализацию и завершить сессию на этом устройстве.</p>
+        </section>
       </div>
     }
   </div>
