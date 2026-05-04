@@ -1,0 +1,10 @@
+services:
+  medassist-landing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: medassist-landing:latest
+    container_name: medassist-landing
+    restart: unless-stopped
+    ports:
+      - "${LANDING_PORT:-8080}:80"
