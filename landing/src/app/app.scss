@@ -1,12 +1,15 @@
+@property --gradient-angle {
+  syntax: '<angle>';
+  initial-value: 155deg;
+  inherits: true;
+}
+
 .landing-page {
   position: relative;
   isolation: isolate;
   min-height: 100%;
-  background:
-    linear-gradient(135deg, rgba(32, 115, 91, 0.08) 0%, transparent 32%),
-    linear-gradient(205deg, rgba(49, 145, 115, 0.14) 0%, transparent 38%),
-    linear-gradient(180deg, #fbfcfc 0%, var(--bg-color) 46%, #eef3f1 100%);
-  color: var(--text-color);
+  background: linear-gradient(var(--gradient-angle), #4d7d74 0%, #3c6c7a 35%, #2d5a6e 65%, #224459 100%);
+  color: #eef6f2;
   overflow: hidden;
 }
 
@@ -56,8 +59,8 @@
   inset: 0;
   opacity: 0.28;
   background-image:
-    linear-gradient(rgba(32, 115, 91, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(32, 115, 91, 0.08) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: linear-gradient(180deg, #000 0%, transparent 72%);
 }
@@ -73,11 +76,32 @@ main {
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(251, 252, 252, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(216, 231, 225, 0.9);
-  box-shadow: 0 2px 24px rgba(17, 24, 39, 0.07);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  box-shadow: none;
+  color: #fff;
+  transition: background 300ms ease, border-color 300ms ease, box-shadow 300ms ease, color 300ms ease;
+
+  &:not(.scrolled) {
+    .landing-nav a,
+    .brand-copy span {
+      color: rgba(255, 255, 255, 0.75);
+      transition: color 300ms ease;
+    }
+
+    .landing-nav a:hover {
+      color: #fff;
+    }
+  }
+
+  &.scrolled {
+    background: rgba(251, 252, 252, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(216, 231, 225, 0.9);
+    box-shadow: 0 2px 24px rgba(17, 24, 39, 0.07);
+    color: var(--text-color);
+  }
 }
 
 .header-inner {
@@ -212,6 +236,78 @@ main {
   gap: 28px;
   align-items: start;
   padding: 22px 0 28px;
+}
+
+/* hero text on dark */
+.hero-section h1 {
+  color: #fff;
+}
+
+.hero-section .hero-description {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* hero ribbon — dark glass */
+.hero-section .hero-ribbon {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+}
+
+.hero-section .hero-ribbon span {
+  background: rgba(255, 255, 255, 0.12);
+  color: #c4f0de;
+}
+
+/* hero facts — dark glass */
+.hero-section .hero-facts {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.hero-section .hero-facts div {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.hero-section .hero-facts div:hover {
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-3px);
+}
+
+.hero-section .hero-facts dt {
+  color: #86e0b4;
+}
+
+.hero-section .hero-facts dd {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* secondary button — white glass on dark */
+.hero-section .button-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+.hero-section .button-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+}
+
+/* product window gets deeper shadow on dark bg */
+.hero-section .product-window {
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* brand orbit more visible on dark */
+.hero-section .brand-orbit {
+  opacity: 0.38;
+}
+
+/* update feed cards — stronger shadow on dark */
+.hero-section .update-feed article {
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.24);
 }
 
 .hero-motion-map {
@@ -1676,16 +1772,19 @@ h1 {
   bottom: 0;
   left: 0;
   height: 3px;
-  width: 0;
+  width: 100%;
   background: var(--accent-color);
   border-radius: 0 3px 0 0;
   z-index: 20;
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
   animation: carouselBar 10s linear forwards;
 }
 
 @keyframes carouselBar {
-  from { width: 0; }
-  to   { width: 100%; }
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
 .carousel-prev,
@@ -1811,16 +1910,30 @@ h1 {
 }
 
 @media (max-width: 680px) {
-  .carousel-stage {
-    min-height: 260px;
+  /* Fix 4: carousel not cramped */
+  .approach-section {
+    padding-inline: 12px;
   }
 
+  .carousel-stage {
+    min-height: 240px;
+  }
+
+  .carousel-prev,
+  .carousel-next {
+    width: 30px;
+    height: 30px;
+  }
+
+  .carousel-prev { left: 8px; }
+  .carousel-next { right: 8px; }
+
   .carousel-slide {
-    padding: 28px 56px;
+    padding: 16px 48px;
   }
 
   .carousel-slide h3 {
-    font-size: 22px;
+    font-size: 21px;
   }
 
   .carousel-slide p {
@@ -1898,11 +2011,11 @@ h1 {
 @keyframes brandFloat {
   0%,
   100% {
-    opacity: 0.16;
+    opacity: 0.45;
     transform: translate3d(0, 0, 0) rotateX(8deg);
   }
   50% {
-    opacity: 0.26;
+    opacity: 0.62;
     transform: translate3d(0, -18px, 0) rotateX(8deg);
   }
 }
@@ -2018,68 +2131,69 @@ h1 {
 }
 
 @media (max-width: 680px) {
+  /* ── Fix 1+2: compact single-row header, 60px tall ── */
   .header-inner {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    min-height: auto;
-    padding-block: 14px;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    min-height: 60px;
+    padding-block: 0;
   }
 
-  .header-actions {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .hero-section {
-    padding-top: 18px;
-  }
-
-  h1 {
-    font-size: 42px;
-  }
-
-  .hero-description {
-    font-size: 17px;
-  }
-
-  .update-feed,
-  .app-preview-shell,
-  .hero-ribbon {
-    grid-template-columns: 1fr;
-  }
-
-  .app-preview-shell {
-    min-height: 0;
-  }
-
-  .preview-sidebar {
-    min-height: 64px;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    align-content: center;
-    border-right: 0;
-    border-bottom: 1px solid #dfe4ea;
-  }
-
-  .preview-app-brand {
-    margin-bottom: 0;
-  }
-
-  .preview-app-brand strong,
-  .nav-icon {
+  .brand-copy span {
     display: none;
   }
 
-  .preview-brand {
-    margin: 0;
+  .header-actions {
+    width: auto;
+    justify-content: flex-end;
   }
 
-  .token-chip {
-    grid-column: 1 / -1;
-    justify-content: center;
+  main {
+    padding-top: 60px;
   }
 
-  .chat-message-row p {
-    max-width: calc(100% - 38px);
+  /* ── Fix 3: hero on mobile ── */
+  /* restore spinning animation as subtle background element */
+  .hero-motion-map {
+    display: grid;
+    width: 220px;
+    height: 220px;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.22;
+  }
+
+  .brand-orbit {
+    width: 200px;
+  }
+
+  /* keep text above the animation */
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* hide the complex app mock; keep the two feature cards below */
+  .product-window {
+    display: none;
+  }
+
+  .hero-section {
+    padding-top: 8px;
+  }
+
+  h1 {
+    font-size: 38px;
+  }
+
+  .hero-description {
+    font-size: 16px;
+  }
+
+  .update-feed,
+  .hero-ribbon {
+    grid-template-columns: 1fr;
   }
 
   .hero-ribbon {
@@ -2087,30 +2201,31 @@ h1 {
     display: grid;
   }
 
-  .scenario-section {
-    padding: 28px 0 46px;
+  /* ── Fix 5: breathing room in card sections ── */
+  .subspec-section {
+    padding-inline: 18px;
+  }
+
+  .platform-grid article,
+  .scenario-card {
+    padding: 20px;
   }
 
   .scenario-card {
     min-height: 0;
-    padding: 22px;
   }
 
   .scenario-card h3 {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .section {
-    padding: 46px 0;
+    padding: 40px 0;
   }
 
   .section-heading h2,
   .cta-panel h2 {
-    font-size: 34px;
-  }
-
-  .pain-card h3 {
-    font-size: 20px;
+    font-size: 32px;
   }
 
   .cta-panel {
@@ -2120,5 +2235,60 @@ h1 {
   .cta-reassurance {
     gap: 16px;
   }
+}
 
+/* ═══════════════════════════════════════════════════════
+   Dark background — targeted overrides only
+   ═══════════════════════════════════════════════════════ */
+
+/* White-bg sections/cards: restore dark text so it reads on light backgrounds */
+.approach-section,
+.subspec-section,
+.cta-panel,
+.scenario-card,
+.platform-grid article,
+.landing-footer {
+  color: var(--text-color);
+}
+
+/* Restore original colors inside the light UI mockup */
+.product-window {
+  --muted-text-color: #697486;
+  color: #172033;
+}
+
+/* Restore inside the white update-feed cards in hero */
+.hero-section .update-feed article {
+  --muted-text-color: #697486;
+  color: #172033;
+}
+
+/* Section headings that sit directly on dark bg (scenario, platforms) */
+.scenario-section .section-heading p,
+.platforms-section .section-heading p {
+  color: rgba(220, 240, 230, 0.75);
+}
+
+/* Eyebrow on dark bg sections */
+.scenario-section .eyebrow,
+.platforms-section .eyebrow {
+  color: #86e0b4;
+}
+
+/* Ambient shapes — slightly lighter on dark bg */
+.ambient-shape-primary {
+  background: linear-gradient(135deg, rgba(52, 140, 107, 0.32), rgba(255, 255, 255, 0.07));
+}
+
+.ambient-shape-secondary {
+  background: linear-gradient(135deg, rgba(40, 102, 82, 0.22), rgba(255, 255, 255, 0.14));
+}
+
+/* Stethoscope — brighter on dark bg */
+.hero-section .brand-orbit {
+  opacity: 0.55;
+}
+
+.hero-section .brand-symbol {
+  filter: drop-shadow(0 16px 36px rgba(134, 224, 180, 0.3));
 }
