@@ -76,7 +76,7 @@ main {
   left: 0;
   right: 0;
   z-index: 100;
-  padding-top: env(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top, 0px);
   background: transparent;
   border-bottom: 1px solid transparent;
   box-shadow: none;
@@ -102,6 +102,23 @@ main {
     border-bottom: 1px solid rgba(216, 231, 225, 0.9);
     box-shadow: 0 2px 24px rgba(17, 24, 39, 0.07);
     color: var(--text-color);
+  }
+
+  @media (max-width: 768px) {
+    position: sticky;
+    background: rgba(251, 252, 252, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(216, 231, 225, 0.9);
+    box-shadow: 0 2px 16px rgba(17, 24, 39, 0.08);
+    color: var(--text-color);
+
+    &:not(.scrolled) {
+      .landing-nav a,
+      .brand-copy span {
+        color: var(--muted-text-color);
+      }
+    }
   }
 }
 
@@ -1911,9 +1928,10 @@ h1 {
 }
 
 @media (max-width: 680px) {
-  /* Fix 4: carousel not cramped */
+  /* Fix 4: carousel with proper outer margin and inner padding */
   .approach-section {
-    padding-inline: 20px;
+    margin-inline: 16px;
+    padding-inline: 24px;
   }
 
   .carousel-stage {
@@ -2150,7 +2168,7 @@ h1 {
   }
 
   main {
-    padding-top: calc(60px + env(safe-area-inset-top));
+    padding-top: 0;
   }
 
   /* ── Fix 3: hero on mobile ── */
@@ -2204,7 +2222,8 @@ h1 {
 
   /* ── Fix 5: breathing room in card sections ── */
   .subspec-section {
-    padding-inline: 20px;
+    margin-inline: 16px;
+    padding-inline: 24px;
   }
 
   .platform-grid article,
