@@ -76,6 +76,7 @@ main {
   left: 0;
   right: 0;
   z-index: 100;
+  padding-top: env(safe-area-inset-top);
   background: transparent;
   border-bottom: 1px solid transparent;
   box-shadow: none;
@@ -1912,7 +1913,7 @@ h1 {
 @media (max-width: 680px) {
   /* Fix 4: carousel not cramped */
   .approach-section {
-    padding-inline: 12px;
+    padding-inline: 20px;
   }
 
   .carousel-stage {
@@ -2149,7 +2150,7 @@ h1 {
   }
 
   main {
-    padding-top: 60px;
+    padding-top: calc(60px + env(safe-area-inset-top));
   }
 
   /* ── Fix 3: hero on mobile ── */
@@ -2203,7 +2204,7 @@ h1 {
 
   /* ── Fix 5: breathing room in card sections ── */
   .subspec-section {
-    padding-inline: 18px;
+    padding-inline: 20px;
   }
 
   .platform-grid article,
