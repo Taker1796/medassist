@@ -76,7 +76,6 @@ main {
   left: 0;
   right: 0;
   z-index: 100;
-  padding-top: env(safe-area-inset-top, 0px);
   background: transparent;
   border-bottom: 1px solid transparent;
   box-shadow: none;
@@ -1928,9 +1927,8 @@ h1 {
 }
 
 @media (max-width: 680px) {
-  /* Fix 4: carousel with proper outer margin and inner padding */
+  /* Fix 4: carousel internal padding (outer spacing comes from main 24px) */
   .approach-section {
-    margin-inline: 16px;
     padding-inline: 24px;
   }
 
@@ -2222,7 +2220,6 @@ h1 {
 
   /* ── Fix 5: breathing room in card sections ── */
   .subspec-section {
-    margin-inline: 16px;
     padding-inline: 24px;
   }
 
