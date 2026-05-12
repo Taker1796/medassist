@@ -6,27 +6,30 @@
   </div>
 
   <header class="landing-header">
-    <a class="landing-brand" href="#" aria-label="MedAssist">
-      <span class="brand-mark">M</span>
-      <span class="brand-copy">
-        <strong>MedAssist</strong>
-        <span>ИИ-ассистент для врачей</span>
-      </span>
-    </a>
+    <div class="header-inner">
+      <a class="landing-brand" href="#" aria-label="MedAssist">
+        <span class="brand-mark">M</span>
+        <span class="brand-copy">
+          <strong>MedAssist</strong>
+          <span>ИИ-ассистент для врачей</span>
+        </span>
+      </a>
 
-    <nav class="landing-nav" aria-label="Основная навигация">
-      <a href="#scenarios">Сценарии</a>
-      <a href="#workflow">Как работает</a>
-      <a href="#safety">Подход</a>
-      <a href="#platforms">Платформы</a>
-    </nav>
+      <nav class="landing-nav" aria-label="Основная навигация">
+        <a href="#scenarios">Сценарии</a>
+        <a href="#safety">Подход</a>
+        <a href="#platforms">Платформы</a>
+      </nav>
 
-    <div class="header-actions">
-      <a class="text-link" href="#workflow">Посмотреть процесс</a>
+      <div class="header-actions">
+        <a class="button button-primary" href="#cta">Попробовать</a>
+      </div>
     </div>
   </header>
 
   <main>
+
+    <!-- ─── HERO ─── -->
     <section class="hero-section">
       <div class="hero-motion-map" aria-hidden="true">
         <div class="brand-orbit">
@@ -43,36 +46,35 @@
       </div>
 
       <div class="hero-content">
-        <p class="eyebrow">Для онлайн-приемов и быстрых консультаций</p>
-        <h1>Медицинский ИИ-ассистент, который работает в контексте врача и пациента</h1>
+        <h1>ИИ в вашей специализации: анамнез не в голове, итог не вручную</h1>
         <p class="hero-description">
-          MedAssist помогает вести пациента, консультироваться с ИИ по выбранной
-          специализации, разбирать анализы и автоматически собирать итог приема в карту.
+          Задаёте вопросы, прикладываете анализы — ИИ отвечает в контексте вашей специализации
+          и анамнеза пациента. Завершаете приём — итог оформляется автоматически.
         </p>
 
         <div class="hero-ribbon" aria-label="Ключевые возможности">
-          <span>Без персональных данных</span>
-          <span>Контекст специализации</span>
-          <span>Автоитог приема</span>
+          <span>9 специализаций</span>
+          <span>Без ФИО пациентов</span>
+          <span>Автоитог приёма</span>
         </div>
 
         <div class="hero-actions">
-          <a class="button button-primary" href="#workflow">Как работает прием</a>
-          <a class="button button-secondary" href="#scenarios">Разобрать сценарии</a>
+          <a class="button button-primary" href="#cta">Попробовать бесплатно</a>
+          <a class="button button-secondary" href="#scenarios">Как устроено</a>
         </div>
 
         <dl class="hero-facts" aria-label="Ключевые факты MedAssist">
           <div>
             <dt>2</dt>
-            <dd>режима: прием пациента или консультация без карты</dd>
+            <dd>режима: полный приём с картой или быстрый вопрос без неё</dd>
           </div>
           <div>
-            <dt>0</dt>
-            <dd>обязательных персональных данных в карточке пациента</dd>
+            <dt>9</dt>
+            <dd>специализаций с собственным клиническим контекстом</dd>
           </div>
           <div>
             <dt>24/7</dt>
-            <dd>автозавершение приема и сбор итогов, если врач отвлекся</dd>
+            <dd>автозавершение — итог не потеряется, даже если не закрыть приём вручную</dd>
           </div>
         </dl>
       </div>
@@ -81,7 +83,7 @@
         <div class="product-window">
           <div class="product-glow" aria-hidden="true"></div>
           <div class="window-topbar">
-            <span>MedAssist PWA</span>
+            <span>MedAssist</span>
             <strong>Онлайн</strong>
           </div>
 
@@ -103,7 +105,7 @@
                 <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M3 13h4l2-6 4 12 2-6h6" />
                 </svg>
-                Рабочий стол
+                Главная
               </span>
               <span class="active">
                 <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -121,14 +123,14 @@
                   <path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14Z" />
                   <path d="M5 14l.7 1.8L7.5 16.5l-1.8.7L5 19l-.7-1.8-1.8-.7 1.8-.7L5 14Z" />
                 </svg>
-                ИИ
+                Спросить ИИ
               </span>
               <span>
                 <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
                   <circle cx="12" cy="8" r="4" />
                   <path d="M4 21a8 8 0 0 1 16 0" />
                 </svg>
-                Настройки
+                Профиль
               </span>
             </nav>
 
@@ -138,17 +140,16 @@
                   <span class="chat-icon-preview"></span>
                   <div>
                     <strong>Список пациентов</strong>
-                    <p>Выберите пациента для начала приема.</p>
+                    <p>Выберите пациента для начала приёма.</p>
                   </div>
                   <button type="button" aria-label="Добавить пациента">+</button>
                 </div>
-
                 <div class="pwa-patient-row">
                   <div>
                     <strong>Пациент 42</strong>
                     <p>Женщина, 42 года · гипотиреоз · анализы прикреплены</p>
                   </div>
-                  <span>Начать прием</span>
+                  <span>Начать приём</span>
                 </div>
               </div>
 
@@ -156,38 +157,32 @@
                 <div class="pwa-chat-heading">
                   <span class="chat-icon-preview ai"></span>
                   <div>
-                    <strong>ИИ-консультация</strong>
+                    <strong>Приём с ИИ</strong>
                     <p>Гинекология</p>
                   </div>
                 </div>
-
                 <div class="specialty-status">
-                  <span>Сейчас учитывается специализация: гинекология</span>
+                  <span>Специализация: гинекология</span>
                   <button type="button">Сменить</button>
                 </div>
-
                 <div class="chat-preview">
                   <div class="chat-message-row assistant">
                     <span class="chat-message-marker">AI</span>
-                    <p>Учитываю возраст, анамнез и выбранную специализацию. Можно сверить жалобы с результатами анализов.</p>
+                    <p>Учитываю возраст, анамнез и специализацию. Можно сверить жалобы с анализами.</p>
                   </div>
                   <div class="chat-message-row user">
-                    <p>Посмотри ТТГ и подскажи, нужен ли смежный взгляд эндокринолога.</p>
+                    <p>Посмотри ТТГ — нужен ли взгляд эндокринолога?</p>
                     <span class="chat-message-marker">DR</span>
                   </div>
                   <div class="typing-line" aria-hidden="true">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span></span><span></span><span></span>
                   </div>
                 </div>
-
                 <div class="chat-composer-preview">
                   <span>Введите сообщение...</span>
                   <button type="button" aria-label="Отправить"></button>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -195,193 +190,190 @@
         <div class="update-feed">
           <article>
             <span>Подсказка ИИ</span>
-            <strong>Переключить специализацию</strong>
-            <p>В том же чате можно временно получить консультацию по смежному профилю.</p>
+            <strong>Смена специализации</strong>
+            <p>ИИ предлагает взгляд эндокринолога прямо в текущем чате — одним кликом.</p>
           </article>
           <article>
             <span>Автодействие</span>
-            <strong>Завершить прием</strong>
-            <p>Если врач не закрыл прием вручную, MedAssist соберет итог сам.</p>
+            <strong>Итог готов</strong>
+            <p>После завершения приёма — итог и обновлённая карта автоматически.</p>
           </article>
         </div>
       </aside>
     </section>
 
-    <section class="scenario-section" id="scenarios" aria-label="Сценарии использования">
-      <div class="section-heading section-heading-split">
-        <div>
-          <p class="eyebrow">Сценарии</p>
-          <h2>Два рабочих режима без лишнего переключения контекста</h2>
+
+    <!-- ─── APPROACH CAROUSEL ─── -->
+    <section class="section approach-section" id="safety" aria-label="Подход MedAssist">
+      <div class="section-heading">
+        <p class="eyebrow">Подход</p>
+        <h2>Безопасно и под контролем врача</h2>
+      </div>
+
+      <div class="carousel-wrap">
+        <div class="carousel-stage">
+          @for (k of [progressKey()]; track k) {
+            <div class="carousel-bar" aria-hidden="true"></div>
+          }
+          <button class="carousel-prev" (click)="prev()" aria-label="Предыдущий слайд">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button class="carousel-next" (click)="next()" aria-label="Следующий слайд">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+
+          <div class="carousel-slide" [class.active]="currentSlide() === 0">
+            <h3>Анонимные карты — никаких ФИО</h3>
+            <p>Карта хранит только клинически значимое: псевдоним или номер, возраст, пол, аллергии, хронические заболевания и итоги визитов. Никаких паспортных данных.</p>
+          </div>
+          <div class="carousel-slide" [class.active]="currentSlide() === 1">
+            <h3>ИИ советует — вы решаете</h3>
+            <p>Ассистент структурирует диалог и разбирает анализы. Клиническое решение всегда остаётся за врачом.</p>
+          </div>
+          <div class="carousel-slide" [class.active]="currentSlide() === 2">
+            <h3>История не теряется между приёмами</h3>
+            <p>Факты из каждого диалога попадают в карту — на следующем визите ИИ уже знает, что было раньше.</p>
+          </div>
+          <div class="carousel-slide" [class.active]="currentSlide() === 3">
+            <h3>Создано вместе с врачами</h3>
+            <p>Логика приёма, форматы ответов и сценарии разработаны совместно с практикующими специалистами.</p>
+          </div>
         </div>
-        <p>
-          Врач может вести полноценный прием с картой пациента или открыть быстрый ИИ-чат
-          по специализации, когда пациентская карточка не нужна.
-        </p>
+
+        <div class="carousel-dots" role="group" aria-label="Слайды">
+          <button class="carousel-dot" [class.active]="currentSlide() === 0" (click)="goToSlide(0)" aria-label="Слайд 1"></button>
+          <button class="carousel-dot" [class.active]="currentSlide() === 1" (click)="goToSlide(1)" aria-label="Слайд 2"></button>
+          <button class="carousel-dot" [class.active]="currentSlide() === 2" (click)="goToSlide(2)" aria-label="Слайд 3"></button>
+          <button class="carousel-dot" [class.active]="currentSlide() === 3" (click)="goToSlide(3)" aria-label="Слайд 4"></button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ─── SCENARIOS ─── -->
+    <section class="scenario-section" id="scenarios" aria-label="Сценарии использования">
+      <div class="section-heading">
+        <p class="eyebrow">Сценарии</p>
+        <h2>Два режима под разные задачи</h2>
       </div>
 
       <div class="scenario-grid">
         <article class="scenario-card scenario-card-primary">
           <span class="module-index">01</span>
-          <h3>Прием с ведением карты пациента</h3>
+          <h3>Приём с ведением карты</h3>
           <p>
-            Врач выбирает специализацию, заводит пациента без персональных данных, указывает
-            возраст, пол, аллергии и хронические заболевания, затем работает в чате с ИИ.
+            Создаёте пациента один раз: возраст, пол, аллергии, хронические заболевания.
+            ИИ держит всё это в контексте каждого ответа на протяжении всего диалога.
           </p>
           <ul>
-            <li>ИИ учитывает карту, анамнез и профиль приема.</li>
-            <li>Можно прикреплять анализы и обсуждать их в диалоге.</li>
-            <li>После приема итог и новые факты дополняют карту.</li>
+            <li>Анамнез и прикреплённые анализы учитываются в каждом ответе.</li>
+            <li>Итог приёма и новые клинические факты — в карту автоматически.</li>
+            <li>История всех визитов сохраняется и доступна на следующем приёме.</li>
           </ul>
         </article>
 
         <article class="scenario-card">
           <span class="module-index">02</span>
-          <h3>Консультация с ИИ без пациента</h3>
+          <h3>Быстрый вопрос без карточки</h3>
           <p>
-            Для быстрых вопросов врач открывает чат, выбирает интересующую специализацию
-            и получает ответ без создания пациентской карточки.
+            Нужно разобрать случай или проверить гипотезу — выбираете специализацию
+            и задаёте вопрос напрямую. Карточка пациента не нужна.
           </p>
           <ul>
-            <li>Подходит для проверки гипотез и разбора общих клинических вопросов.</li>
-            <li>Специализацию можно менять под задачу.</li>
-            <li>Доступно с телефона, PWA и веб-кабинета.</li>
+            <li>Подходит для клинических вопросов и разбора сложных случаев.</li>
+            <li>Специализацию меняете под задачу прямо в чате.</li>
+            <li>Доступно с телефона, планшета и компьютера.</li>
           </ul>
         </article>
       </div>
     </section>
 
-    <section class="section workflow-section" id="workflow">
-      <div class="section-heading">
-        <p class="eyebrow">Как работает</p>
-        <h2>Понятный маршрут приема от настройки контекста до готового итога</h2>
-        <p>
-          MedAssist не заменяет врача, а снижает нагрузку на память, ручной ввод и оформление
-          результатов консультации.
-        </p>
-      </div>
 
-      <div class="workflow-list">
-        <article>
-          <h3>Выбрать специализацию</h3>
-          <p>Например, гинекология. ИИ будет отвечать в рамках выбранного клинического контекста.</p>
-        </article>
-        <article>
-          <h3>Создать пациента или открыть карту существующего</h3>
-          <p>Достаточно указать минимальный набор данных: возраст, пол, хронические заболевания или другие значимые заметки.</p>
-        </article>
-        <article>
-          <h3>Вести чат во время приема</h3>
-          <p>Врач задает вопросы, прикладывает анализы и получает рекомендации с учетом анамнеза.</p>
-        </article>
-        <article>
-          <h3>Подключить смежный взгляд</h3>
-          <p>ИИ может предложить временно переключить специализацию прямо в текущем диалоге.</p>
-        </article>
-        <article>
-          <h3>Получить итог и обновленную карту</h3>
-          <p>Система соберет итог приёма, добавит новые важные факты о пациенте, хронические состояния, аллергии и пр.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="ticker-section" aria-label="Основные возможности">
-      <span>Обезличенные карты</span>
-      <span>Выбор специализации</span>
-      <span>ИИ-чат на приеме</span>
-      <span>Разбор анализов</span>
-      <span>Смежные консультации</span>
-      <span>Автоитог</span>
-      <span>Telegram</span>
-      <span>PWA</span>
-      <span>Web</span>
-    </section>
-
-    <section class="section product-section" id="safety">
-      <div class="section-heading">
-        <p class="eyebrow">Подход</p>
-        <h2>Спроектировано вокруг врачебного процесса и приватности</h2>
-        <p>
-          Продукт разработан совместно с врачами: в центре не абстрактный чат, а рабочий
-          прием, где важны контекст, аккуратность данных и быстрый возврат к пациенту.
-        </p>
-      </div>
-
-      <div class="product-layout">
-        <article class="module-card module-card-wide">
-          <span class="module-index">01</span>
-          <h3>Минимум данных, максимум полезного контекста</h3>
+    <!-- ─── SUBSPEC FEATURE ─── -->
+    <section class="section subspec-section" aria-label="Смена специализации в диалоге">
+      <div class="subspec-layout">
+        <div class="subspec-text">
+          <p class="eyebrow">Только в MedAssist</p>
+          <h2>Смена специализации — прямо в диалоге</h2>
           <p>
-            Карта хранит обезличенные медицинские факты, которые нужны для консультации:
-            возраст, пол, аллергии, хронические заболевания, заметки и итоги визитов.
+            Ведёте гинекологический приём — ИИ замечает отклонение ТТГ и предлагает
+            взгляд эндокринолога. Один клик — следующий ответ в новом контексте,
+            история чата не обрывается.
           </p>
-        </article>
-
-        <article class="module-card">
-          <span class="module-index">02</span>
-          <h3>ИИ как помощник врача</h3>
-          <p>Ассистент помогает структурировать диалог, но финальные решения остаются за специалистом.</p>
-        </article>
-
-        <article class="module-card">
-          <span class="module-index">03</span>
-          <h3>Ничего не теряется после приема</h3>
-          <p>Новые факты из диалога переходят в карту и становятся доступны на следующей консультации.</p>
-        </article>
-
-        <article class="module-card">
-          <span class="module-index">04</span>
-          <h3>Создано с врачами</h3>
-          <p>Сценарии, формулировки и логика продукта проверяются на реальных рабочих процессах.</p>
-        </article>
+          <ul class="subspec-list">
+            <li>ИИ инициирует смену сам, когда это клинически уместно</li>
+            <li>Кнопка возврата к основной специализации всегда на экране</li>
+          </ul>
+        </div>
+        <div class="subspec-visual" aria-label="Пример смены специализации">
+          <div class="subspec-demo-card">
+            <div class="subspec-demo-header">
+              <span class="subspec-demo-spec">Специализация: Гинекология</span>
+            </div>
+            <div class="subspec-demo-message">
+              <span class="chat-message-marker">AI</span>
+              <p>Уровень ТТГ выходит за норму. Рекомендую рассмотреть с позиции эндокринологии — могу переключиться.</p>
+            </div>
+            <div class="subspec-chips-row">
+              <button class="subspec-chip-btn current" type="button">Гинекология</button>
+              <button class="subspec-chip-btn" type="button">Эндокринология</button>
+            </div>
+            <p class="subspec-demo-hint">Переключиться — один клик. Вернуться — тоже.</p>
+          </div>
+        </div>
       </div>
     </section>
 
+
+    <!-- ─── PLATFORMS ─── -->
     <section class="section platforms-section" id="platforms">
       <div class="section-heading">
         <p class="eyebrow">Платформы</p>
-        <h2>Доступ там, где врачу удобно работать сейчас</h2>
+        <h2>Работает там, где удобно</h2>
       </div>
 
       <div class="platform-grid">
         <article>
-          <span>Telegram bot</span>
-          <h3>Быстрая консультация с телефона</h3>
-          <p>Подходит для оперативных вопросов и доступа к ассистенту без открытия кабинета.</p>
-        </article>
-        <article>
-          <span>Web cabinet</span>
-          <h3>Полноценный рабочий экран</h3>
-          <p>Удобен для онлайн-приемов, карт пациентов, вложений, истории и итогов визитов.</p>
-        </article>
-        <article>
           <span>PWA</span>
-          <h3>Мобильный формат без стора</h3>
-          <p>Устанавливается на устройство и дает доступ к тем же сценариям в привычном интерфейсе.</p>
+          <h3>Приложение на телефоне</h3>
+          <p>Устанавливается на рабочий экран за секунды. Работает офлайн.</p>
+        </article>
+        <article>
+          <span>Web</span>
+          <h3>Кабинет за компьютером</h3>
+          <p>Карты, история визитов, анализы и итоги приёмов — всё на одном экране.</p>
+        </article>
+        <article>
+          <span>Синхронизация</span>
+          <h3>Один аккаунт везде</h3>
+          <p>Начали с телефона — продолжили за компьютером. Данные синхронизируются в реальном времени.</p>
         </article>
       </div>
     </section>
 
-    <section class="section proof-section">
-      <div class="proof-panel">
-        <div>
-          <p class="eyebrow">Для врача</p>
-          <h2>Меньше рутины вокруг приема, больше внимания пациенту</h2>
-        </div>
-        <div class="proof-grid">
-          <article>
-            <strong>Быстрее старт консультации</strong>
-            <p>Контекст задается один раз и остается доступен в чате.</p>
-          </article>
-          <article>
-            <strong>Аккуратнее документация</strong>
-            <p>Итог собирается из диалога и не зависит от того, все ли врач успел записать вручную.</p>
-          </article>
-          <article>
-            <strong>Гибкий клинический взгляд</strong>
-            <p>Смежную специализацию можно подключить без создания нового чата.</p>
-          </article>
+
+    <!-- ─── CTA ─── -->
+    <section class="section cta-section" id="cta" aria-label="Начать использование">
+      <div class="cta-panel">
+        <p class="eyebrow">Доступ</p>
+        <h2>Начните бесплатно на следующем приёме</h2>
+        <p>Выберите специализацию, создайте первого пациента — и работайте. Базовый доступ бесплатный. Для безлимитного использования ИИ — ежемесячная подписка.</p>
+        <div class="cta-actions">
+          <a class="button button-primary button-large" href="https://pwa-d.muk.i234.me">Открыть MedAssist бесплатно</a>
         </div>
       </div>
     </section>
+
   </main>
+
+  <footer class="landing-footer">
+    <div class="footer-inner">
+      <a class="landing-brand footer-brand" href="#" aria-label="MedAssist">
+        <span class="brand-mark brand-mark-sm">M</span>
+        <strong>MedAssist</strong>
+      </a>
+      <p class="footer-copy">ИИ-ассистент для врачей онлайн-приёмов</p>
+      <a class="footer-link" href="https://pwa-d.muk.i234.me">Открыть приложение</a>
+    </div>
+  </footer>
 </div>
