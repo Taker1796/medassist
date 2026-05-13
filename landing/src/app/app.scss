@@ -1665,9 +1665,27 @@ h1 {
     gap: 12px;
   }
 
+  .footer-brand {
+    order: 1;
+  }
+
+  .footer-link {
+    order: 2;
+    margin-left: auto;
+  }
+
   .footer-copy {
     flex: 1 1 100%;
     order: 3;
+    text-align: center;
+  }
+
+  .footer-bottom {
+    padding-inline: 18px;
+  }
+
+  .footer-copyright {
+    text-align: center;
   }
 }
 
@@ -1808,7 +1826,6 @@ h1 {
   z-index: 20;
   transform: scaleX(0);
   transform-origin: left center;
-  will-change: transform;
   animation: carouselBarA 10s linear forwards;
 }
 
@@ -1932,9 +1949,14 @@ h1 {
   .approach-section::before,
   .approach-section::after,
   .carousel-stage::before,
-  .carousel-stage::after,
+  .carousel-stage::after {
+    animation: none;
+  }
+
   .carousel-bar {
     animation: none;
+    transform: scaleX(1);
+    opacity: 0.55;
   }
 }
 
