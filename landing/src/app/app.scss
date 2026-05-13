@@ -1952,12 +1952,6 @@ h1 {
   .carousel-stage::after {
     animation: none;
   }
-
-  .carousel-bar {
-    animation: none;
-    transform: scaleX(1);
-    opacity: 0.55;
-  }
 }
 
 @media (max-width: 900px) {
