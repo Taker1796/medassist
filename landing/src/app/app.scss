@@ -1646,6 +1646,19 @@ h1 {
   text-decoration: underline;
 }
 
+.footer-bottom {
+  border-top: 1px solid var(--border-color);
+  padding: 12px 28px;
+  width: min(100%, 1240px);
+  margin: 0 auto;
+}
+
+.footer-copyright {
+  color: var(--muted-text-color);
+  font-size: 12px;
+  margin: 0;
+}
+
 @media (max-width: 680px) {
   .footer-inner {
     flex-wrap: wrap;
@@ -1796,10 +1809,19 @@ h1 {
   transform: scaleX(0);
   transform-origin: left center;
   will-change: transform;
-  animation: carouselBar 10s linear forwards;
+  animation: carouselBarA 10s linear forwards;
 }
 
-@keyframes carouselBar {
+.carousel-bar-b {
+  animation-name: carouselBarB;
+}
+
+@keyframes carouselBarA {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes carouselBarB {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
 }

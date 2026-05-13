@@ -213,7 +213,7 @@
       <div class="carousel-wrap">
         <div class="carousel-stage">
           @for (k of [progressKey()]; track k) {
-            <div class="carousel-bar" aria-hidden="true"></div>
+            <div class="carousel-bar" [class.carousel-bar-b]="k % 2 === 0" aria-hidden="true"></div>
           }
           <button class="carousel-prev" (click)="prev()" aria-label="Предыдущий слайд">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
@@ -374,6 +374,9 @@
       </a>
       <p class="footer-copy">ИИ-ассистент для врачей и онлайн-приёмов</p>
       <a class="footer-link" href="https://pwa-d.muk.i234.me">Открыть приложение</a>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">© 2026 MedAssist. Все права защищены.</p>
     </div>
   </footer>
 </div>
