@@ -9,7 +9,7 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly currentSlide = signal(0);
   readonly progressKey = signal(0);
   readonly scrolled = signal(false);
-  readonly totalSlides = 4;
+  readonly totalSlides = 6;
   private intervalId: ReturnType<typeof setInterval> | null = null;
   private readonly onScroll = () => {
     this.scrolled.set(window.scrollY > 40);

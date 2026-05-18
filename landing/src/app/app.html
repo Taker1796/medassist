@@ -1,21 +1,18 @@
 <header class="landing-header" [class.scrolled]="scrolled()">
   <div class="header-inner">
-    <a class="landing-brand" href="#" aria-label="MedAssist">
-      <span class="brand-mark">M</span>
-      <span class="brand-copy">
-        <strong>MedAssist</strong>
-        <span>ИИ-ассистент для врачей</span>
-      </span>
+    <a class="landing-brand" href="#" aria-label="Doctarion">
+      <img src="assets/logo-full.svg" class="brand-logo" alt="Doctarion">
     </a>
 
     <nav class="landing-nav" aria-label="Основная навигация">
       <a href="#scenarios">Сценарии</a>
       <a href="#safety">Подход</a>
+      <a href="#unique">Особенности</a>
       <a href="#platforms">Платформы</a>
     </nav>
 
     <div class="header-actions">
-      <a class="button button-primary" href="#cta">Попробовать</a>
+      <a class="button button-primary" href="https://pwa-d.muk.i234.me">Попробовать</a>
     </div>
   </div>
 </header>
@@ -46,24 +43,13 @@
       </div>
 
       <div class="hero-content">
-        <h1>ИИ в вашей специализации: анамнез не в голове, итог не вручную</h1>
+        <h1>Doctarion:<br> анамнез не в голове, заключение не вручную</h1>
         <p class="hero-description">
           Задаёте вопросы, прикладываете анализы — ИИ отвечает в контексте вашей специализации
-          и анамнеза пациента. Завершаете приём — итог оформляется автоматически.
+          и анамнеза пациента. Завершаете приём — заключение оформляется автоматически.
         </p>
 
-        <div class="hero-ribbon" aria-label="Ключевые возможности">
-          <span>9 специализаций</span>
-          <span>Без ФИО пациентов</span>
-          <span>Автоитог приёма</span>
-        </div>
-
-        <div class="hero-actions">
-          <a class="button button-primary" href="#cta">Попробовать бесплатно</a>
-          <a class="button button-secondary" href="#scenarios">Как устроено</a>
-        </div>
-
-        <dl class="hero-facts" aria-label="Ключевые факты MedAssist">
+        <dl class="hero-facts" aria-label="Ключевые факты Doctarion">
           <div>
             <dt>2</dt>
             <dd>режима: полный приём с картой или быстрый вопрос без неё</dd>
@@ -74,16 +60,16 @@
           </div>
           <div>
             <dt>24/7</dt>
-            <dd>автозавершение — итог не потеряется, даже если не закрыть приём вручную</dd>
+            <dd>автозавершение — заключение не потеряется, даже если не закрыть приём вручную</dd>
           </div>
         </dl>
       </div>
 
-      <aside class="hero-aside" aria-label="Рабочий процесс MedAssist">
+      <aside class="hero-aside" aria-label="Рабочий процесс Doctarion">
         <div class="product-window">
           <div class="product-glow" aria-hidden="true"></div>
           <div class="window-topbar">
-            <span>MedAssist</span>
+            <span>Doctarion</span>
             <strong>Онлайн</strong>
           </div>
 
@@ -99,7 +85,7 @@
                     <circle cx="20" cy="10" r="2" />
                   </svg>
                 </span>
-                <strong>MedAssist</strong>
+                <strong>Doctarion</strong>
               </span>
               <span>
                 <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -187,64 +173,268 @@
           </div>
         </div>
 
-        <div class="update-feed">
-          <article>
-            <span>Подсказка ИИ</span>
-            <strong>Смена специализации</strong>
-            <p>ИИ предлагает взгляд эндокринолога прямо в текущем чате — одним кликом.</p>
-          </article>
-          <article>
-            <span>Автодействие</span>
-            <strong>Итог готов</strong>
-            <p>После завершения приёма — итог и обновлённая карта автоматически.</p>
-          </article>
-        </div>
       </aside>
     </section>
 
 
     <!-- ─── APPROACH CAROUSEL ─── -->
-    <section class="section approach-section" id="safety" aria-label="Подход MedAssist">
+    <section class="section approach-outer" id="safety" aria-label="Подход Doctarion">
       <div class="section-heading">
-        <p class="eyebrow">Подход</p>
         <h2>Безопасно и под контролем врача</h2>
       </div>
 
-      <div class="carousel-wrap">
-        <div class="carousel-stage">
-          @for (k of [progressKey()]; track k) {
-            <div class="carousel-bar" [class.carousel-bar-b]="k % 2 === 0" aria-hidden="true"></div>
-          }
-          <button class="carousel-prev" (click)="prev()" aria-label="Предыдущий слайд">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <button class="carousel-next" (click)="next()" aria-label="Следующий слайд">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
+      <div class="approach-section">
+        <div class="carousel-wrap">
+          <div class="carousel-stage">
+            @for (k of [progressKey()]; track k) {
+              <div class="carousel-bar" [class.carousel-bar-b]="k % 2 === 0" aria-hidden="true"></div>
+            }
+            <button class="carousel-prev" (click)="prev()" aria-label="Предыдущий слайд">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="carousel-next" (click)="next()" aria-label="Следующий слайд">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
 
-          <div class="carousel-slide" [class.active]="currentSlide() === 0">
-            <h3>Анонимные карты — никаких ФИО</h3>
-            <p>Карта хранит только клинически значимое: псевдоним или номер, возраст, пол, аллергии, хронические заболевания и итоги визитов. Никаких паспортных данных.</p>
-          </div>
-          <div class="carousel-slide" [class.active]="currentSlide() === 1">
-            <h3>ИИ советует — вы решаете</h3>
-            <p>Ассистент структурирует диалог и разбирает анализы. Клиническое решение всегда остаётся за врачом.</p>
-          </div>
-          <div class="carousel-slide" [class.active]="currentSlide() === 2">
-            <h3>История не теряется между приёмами</h3>
-            <p>Факты из каждого диалога попадают в карту — на следующем визите ИИ уже знает, что было раньше.</p>
-          </div>
-          <div class="carousel-slide" [class.active]="currentSlide() === 3">
-            <h3>Создано вместе с врачами</h3>
-            <p>Логика приёма, форматы ответов и сценарии разработаны совместно с практикующими специалистами.</p>
-          </div>
-        </div>
+            <div class="carousel-slide" [class.active]="currentSlide() === 0">
+              <!-- Slide 0: anonymity / privacy — shield + lock -->
+              <svg class="slide-bg" viewBox="0 0 800 460" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <pattern id="sg0d" width="44" height="44" patternUnits="userSpaceOnUse"><circle cx="22" cy="22" r="1.5" fill="#319173" opacity="0.14"/></pattern>
+                </defs>
+                <rect width="800" height="460" fill="url(#sg0d)"/>
+                <!-- shield -->
+                <path d="M610 38 L748 84 L748 224 Q748 342 610 382 Q472 342 472 224 L472 84 Z" fill="#319173" fill-opacity="0.05" stroke="#319173" stroke-opacity="0.14" stroke-width="1.5"/>
+                <path d="M610 68 L722 106 L722 220 Q722 318 610 352 Q498 318 498 220 L498 106 Z" fill="none" stroke="#319173" stroke-opacity="0.07" stroke-width="1"/>
+                <!-- lock body -->
+                <rect x="587" y="222" width="46" height="40" rx="8" fill="#319173" fill-opacity="0.09" stroke="#319173" stroke-opacity="0.20" stroke-width="1.5"/>
+                <!-- lock shackle -->
+                <path d="M595 222 L595 205 Q595 190 610 190 Q625 190 625 205 L625 222" stroke="#319173" stroke-opacity="0.20" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- keyhole -->
+                <circle cx="610" cy="238" r="5" fill="#319173" fill-opacity="0.14"/>
+                <rect x="607" y="240" width="6" height="9" rx="1.5" fill="#319173" fill-opacity="0.14"/>
+                <!-- anonymous person above lock -->
+                <circle cx="610" cy="168" r="22" fill="#319173" fill-opacity="0.06" stroke="#319173" stroke-opacity="0.12" stroke-width="1"/>
+                <line x1="596" y1="154" x2="624" y2="182" stroke="#319173" stroke-opacity="0.13" stroke-width="2" stroke-linecap="round"/>
+                <line x1="624" y1="154" x2="596" y2="182" stroke="#319173" stroke-opacity="0.13" stroke-width="2" stroke-linecap="round"/>
+                <!-- redacted card top-left -->
+                <rect x="60" y="90" width="80" height="64" rx="8" fill="#319173" fill-opacity="0.04" stroke="#319173" stroke-opacity="0.10" stroke-width="1"/>
+                <line x1="74" y1="114" x2="128" y2="114" stroke="#319173" stroke-opacity="0.10" stroke-width="2"/>
+                <line x1="74" y1="128" x2="112" y2="128" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <line x1="74" y1="140" x2="120" y2="140" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <!-- small shield echo bottom-left -->
+                <path d="M90 330 L140 348 L140 390 Q140 416 90 424 Q40 416 40 390 L40 348 Z" fill="none" stroke="#319173" stroke-opacity="0.07" stroke-width="1"/>
+              </svg>
+              <h3>Анонимные карты — никаких ФИО</h3>
+              <p>Карта хранит только клинически значимое: псевдоним или номер, возраст, пол, аллергии, хронические заболевания и заключения визитов. Никаких паспортных данных.</p>
+            </div>
+            <div class="carousel-slide" [class.active]="currentSlide() === 1">
+              <!-- Slide 1: AI + human balance — neural net + stethoscope -->
+              <svg class="slide-bg" viewBox="0 0 800 460" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <pattern id="sg1d" width="44" height="44" patternUnits="userSpaceOnUse"><circle cx="22" cy="22" r="1.5" fill="#319173" opacity="0.14"/></pattern>
+                </defs>
+                <rect width="800" height="460" fill="url(#sg1d)"/>
+                <!-- neural net nodes — bottom-left cluster -->
+                <circle cx="58"  cy="310" r="12" fill="#319173" fill-opacity="0.07" stroke="#319173" stroke-opacity="0.16" stroke-width="1.5"/>
+                <circle cx="58"  cy="380" r="12" fill="#319173" fill-opacity="0.07" stroke="#319173" stroke-opacity="0.16" stroke-width="1.5"/>
+                <circle cx="148" cy="290" r="12" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.18" stroke-width="1.5"/>
+                <circle cx="148" cy="348" r="12" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.18" stroke-width="1.5"/>
+                <circle cx="148" cy="406" r="12" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.18" stroke-width="1.5"/>
+                <circle cx="240" cy="320" r="14" fill="#319173" fill-opacity="0.09" stroke="#319173" stroke-opacity="0.20" stroke-width="1.5"/>
+                <circle cx="240" cy="390" r="14" fill="#319173" fill-opacity="0.09" stroke="#319173" stroke-opacity="0.20" stroke-width="1.5"/>
+                <!-- connections -->
+                <line x1="70"  y1="310" x2="136" y2="290" stroke="#319173" stroke-opacity="0.07" stroke-width="1"/>
+                <line x1="70"  y1="310" x2="136" y2="348" stroke="#319173" stroke-opacity="0.07" stroke-width="1"/>
+                <line x1="70"  y1="380" x2="136" y2="348" stroke="#319173" stroke-opacity="0.07" stroke-width="1"/>
+                <line x1="70"  y1="380" x2="136" y2="406" stroke="#319173" stroke-opacity="0.07" stroke-width="1"/>
+                <line x1="160" y1="290" x2="226" y2="320" stroke="#319173" stroke-opacity="0.08" stroke-width="1"/>
+                <line x1="160" y1="348" x2="226" y2="320" stroke="#319173" stroke-opacity="0.08" stroke-width="1"/>
+                <line x1="160" y1="348" x2="226" y2="390" stroke="#319173" stroke-opacity="0.08" stroke-width="1"/>
+                <line x1="160" y1="406" x2="226" y2="390" stroke="#319173" stroke-opacity="0.08" stroke-width="1"/>
+                <!-- dashed bridge -->
+                <line x1="254" y1="355" x2="500" y2="355" stroke="#319173" stroke-opacity="0.10" stroke-width="1.5" stroke-dasharray="6 4"/>
+                <path d="M493 347 L501 355 L493 363" stroke="#319173" stroke-opacity="0.14" stroke-width="2" stroke-linecap="round"/>
+                <!-- stethoscope — bottom-right -->
+                <circle cx="630" cy="340" r="46" fill="#319173" fill-opacity="0.04" stroke="#319173" stroke-opacity="0.10" stroke-width="1.5"/>
+                <circle cx="630" cy="340" r="26" fill="#319173" fill-opacity="0.06" stroke="#319173" stroke-opacity="0.15" stroke-width="2"/>
+                <!-- cross inside -->
+                <line x1="630" y1="325" x2="630" y2="355" stroke="#319173" stroke-opacity="0.20" stroke-width="3" stroke-linecap="round"/>
+                <line x1="615" y1="340" x2="645" y2="340" stroke="#319173" stroke-opacity="0.20" stroke-width="3" stroke-linecap="round"/>
+                <!-- tube -->
+                <path d="M656 340 Q688 340 688 375 Q688 408 672 416 Q656 424 646 414" stroke="#319173" stroke-opacity="0.14" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="646" cy="414" r="7" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.16" stroke-width="1.5"/>
+                <!-- checkmark top-right -->
+                <circle cx="716" cy="72" r="28" fill="#319173" fill-opacity="0.05" stroke="#319173" stroke-opacity="0.12" stroke-width="1.5"/>
+                <path d="M703 72 L712 82 L730 60" stroke="#319173" stroke-opacity="0.20" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <h3>ИИ советует — вы решаете</h3>
+              <p>Ассистент структурирует диалог и разбирает анализы. Клиническое решение всегда остаётся за врачом.</p>
+            </div>
+            <div class="carousel-slide" [class.active]="currentSlide() === 2">
+              <!-- Slide 2: history / timeline — horizontal chain with cards -->
+              <svg class="slide-bg" viewBox="0 0 800 460" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <pattern id="sg2d" width="44" height="44" patternUnits="userSpaceOnUse"><circle cx="22" cy="22" r="1.5" fill="#319173" opacity="0.14"/></pattern>
+                </defs>
+                <rect width="800" height="460" fill="url(#sg2d)"/>
+                <!-- timeline baseline -->
+                <line x1="80" y1="300" x2="720" y2="300" stroke="#319173" stroke-opacity="0.14" stroke-width="2"/>
+                <path d="M713 292 L721 300 L713 308" stroke="#319173" stroke-opacity="0.16" stroke-width="2" stroke-linecap="round"/>
+                <!-- node 1 -->
+                <circle cx="160" cy="300" r="11" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.18" stroke-width="2"/>
+                <line x1="160" y1="289" x2="160" y2="212" stroke="#319173" stroke-opacity="0.09" stroke-width="1" stroke-dasharray="4 3"/>
+                <rect x="122" y="144" width="76" height="68" rx="8" fill="#319173" fill-opacity="0.05" stroke="#319173" stroke-opacity="0.11" stroke-width="1"/>
+                <line x1="136" y1="166" x2="186" y2="166" stroke="#319173" stroke-opacity="0.10" stroke-width="1.5"/>
+                <line x1="136" y1="179" x2="178" y2="179" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <line x1="136" y1="192" x2="182" y2="192" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <!-- node 2 -->
+                <circle cx="360" cy="300" r="11" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.18" stroke-width="2"/>
+                <line x1="360" y1="311" x2="360" y2="348" stroke="#319173" stroke-opacity="0.09" stroke-width="1" stroke-dasharray="4 3"/>
+                <rect x="322" y="348" width="76" height="68" rx="8" fill="#319173" fill-opacity="0.05" stroke="#319173" stroke-opacity="0.11" stroke-width="1"/>
+                <line x1="336" y1="370" x2="386" y2="370" stroke="#319173" stroke-opacity="0.10" stroke-width="1.5"/>
+                <line x1="336" y1="383" x2="378" y2="383" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <line x1="336" y1="396" x2="382" y2="396" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <!-- node 3 -->
+                <circle cx="560" cy="300" r="11" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.18" stroke-width="2"/>
+                <line x1="560" y1="289" x2="560" y2="202" stroke="#319173" stroke-opacity="0.09" stroke-width="1" stroke-dasharray="4 3"/>
+                <rect x="522" y="134" width="76" height="68" rx="8" fill="#319173" fill-opacity="0.05" stroke="#319173" stroke-opacity="0.11" stroke-width="1"/>
+                <line x1="536" y1="156" x2="586" y2="156" stroke="#319173" stroke-opacity="0.10" stroke-width="1.5"/>
+                <line x1="536" y1="169" x2="578" y2="169" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <line x1="536" y1="182" x2="582" y2="182" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <!-- brain/memory echo top-right -->
+                <path d="M720 80 Q740 60 760 80 Q780 60 780 86 Q790 100 776 112 Q780 124 768 130 Q768 144 756 144 Q748 152 740 144 Q732 152 724 144 Q712 144 712 130 Q700 124 704 112 Q690 100 700 86 Q700 60 720 80Z" fill="#319173" fill-opacity="0.05" stroke="#319173" stroke-opacity="0.10" stroke-width="1"/>
+              </svg>
+              <h3>История не теряется между приёмами</h3>
+              <p>Факты из каждого диалога попадают в карту — на следующем визите ИИ уже знает, что было раньше.</p>
+            </div>
+            <div class="carousel-slide" [class.active]="currentSlide() === 3">
+              <!-- Slide 3: built with doctors — collaboration network -->
+              <svg class="slide-bg" viewBox="0 0 800 460" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <pattern id="sg3d" width="44" height="44" patternUnits="userSpaceOnUse"><circle cx="22" cy="22" r="1.5" fill="#319173" opacity="0.14"/></pattern>
+                </defs>
+                <rect width="800" height="460" fill="url(#sg3d)"/>
+                <!-- central medical hub -->
+                <circle cx="400" cy="230" r="38" fill="#319173" fill-opacity="0.07" stroke="#319173" stroke-opacity="0.16" stroke-width="1.5"/>
+                <line x1="400" y1="215" x2="400" y2="245" stroke="#319173" stroke-opacity="0.22" stroke-width="3" stroke-linecap="round"/>
+                <line x1="385" y1="230" x2="415" y2="230" stroke="#319173" stroke-opacity="0.22" stroke-width="3" stroke-linecap="round"/>
+                <!-- person nodes at corners -->
+                <!-- top-left -->
+                <circle cx="152" cy="108" r="20" fill="#319173" fill-opacity="0.06" stroke="#319173" stroke-opacity="0.14" stroke-width="1.5"/>
+                <circle cx="152" cy="102" r="9"  fill="#319173" fill-opacity="0.08"/>
+                <path d="M134 128 Q134 116 152 116 Q170 116 170 128" fill="#319173" fill-opacity="0.05"/>
+                <line x1="170" y1="118" x2="366" y2="218" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <!-- top-right -->
+                <circle cx="648" cy="108" r="20" fill="#319173" fill-opacity="0.06" stroke="#319173" stroke-opacity="0.14" stroke-width="1.5"/>
+                <circle cx="648" cy="102" r="9"  fill="#319173" fill-opacity="0.08"/>
+                <path d="M630 128 Q630 116 648 116 Q666 116 666 128" fill="#319173" fill-opacity="0.05"/>
+                <line x1="630" y1="118" x2="434" y2="218" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <!-- bottom-left -->
+                <circle cx="152" cy="352" r="20" fill="#319173" fill-opacity="0.06" stroke="#319173" stroke-opacity="0.14" stroke-width="1.5"/>
+                <circle cx="152" cy="346" r="9"  fill="#319173" fill-opacity="0.08"/>
+                <path d="M134 372 Q134 360 152 360 Q170 360 170 372" fill="#319173" fill-opacity="0.05"/>
+                <line x1="170" y1="344" x2="366" y2="244" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <!-- bottom-right -->
+                <circle cx="648" cy="352" r="20" fill="#319173" fill-opacity="0.06" stroke="#319173" stroke-opacity="0.14" stroke-width="1.5"/>
+                <circle cx="648" cy="346" r="9"  fill="#319173" fill-opacity="0.08"/>
+                <path d="M630 372 Q630 360 648 360 Q666 360 666 372" fill="#319173" fill-opacity="0.05"/>
+                <line x1="630" y1="344" x2="434" y2="244" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <!-- right side extra person -->
+                <circle cx="720" cy="230" r="20" fill="#319173" fill-opacity="0.06" stroke="#319173" stroke-opacity="0.14" stroke-width="1.5"/>
+                <circle cx="720" cy="224" r="9"  fill="#319173" fill-opacity="0.08"/>
+                <path d="M702 250 Q702 238 720 238 Q738 238 738 250" fill="#319173" fill-opacity="0.05"/>
+                <line x1="700" y1="230" x2="438" y2="230" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+              </svg>
+              <h3>Создано вместе с врачами</h3>
+              <p>Логика приёма, форматы ответов и сценарии разработаны совместно с практикующими специалистами.</p>
+            </div>
+            <div class="carousel-slide" [class.active]="currentSlide() === 4">
+              <!-- Slide 4: specialty switch — orbital diagram -->
+              <svg class="slide-bg" viewBox="0 0 800 460" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <pattern id="sg4d" width="44" height="44" patternUnits="userSpaceOnUse"><circle cx="22" cy="22" r="1.5" fill="#319173" opacity="0.14"/></pattern>
+                </defs>
+                <rect width="800" height="460" fill="url(#sg4d)"/>
+                <!-- outer orbit -->
+                <circle cx="420" cy="240" r="158" fill="none" stroke="#319173" stroke-opacity="0.09" stroke-width="1.5" stroke-dasharray="8 5"/>
+                <!-- inner orbit -->
+                <circle cx="420" cy="240" r="92" fill="none" stroke="#319173" stroke-opacity="0.07" stroke-width="1"/>
+                <!-- central hub -->
+                <circle cx="420" cy="240" r="44" fill="#319173" fill-opacity="0.07" stroke="#319173" stroke-opacity="0.16" stroke-width="1.5"/>
+                <!-- hub icon — two arrows (switch) -->
+                <path d="M406 232 L420 220 L434 232" stroke="#319173" stroke-opacity="0.22" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M434 248 L420 260 L406 248" stroke="#319173" stroke-opacity="0.22" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <!-- orbit specialty nodes (5 around outer circle) -->
+                <!-- top -->
+                <circle cx="420" cy="82" r="24" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.18" stroke-width="1.5"/>
+                <!-- right (highlighted — active specialty) -->
+                <circle cx="578" cy="240" r="26" fill="#319173" fill-opacity="0.11" stroke="#319173" stroke-opacity="0.22" stroke-width="2"/>
+                <!-- bottom -->
+                <circle cx="420" cy="398" r="24" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.18" stroke-width="1.5"/>
+                <!-- left -->
+                <circle cx="262" cy="240" r="24" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.18" stroke-width="1.5"/>
+                <!-- top-right -->
+                <circle cx="532" cy="132" r="20" fill="#319173" fill-opacity="0.07" stroke="#319173" stroke-opacity="0.14" stroke-width="1"/>
+                <!-- spoke lines -->
+                <line x1="420" y1="196" x2="420" y2="106" stroke="#319173" stroke-opacity="0.06" stroke-width="1"/>
+                <line x1="464" y1="240" x2="552" y2="240" stroke="#319173" stroke-opacity="0.06" stroke-width="1"/>
+                <line x1="420" y1="284" x2="420" y2="374" stroke="#319173" stroke-opacity="0.06" stroke-width="1"/>
+                <line x1="376" y1="240" x2="286" y2="240" stroke="#319173" stroke-opacity="0.06" stroke-width="1"/>
+                <!-- rotation arc arrow -->
+                <path d="M437 83 Q488 83 514 130" stroke="#319173" stroke-opacity="0.11" stroke-width="1.5" stroke-dasharray="5 3" fill="none"/>
+                <path d="M507 121 L514 130 L504 132" stroke="#319173" stroke-opacity="0.14" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <h3>Смена специализации</h3>
+              <p>ИИ предлагает взгляд конкретного специалиста прямо в текущем чате — одним кликом.</p>
+            </div>
+            <div class="carousel-slide" [class.active]="currentSlide() === 5">
+              <!-- Slide 5: conclusion ready — document + checkmark -->
+              <svg class="slide-bg" viewBox="0 0 800 460" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <pattern id="sg5d" width="44" height="44" patternUnits="userSpaceOnUse"><circle cx="22" cy="22" r="1.5" fill="#319173" opacity="0.14"/></pattern>
+                </defs>
+                <rect width="800" height="460" fill="url(#sg5d)"/>
+                <!-- document — right side -->
+                <rect x="498" y="58" width="226" height="296" rx="14" fill="#319173" fill-opacity="0.05" stroke="#319173" stroke-opacity="0.12" stroke-width="1.5"/>
+                <!-- folded corner -->
+                <path d="M686 58 L724 58 L724 96 Z" fill="#319173" fill-opacity="0.06" stroke="#319173" stroke-opacity="0.09" stroke-width="1"/>
+                <!-- doc header bar -->
+                <rect x="520" y="84" width="86" height="10" rx="4" fill="#319173" fill-opacity="0.09"/>
+                <!-- doc text lines -->
+                <line x1="520" y1="122" x2="702" y2="122" stroke="#319173" stroke-opacity="0.09" stroke-width="1.5"/>
+                <line x1="520" y1="138" x2="685" y2="138" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <line x1="520" y1="154" x2="695" y2="154" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <line x1="520" y1="170" x2="670" y2="170" stroke="#319173" stroke-opacity="0.05" stroke-width="1.5"/>
+                <line x1="520" y1="198" x2="702" y2="198" stroke="#319173" stroke-opacity="0.09" stroke-width="1.5"/>
+                <line x1="520" y1="214" x2="688" y2="214" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <line x1="520" y1="230" x2="698" y2="230" stroke="#319173" stroke-opacity="0.05" stroke-width="1.5"/>
+                <!-- big checkmark circle on doc -->
+                <circle cx="611" cy="304" r="36" fill="#319173" fill-opacity="0.08" stroke="#319173" stroke-opacity="0.18" stroke-width="1.5"/>
+                <path d="M592 304 L606 320 L632 282" stroke="#319173" stroke-opacity="0.26" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- second smaller doc — bottom-left -->
+                <rect x="76" y="280" width="170" height="130" rx="10" fill="#319173" fill-opacity="0.04" stroke="#319173" stroke-opacity="0.09" stroke-width="1"/>
+                <rect x="96" y="300" width="60" height="8" rx="3" fill="#319173" fill-opacity="0.07"/>
+                <line x1="96"  y1="324" x2="234" y2="324" stroke="#319173" stroke-opacity="0.07" stroke-width="1.5"/>
+                <line x1="96"  y1="338" x2="220" y2="338" stroke="#319173" stroke-opacity="0.05" stroke-width="1.5"/>
+                <line x1="96"  y1="352" x2="228" y2="352" stroke="#319173" stroke-opacity="0.05" stroke-width="1.5"/>
+                <!-- small checkmark on small doc -->
+                <circle cx="220" cy="378" r="16" fill="#319173" fill-opacity="0.07" stroke="#319173" stroke-opacity="0.14" stroke-width="1"/>
+                <path d="M211 378 L218 386 L230 366" stroke="#319173" stroke-opacity="0.20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <h3>Заключение готово</h3>
+              <p>После завершения приёма — заключение и обновлённая карта автоматически.</p>
+            </div>
 
-        <div class="carousel-dots" role="group" aria-label="Слайды">
-          <button class="carousel-dot" [class.active]="currentSlide() === 0" (click)="goToSlide(0)" aria-label="Слайд 1"></button>
-          <button class="carousel-dot" [class.active]="currentSlide() === 1" (click)="goToSlide(1)" aria-label="Слайд 2"></button>
-          <button class="carousel-dot" [class.active]="currentSlide() === 2" (click)="goToSlide(2)" aria-label="Слайд 3"></button>
-          <button class="carousel-dot" [class.active]="currentSlide() === 3" (click)="goToSlide(3)" aria-label="Слайд 4"></button>
+            <div class="carousel-dots" role="group" aria-label="Слайды">
+              <button class="carousel-dot" [class.active]="currentSlide() === 0" (click)="goToSlide(0)" aria-label="Слайд 1"></button>
+              <button class="carousel-dot" [class.active]="currentSlide() === 1" (click)="goToSlide(1)" aria-label="Слайд 2"></button>
+              <button class="carousel-dot" [class.active]="currentSlide() === 2" (click)="goToSlide(2)" aria-label="Слайд 3"></button>
+              <button class="carousel-dot" [class.active]="currentSlide() === 3" (click)="goToSlide(3)" aria-label="Слайд 4"></button>
+              <button class="carousel-dot" [class.active]="currentSlide() === 4" (click)="goToSlide(4)" aria-label="Слайд 5"></button>
+              <button class="carousel-dot" [class.active]="currentSlide() === 5" (click)="goToSlide(5)" aria-label="Слайд 6"></button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -267,7 +457,7 @@
           </p>
           <ul>
             <li>Анамнез и прикреплённые анализы учитываются в каждом ответе.</li>
-            <li>Итог приёма и новые клинические факты — в карту автоматически.</li>
+            <li>Заключение приёма и новые клинические факты — в карту автоматически.</li>
             <li>История всех визитов сохраняется и доступна на следующем приёме.</li>
           </ul>
         </article>
@@ -290,10 +480,10 @@
 
 
     <!-- ─── SUBSPEC FEATURE ─── -->
-    <section class="section subspec-section" aria-label="Смена специализации в диалоге">
+    <section class="section subspec-section" id="unique" aria-label="Смена специализации в диалоге">
       <div class="subspec-layout">
         <div class="subspec-text">
-          <p class="eyebrow">Только в MedAssist</p>
+          <p class="eyebrow">Только в Doctarion</p>
           <h2>Смена специализации — прямо в диалоге</h2>
           <p>
             Ведёте гинекологический приём — ИИ замечает отклонение ТТГ и предлагает
@@ -341,7 +531,7 @@
         <article>
           <span>Web</span>
           <h3>Кабинет за компьютером</h3>
-          <p>Карты, история визитов, анализы и итоги приёмов — всё на одном экране.</p>
+          <p>Карты, история визитов, анализы и заключения приёмов — всё на одном экране.</p>
         </article>
         <article>
           <span>Синхронизация</span>
@@ -352,31 +542,17 @@
     </section>
 
 
-    <!-- ─── CTA ─── -->
-    <section class="section cta-section" id="cta" aria-label="Начать использование">
-      <div class="cta-panel">
-        <p class="eyebrow">Доступ</p>
-        <h2>Начните бесплатно на следующем приёме</h2>
-        <p>Выберите специализацию, создайте первого пациента — и работайте. Базовый доступ бесплатный. Для безлимитного использования ИИ — ежемесячная подписка.</p>
-        <div class="cta-actions">
-          <a class="button button-primary button-large" href="https://pwa-d.muk.i234.me">Открыть MedAssist бесплатно</a>
-        </div>
-      </div>
-    </section>
-
   </main>
 
   <footer class="landing-footer">
     <div class="footer-inner">
-      <a class="landing-brand footer-brand" href="#" aria-label="MedAssist">
-        <span class="brand-mark brand-mark-sm">M</span>
-        <strong>MedAssist</strong>
+      <a class="landing-brand footer-brand" href="#" aria-label="Doctarion">
+        <img src="assets/logo-full.svg" class="footer-logo" alt="Doctarion">
       </a>
       <p class="footer-copy">ИИ-ассистент для врачей и онлайн-приёмов</p>
-      <a class="footer-link" href="https://pwa-d.muk.i234.me">Открыть приложение</a>
     </div>
     <div class="footer-bottom">
-      <p class="footer-copyright">© 2026 MedAssist. Все права защищены.</p>
+      <p class="footer-copyright">© 2026 Doctarion. Все права защищены.</p>
     </div>
   </footer>
 </div>
