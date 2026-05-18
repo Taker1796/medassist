@@ -76,49 +76,12 @@ main {
   left: 0;
   right: 0;
   z-index: 100;
-  background: transparent;
-  border-bottom: 1px solid transparent;
-  box-shadow: none;
-  color: #fff;
-  transition: background 300ms ease, border-color 300ms ease, box-shadow 300ms ease, color 300ms ease;
-
-  &:not(.scrolled) {
-    .landing-nav a,
-    .brand-copy span {
-      color: rgba(255, 255, 255, 0.75);
-      transition: color 300ms ease;
-    }
-
-    .landing-nav a:hover {
-      color: #fff;
-    }
-  }
-
-  &.scrolled {
-    background: rgba(251, 252, 252, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(216, 231, 225, 0.9);
-    box-shadow: 0 2px 24px rgba(17, 24, 39, 0.07);
-    color: var(--text-color);
-  }
-
-  @media (max-width: 768px) {
-    position: fixed;
-    background: rgba(251, 252, 252, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(216, 231, 225, 0.9);
-    box-shadow: 0 2px 16px rgba(17, 24, 39, 0.08);
-    color: var(--text-color);
-
-    &:not(.scrolled) {
-      .landing-nav a,
-      .brand-copy span {
-        color: var(--muted-text-color);
-      }
-    }
-  }
+  background: rgba(251, 252, 252, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(216, 231, 225, 0.9);
+  box-shadow: 0 2px 16px rgba(17, 24, 39, 0.06);
+  color: var(--text-color);
 }
 
 .header-inner {
@@ -446,6 +409,17 @@ h1 {
   line-height: 1.02;
   font-weight: 800;
   letter-spacing: 0;
+}
+
+.hero-brand-name {
+  display: inline;
+}
+
+.hero-brand-tagline {
+  font-size: 0.5em;
+  font-weight: 700;
+  line-height: 1.3;
+  opacity: 0.9;
 }
 
 .hero-description {
@@ -1350,7 +1324,7 @@ h1 {
 }
 
 .platform-grid article {
-  min-height: 250px;
+  min-height: 220px;
   padding: 24px;
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
@@ -1358,6 +1332,97 @@ h1 {
 .platform-grid p {
   margin-top: 14px;
   font-size: 15px;
+}
+
+/* ─── Telegram row ─── */
+
+.tg-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.tg-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 22px 24px 24px;
+  border: 1px solid rgba(42, 171, 238, 0.22);
+  border-radius: 12px;
+  background: rgba(42, 171, 238, 0.07);
+  text-decoration: none;
+  color: inherit;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.tg-card:hover {
+  background: rgba(42, 171, 238, 0.12);
+  border-color: rgba(42, 171, 238, 0.38);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(42, 171, 238, 0.12);
+}
+
+.tg-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tg-icon {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  fill: #2aabee;
+}
+
+.tg-type {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #2aabee;
+}
+
+.tg-handle {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.tg-desc {
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(220, 240, 230, 0.7);
+  margin: 0;
+}
+
+.tg-btn {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  padding: 8px 16px;
+  border: 1px solid rgba(42, 171, 238, 0.38);
+  border-radius: 8px;
+  background: rgba(42, 171, 238, 0.12);
+  color: #2aabee;
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+.tg-card:hover .tg-btn {
+  background: rgba(42, 171, 238, 0.20);
+  border-color: rgba(42, 171, 238, 0.55);
+}
+
+@media (max-width: 600px) {
+  .tg-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ─── Pain section ─── */
