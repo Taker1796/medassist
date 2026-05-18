@@ -126,6 +126,7 @@ main {
   margin: 0 auto;
   min-height: 80px;
   padding: 0 28px;
+  padding-top: env(safe-area-inset-top, 0px);
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -268,6 +269,8 @@ main {
   grid-template-columns: minmax(0, 1fr) 480px;
   gap: 28px;
   align-items: stretch;
+  /* fallback for browsers without dvh support */
+  padding: 22px 0 28px;
   padding: 22px 0 max(28px, calc(100dvh - 824px));
 }
 
@@ -1630,6 +1633,8 @@ h1 {
 .landing-footer {
   border-top: 1px solid var(--border-color);
   background: rgba(255, 255, 255, 0.7);
+  /* safe area for iPhone home indicator */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .footer-inner {
@@ -1988,24 +1993,25 @@ h1 {
 
 @media (max-width: 680px) {
   .approach-section {
-    height: 360px;
+    height: 380px;
   }
 
   .carousel-stage {
     min-height: 0;
   }
 
+  /* 44×44 touch targets per Apple HIG / Material guidelines */
   .carousel-prev,
   .carousel-next {
-    width: 30px;
-    height: 30px;
+    width: 44px;
+    height: 44px;
   }
 
-  .carousel-prev { left: 8px; }
-  .carousel-next { right: 8px; }
+  .carousel-prev { left: 6px; }
+  .carousel-next { right: 6px; }
 
   .carousel-slide {
-    padding: 16px 48px 72px;
+    padding: 16px 56px 72px;
   }
 
   .carousel-slide h3 {
@@ -2014,6 +2020,17 @@ h1 {
 
   .carousel-slide p {
     font-size: 15px;
+  }
+
+  /* expand dot tap area without changing visual size */
+  .carousel-dot {
+    position: relative;
+  }
+
+  .carousel-dot::after {
+    content: '';
+    position: absolute;
+    inset: -14px -10px;
   }
 }
 
@@ -2110,7 +2127,7 @@ h1 {
   0%,
   100% {
     opacity: 0;
-    translate: -48% 0;
+    transform: rotate(-32deg) translateX(-48%);
   }
   45%,
   55% {
@@ -2118,7 +2135,7 @@ h1 {
   }
   70% {
     opacity: 0;
-    translate: 48% 0;
+    transform: rotate(-32deg) translateX(48%);
   }
 }
 
@@ -2310,6 +2327,37 @@ h1 {
 
   .cta-reassurance {
     gap: 16px;
+  }
+}
+
+/* ─── Very small screens (≤ 400px, e.g. iPhone SE, older Android) ─── */
+@media (max-width: 400px) {
+  h1 {
+    font-size: 30px;
+  }
+
+  .section-heading h2 {
+    font-size: 26px;
+  }
+
+  .subspec-text h2 {
+    font-size: 26px;
+  }
+
+  .hero-description {
+    font-size: 15px;
+  }
+
+  main {
+    padding-inline: 14px;
+  }
+
+  .header-inner {
+    padding-inline: 14px;
+  }
+
+  .subspec-section {
+    padding-inline: 16px;
   }
 }
 
