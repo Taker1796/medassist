@@ -1919,6 +1919,19 @@ h1 {
   z-index: 0;
 }
 
+@media (max-width: 680px) {
+  /* On mobile the slide is portrait-ish: slice would zoom in heavily.
+     Instead render SVG at its natural 800:460 ratio, centered vertically. */
+  .slide-bg {
+    inset: auto;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: auto;
+    transform: translateY(-50%);
+  }
+}
+
 .carousel-slide h3,
 .carousel-slide p {
   position: relative;
